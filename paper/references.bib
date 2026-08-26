@@ -1,0 +1,151 @@
+% Bibliography for the NeurReps Extended Abstract.
+%
+% Every field here is transcribed from docs/03-references.md, which is this project's record of
+% what was read and what was only summarised. Fields that record does not carry -- volume, issue,
+% article number, page range for several of the journal entries -- are ABSENT rather than guessed.
+% Under the verified/inferred rule in docs/AGENTS.md a bibliographic field recalled from memory is
+% inferred, and an inferred field in a submitted bibliography is indistinguishable from a correct
+% one. Entries needing a lookup carry the marker in a `note` field, which BibTeX prints, so an
+% unverified reference is visible in the compiled bibliography rather than only in a comment. It has
+% to be a real field: `%` does not start a comment inside a BibTeX entry, and putting the marker
+% behind one silently deleted all three of these references from the first compiled draft.
+% scripts/check_submission.py counts the markers and refuses to pass while any remain.
+
+% ---------------------------------------------------------------------------------------------
+% The decomposition and the estimator
+% ---------------------------------------------------------------------------------------------
+
+@inproceedings{chou2025beyond,
+  author    = {Chou, Chi-Ning and Le, Hang and Wang, Yichen and Chung, SueYeon},
+  title     = {Feature Learning beyond the Lazy-Rich Dichotomy: Insights from Representational
+               Geometry},
+  booktitle = {Proceedings of the 42nd International Conference on Machine Learning (ICML)},
+  year      = {2025},
+  note      = {Spotlight. Version pinned for extraction: arXiv:2503.18114v2},
+  eprint    = {2503.18114},
+  archivePrefix = {arXiv},
+}
+
+@inproceedings{chou2026diagnosing,
+  author    = {Chou, Chi-Ning and Kirsanov, Mikhail and Yang, Jenelle and Chung, SueYeon},
+  title     = {Diagnosing Generalization Failures from Representational Geometry Markers},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2026},
+  note      = {Version pinned for extraction: arXiv:2603.01879v1. Appendix B.3 gives the exact
+               three-factor identity used here},
+  eprint    = {2603.01879},
+  archivePrefix = {arXiv},
+}
+
+@article{chou2025glue,
+  author  = {Chou, Chi-Ning and Kim, Royoung and Arend, Luke and Yang, Yao-Yuan and
+             Mensh, Brett D. and Slatton, Will and Wakhloo, Albert J. and Shim, Sang Wan and
+             Perich, Matthew G. and Chung, SueYeon},
+  title   = {Geometry linked to untangling efficiency reveals structure and computation in
+             neural populations},
+  journal = {bioRxiv},
+  year    = {2025},
+  doi     = {10.1101/2024.02.26.582157},
+}
+
+@article{cohen2020separability,
+  author  = {Cohen, Uri and Chung, SueYeon and Lee, Daniel D. and Sompolinsky, Haim},
+  title   = {Separability and geometry of object manifolds in deep neural networks},
+  journal = {Nature Communications},
+  volume  = {11},
+  pages   = {746},
+  year    = {2020},
+}
+
+@article{chung2018classification,
+  author  = {Chung, SueYeon and Lee, Daniel D. and Sompolinsky, Haim},
+  title   = {Classification and geometry of general perceptual manifolds},
+  journal = {Physical Review X},
+  volume  = {8},
+  pages   = {031003},
+  year    = {2018},
+}
+
+@article{wakhloo2023linear,
+  author  = {Wakhloo, Albert J. and Sussman, Tamara J. and Chung, SueYeon},
+  title   = {Linear Classification of Neural Manifolds with Correlated Variability},
+  journal = {Physical Review Letters},
+  year    = {2023},
+  note    = {TODO-VERIFY: volume and article number are not recorded in
+             docs/03-references.md and must be looked up before submission},
+}
+
+@article{wakhloo2026optimal,
+  author  = {Wakhloo, Albert J. and Slatton, Will and Chung, SueYeon},
+  title   = {Neural population geometry and optimal coding of tasks with shared latent structure},
+  journal = {Nature Neuroscience},
+  year    = {2026},
+  doi     = {10.1038/s41593-025-02183-y},
+  eprint  = {2402.16770},
+  archivePrefix = {arXiv},
+}
+
+% ---------------------------------------------------------------------------------------------
+% The richness parameterisation and the continual-learning setting
+% ---------------------------------------------------------------------------------------------
+
+@inproceedings{graldi2025lazy,
+  author    = {Graldi, Jacopo and Breccia, Alessandro and Lanzillotta, Giulia and
+               Hofmann, Thomas and Noci, Lorenzo},
+  title     = {The Importance of Being Lazy: Scaling Limits of Continual Learning},
+  booktitle = {Proceedings of the 42nd International Conference on Machine Learning (ICML)},
+  year      = {2025},
+  eprint    = {2506.16884},
+  archivePrefix = {arXiv},
+}
+
+@inproceedings{hiratani2024disentangling,
+  author    = {Hiratani, Naoki},
+  title     = {Disentangling and mitigating the impact of task similarity for continual learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2024},
+}
+
+@inproceedings{atanasov2025landscape,
+  author    = {Atanasov, Alexander and Meterez, Alexandru and Simon, James B. and
+               Pehlevan, Cengiz},
+  title     = {The Optimization Landscape of {SGD} Across the Feature Learning Strength},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+}
+
+% ---------------------------------------------------------------------------------------------
+% The probe metric and the human anchor
+% ---------------------------------------------------------------------------------------------
+
+@article{johnston2023abstract,
+  author  = {Johnston, W. Jeffrey and Fusi, Stefano},
+  title   = {Abstract representations emerge naturally in neural networks trained to perform
+             multiple tasks},
+  journal = {Nature Communications},
+  year    = {2023},
+  note    = {TODO-VERIFY: volume and article number are not recorded in
+             docs/03-references.md and must be looked up before submission},
+}
+
+@article{menghi2025similarity,
+  author  = {Menghi, Nicholas and Johnston, W. Jeffrey and Vigan{\`o}, Simone and
+             Hinrichs, Hermann and Maess, Burkhard and Fusi, Stefano and Doeller, Christian F.},
+  title   = {The effects of task similarity during representation learning in brains and
+             neural networks},
+  journal = {Nature Communications},
+  year    = {2025},
+  note    = {TODO-VERIFY: volume and article number are not recorded in
+             docs/03-references.md and must be looked up before submission},
+}
+
+@article{bernardi2020geometry,
+  author  = {Bernardi, Silvia and Benna, Marcus K. and Rigotti, Mattia and Munuera, Jerome and
+             Fusi, Stefano and Salzman, C. Daniel},
+  title   = {The geometry of abstraction in the hippocampus and prefrontal cortex},
+  journal = {Cell},
+  volume  = {183},
+  number  = {4},
+  pages   = {954--967},
+  year    = {2020},
+}

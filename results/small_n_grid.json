@@ -1,0 +1,565 @@
+{
+  "generated_by": "scripts/analyse_small_n_grid.py",
+  "precommit": {
+    "written": "2026-08-19T14:02:00+02:00",
+    "written_before_any_new_small_n_grid_arm_completed": true,
+    "question": "At N=32 and N=100, on the full Hiratani 2\u00d72, do CF and GLUE (\u0394 log \u03b1 sign) still organise like the N=300 grid, over 8 inits of one arrangement?",
+    "why": "S-HH-only n=4 found lazy CF leaving the N\u2265150 band at N=32 (mean 0.086) while rich S-HH stayed at CF=0. That cannot locate a corner effect versus a lazy-width effect without S-HL/S-LH/S-LL, and n=4 is short of the paper\u2019s unique n=8. GLUE was logged but not scored. This expansion scores both currencies on the full similarity grid. N=32 GLUE is packed (D_eff ~1.3 in the S-HL smoke); signs are the GLUE claim, not channel-share magnitudes.",
+    "reference_N300_stream0_unique_n8": {
+      "source": "results/phase1/ a=0, stream_id=0, seeds 0\u20137 (the grid\u2019s unique n=8)",
+      "gamma_0.03_CF": {
+        "S-HH": 0.0013,
+        "S-HL": 0.4227,
+        "S-LH": 0.1137,
+        "S-LL": 0.2842
+      },
+      "gamma_10_CF": {
+        "S-HH": 0.0001,
+        "S-HL": 0.4067,
+        "S-LH": 0.0128,
+        "S-LL": 0.1546
+      },
+      "gamma_10_dlog_alpha_task0_lag15": {
+        "S-HH": 0.058,
+        "S-HL": -1.549,
+        "S-LH": -1.037,
+        "S-LL": -1.335
+      },
+      "gamma_10_CF_order": [
+        "S-HL",
+        "S-LL",
+        "S-LH",
+        "S-HH"
+      ],
+      "note_S-LH_rich_CF_is_small": "S-LH at \u03b3=10 has CF 0.013, not 0.4. High readout similarity preserves accuracy. S-HH is the only corner with CF~0 at both \u03b3."
+    },
+    "design": {
+      "N": [
+        32,
+        100
+      ],
+      "gamma": [
+        0.03,
+        10.0
+      ],
+      "condition": [
+        "S-HH",
+        "S-HL",
+        "S-LH",
+        "S-LL"
+      ],
+      "stream_id": [
+        0
+      ],
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_arms": 128,
+      "n_new": 108,
+      "imported_not_retrained": "20 arms: results/shh_width/ (S-HH, seeds 0\u20133, both N and \u03b3) and results/width_smoke/ (S-HL, seed 0, both N and \u03b3). Copied into this directory; specs identical.",
+      "directory": "results/small_n_grid/",
+      "never": [
+        "results/phase1/",
+        "results/width/",
+        "results/width_g10_n40/"
+      ]
+    },
+    "sampling_unit": "initialisation. Eight seeds are eight inits of stream_rng(0). Not an arrangement-level claim. Not pooled with N=300.",
+    "statistics": {
+      "CF": "Per (N, \u03b3, condition): mean, min, max over 8 seeds of forgetting_metrics CF, and of past-task accuracy (last accuracy-matrix row, current task excluded). Unusable arms are kept in the mean and counted.",
+      "GLUE": "Per (N, \u03b3, condition): mean over 8 seeds of \u0394 log \u03b1 (task 0, lag 15, module A, retained) and of \u0394\u03c1_c_signed (boundary 15 \u2212 0, task 0, module A). Channel shares and D_eff are logged. At N=32, D_eff is expected packed; magnitudes of \u0394 log \u03b1 are not compared to N=300.",
+      "clouds": "N=32, seed 0, all four conditions, both \u03b3 (8 npz). Not a decision input."
+    },
+    "decision_rule": {
+      "rich_CF_2x2_survives": "At a given N, \u03b3=10: mean CF(S-HH) \u2264 0.01 AND mean CF(S-HL) \u2265 0.25 AND the order of the four mean CFs is S-HL > S-LL > S-LH > S-HH. Then the rich behavioural 2\u00d72 is intact at that width, on this arrangement.",
+      "rich_CF_2x2_breaks": "At that N, \u03b3=10: mean CF(S-HH) \u2265 0.05 OR mean CF(S-HL) < 0.20 OR the CF order among the four corners is not S-HL > S-LL > S-LH > S-HH. Then rich behavioural organisation does not match N=300 at that width.",
+      "lazy_S-HH_CF_break_confirmed": "At N=32, \u03b3=0.03: mean CF(S-HH) \u2265 0.05 over 8 seeds. Then the n=4 lazy-S-HH break stands at n=8. (Already expected from shh_width.)",
+      "glue_signs_match": "At a given N, \u03b3=10: mean \u0394 log \u03b1 > 0 on S-HH and < 0 on S-HL, S-LH, S-LL. Then GLUE\u2019s gain-vs-loss pattern matches N=300 in sign. Magnitudes at N=32 are not a pass/fail.",
+      "glue_signs_break": "At that N, \u03b3=10: S-HH mean \u0394 log \u03b1 \u2264 0, or any of the three loss corners has mean \u0394 log \u03b1 \u2265 0. Then the GLUE 2\u00d72 sign pattern failed.",
+      "N32_packing": "If mean D_eff (generic, boundary 0, module A) at N=32 is < 2.0, packing is confirmed. GLUE signs may still be scored; channel shares must not be quoted as a test of \u00a75.",
+      "intermediate": "Any cell that is neither survive nor break on that rule: report means and range, do not rewrite the paper.",
+      "fixed_before_the_new_arms_exist": true,
+      "will_not_quote": [
+        "N=32 channel shares as \u00a75",
+        "arrangement-level claims",
+        "pooling with the registered grid",
+        "the imported 20 as a fresh sample \u2014 they are overlap"
+      ]
+    },
+    "can_show": "whether, at one arrangement and 8 inits, the 2\u00d72 of CF and the sign pattern of \u0394 log \u03b1 at \u03b3=10 still match N=300 at N=32 and N=100, and whether the lazy-S-HH CF break replicates at n=8",
+    "cannot_show": [
+      "arrangement variance",
+      "a \u03b3 onset",
+      "W1 magnitude invariance",
+      "located N* finer than {32, 100, 150, 300}"
+    ],
+    "reporting": "off-design, own directory, never adopted by grid.load(). Score with scripts/analyse_small_n_grid.py. The imported 20 are listed in the score file."
+  },
+  "precommit_N16": {
+    "written": "2026-08-19T15:06:00+02:00",
+    "written_before_any_N16_arm_completed": true,
+    "question": "Does the N=32 picture of declining width \u2014 rich 2\u00d72 intact, lazy matched-loss failing, GLUE packed but signs intact \u2014 continue at N=16, where P/N=1 and P(D+1)/N=5?",
+    "why": "The small-n grid at N=32/100 showed richness keeping CF and \u0394 log \u03b1 signs organised like N=300, while lazy S-HH CF broke and N=32 D_eff collapsed to ~1.22. N=16 is one more octave down: module width equals P, concatenated readout is 32 parameters, packing is 5\u00d7 worse than N=32. This is to read the capacity decline, not to enter the paper. Same 2\u00d72, same 8 seeds, same stream, same two \u03b3. N=32 and N=100 are not retrained.",
+    "design": {
+      "N": [
+        16
+      ],
+      "gamma": [
+        0.03,
+        10.0
+      ],
+      "condition": [
+        "S-HH",
+        "S-HL",
+        "S-LH",
+        "S-LL"
+      ],
+      "stream_id": [
+        0
+      ],
+      "seed": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_arms": 64,
+      "directory": "results/small_n_grid/",
+      "never": [
+        "results/phase1/"
+      ],
+      "P_over_N": 1.0,
+      "packing_P_Dp1_over_N": 5.0
+    },
+    "sampling_unit": "initialisation, one arrangement (stream_id=0). Same unit as the N=32/100 grid. Not pooled with N=300.",
+    "statistics": {
+      "same_as_small_n_grid": "CF, past-task accuracy, \u0394 log \u03b1 (task 0, lag 15, module A), \u0394\u03c1_c, D_eff generic at boundary 0, n_usable. Unusable arms stay in the means.",
+      "init_readout": "Frozen-W module-A and A+B exact-readout MSE at N=16, 33 dichotomies, written beside the arms before training."
+    },
+    "decision_rule": {
+      "rich_CF_2x2_survives": "\u03b3=10: mean CF(S-HH) \u2264 0.01 AND mean CF(S-HL) \u2265 0.25 AND CF order S-HL > S-LL > S-LH > S-HH. Same rule as N=32/100.",
+      "rich_CF_2x2_breaks": "\u03b3=10: mean CF(S-HH) \u2265 0.05 OR mean CF(S-HL) < 0.20 OR that order fails.",
+      "rich_fit_breaks": "\u03b3=10 S-HH n_usable < 4 of 8. Then even the rich arm cannot match loss 0.05; N=16 is past the training object, not just past GLUE packing. Report loss-at-cap, do not treat CF as matched-loss.",
+      "glue_signs_match": "\u03b3=10: mean \u0394 log \u03b1 > 0 on S-HH and < 0 on the other three. Magnitudes and channel shares are not a pass/fail. Packing is expected (D_eff < 2).",
+      "lazy_expected_unusable": "\u03b3=0.03: most tasks will miss 0.05. That is a predicted floor, not a CF finding. Still report CF, flagged by n_usable.",
+      "capacity_decline": "Descriptive: mean retained \u03b1 at boundary 0 and lag 15, and D_eff, versus N=32/100 on the same stream. No threshold. The point of this run.",
+      "fixed_before_the_N16_arms_exist": true,
+      "will_not_quote": [
+        "N=16 channel shares as \u00a75",
+        "pooling with the registered grid",
+        "arrangement-level claims"
+      ]
+    },
+    "can_show": "whether the rich 2\u00d72 and GLUE signs survive one more octave of width, and how retained \u03b1 / D_eff move from N=32 to N=16 on this arrangement",
+    "cannot_show": [
+      "a continuous N* ",
+      "arrangement variance",
+      "lazy matched-loss geometry at N=16"
+    ],
+    "reporting": "Same directory as N=32/100 so analyse_small_n_grid.py sees all three widths. Off-design. Score after the 64 complete."
+  },
+  "n_arms": 192,
+  "n_cells": 24,
+  "cells": {
+    "N16_g0.03_S-HH": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.05481597222222222,
+      "min_CF": 0.029666666666666664,
+      "max_CF": 0.12608333333333338,
+      "mean_past_task_acc": 0.93621875,
+      "mean_dlog_alpha": -1.6924395912498724e-16,
+      "mean_delta_rho_c": -0.024827807219336154,
+      "mean_D_eff_generic_b0": 0.9958159853779927,
+      "mean_alpha_retained_b0": 1.0027720709676158,
+      "mean_alpha_retained_b15": 1.0027720709676156,
+      "mean_alpha_generic_b0": 1.004882482567122
+    },
+    "N16_g0.03_S-HL": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.4336284722222222,
+      "min_CF": 0.39561111111111114,
+      "max_CF": 0.4560555555555556,
+      "mean_past_task_acc": 0.5266770833333334,
+      "mean_dlog_alpha": 7.589415207398531e-19,
+      "mean_delta_rho_c": -0.017058384370296317,
+      "mean_D_eff_generic_b0": 0.9958137384894141,
+      "mean_alpha_retained_b0": 1.0027720709676156,
+      "mean_alpha_retained_b15": 1.0027720709676156,
+      "mean_alpha_generic_b0": 1.004882482567122
+    },
+    "N16_g0.03_S-LH": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.40551736111111114,
+      "min_CF": 0.3704444444444445,
+      "max_CF": 0.43927777777777777,
+      "mean_past_task_acc": 0.5521215277777778,
+      "mean_dlog_alpha": 3.0574501264091225e-17,
+      "mean_delta_rho_c": -0.009574808859554147,
+      "mean_D_eff_generic_b0": 0.9958159853779927,
+      "mean_alpha_retained_b0": 1.0027720709676158,
+      "mean_alpha_retained_b15": 1.0027720709676158,
+      "mean_alpha_generic_b0": 1.004882482567122
+    },
+    "N16_g0.03_S-LL": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.4465104166666667,
+      "min_CF": 0.4256388888888889,
+      "max_CF": 0.47561111111111115,
+      "mean_past_task_acc": 0.5088611111111111,
+      "mean_dlog_alpha": 8.64109131470947e-17,
+      "mean_delta_rho_c": -0.007476252514144625,
+      "mean_D_eff_generic_b0": 0.9958137384894141,
+      "mean_alpha_retained_b0": 1.0027720709676156,
+      "mean_alpha_retained_b15": 1.0027720709676158,
+      "mean_alpha_generic_b0": 1.004882482567122
+    },
+    "N16_g10_S-HH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": -9.722222222221892e-05,
+      "min_CF": -0.0006388888888888851,
+      "max_CF": 0.0003055555555555589,
+      "mean_past_task_acc": 0.9998645833333334,
+      "mean_dlog_alpha": -0.0069454365436459435,
+      "mean_delta_rho_c": 0.04538117867940276,
+      "mean_D_eff_generic_b0": 0.9957792485907208,
+      "mean_alpha_retained_b0": 1.8999642487121093,
+      "mean_alpha_retained_b15": 1.9231327331741905,
+      "mean_alpha_generic_b0": 1.0050748161696421
+    },
+    "N16_g10_S-HL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.3829895833333333,
+      "min_CF": 0.3790277777777778,
+      "max_CF": 0.3893055555555556,
+      "mean_past_task_acc": 0.6166284722222222,
+      "mean_dlog_alpha": -0.6552115190282795,
+      "mean_delta_rho_c": 0.11154129404597227,
+      "mean_D_eff_generic_b0": 0.9958090214886193,
+      "mean_alpha_retained_b0": 2.026435855450684,
+      "mean_alpha_retained_b15": 1.0027720709676158,
+      "mean_alpha_generic_b0": 1.004882482567112
+    },
+    "N16_g10_S-LH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.02093750000000001,
+      "min_CF": 0.013916666666666681,
+      "max_CF": 0.02761111111111112,
+      "mean_past_task_acc": 0.9781319444444445,
+      "mean_dlog_alpha": -0.5931813963678247,
+      "mean_delta_rho_c": 0.07622422637714635,
+      "mean_D_eff_generic_b0": 0.9957792485907208,
+      "mean_alpha_retained_b0": 1.8999642487121093,
+      "mean_alpha_retained_b15": 1.0029290669966762,
+      "mean_alpha_generic_b0": 1.0050748161696421
+    },
+    "N16_g10_S-LL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.15095833333333333,
+      "min_CF": 0.13838888888888892,
+      "max_CF": 0.15738888888888886,
+      "mean_past_task_acc": 0.84825,
+      "mean_dlog_alpha": -0.6552115190282796,
+      "mean_delta_rho_c": 0.12461511651079,
+      "mean_D_eff_generic_b0": 0.9958090214886193,
+      "mean_alpha_retained_b0": 2.026435855450684,
+      "mean_alpha_retained_b15": 1.0027720709676156,
+      "mean_alpha_generic_b0": 1.004882482567112
+    },
+    "N32_g0.03_S-HH": {
+      "n": 8,
+      "n_usable": 4,
+      "mean_CF": 0.09600694444444446,
+      "min_CF": 0.061527777777777785,
+      "max_CF": 0.13902777777777775,
+      "mean_past_task_acc": 0.9022708333333334,
+      "mean_dlog_alpha": 2.1883574550324303e-05,
+      "mean_delta_rho_c": -0.02156358373229736,
+      "mean_D_eff_generic_b0": 1.4051538302500237,
+      "mean_alpha_retained_b0": 0.5010160435914826,
+      "mean_alpha_retained_b15": 0.5010270769705301,
+      "mean_alpha_generic_b0": 0.4992810607138318
+    },
+    "N32_g0.03_S-HL": {
+      "n": 8,
+      "n_usable": 1,
+      "mean_CF": 0.46667708333333335,
+      "min_CF": 0.4338055555555556,
+      "max_CF": 0.48699999999999993,
+      "mean_past_task_acc": 0.5313506944444444,
+      "mean_dlog_alpha": -8.326672684688674e-17,
+      "mean_delta_rho_c": -0.0042233047886548886,
+      "mean_D_eff_generic_b0": 1.4061279587856608,
+      "mean_alpha_retained_b0": 0.5010160435914823,
+      "mean_alpha_retained_b15": 0.5010160435914822,
+      "mean_alpha_generic_b0": 0.4992810607138318
+    },
+    "N32_g0.03_S-LH": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.4026180555555556,
+      "min_CF": 0.35141666666666665,
+      "max_CF": 0.48277777777777775,
+      "mean_past_task_acc": 0.5950659722222222,
+      "mean_dlog_alpha": -7.91033905045424e-16,
+      "mean_delta_rho_c": -0.004817600393964713,
+      "mean_D_eff_generic_b0": 1.4051538302500237,
+      "mean_alpha_retained_b0": 0.5010160435914826,
+      "mean_alpha_retained_b15": 0.5010160435914821,
+      "mean_alpha_generic_b0": 0.4992810607138318
+    },
+    "N32_g0.03_S-LL": {
+      "n": 8,
+      "n_usable": 0,
+      "mean_CF": 0.46807291666666667,
+      "min_CF": 0.4446111111111112,
+      "max_CF": 0.49466666666666664,
+      "mean_past_task_acc": 0.5294861111111111,
+      "mean_dlog_alpha": -1.3877787807814457e-16,
+      "mean_delta_rho_c": -0.0021356005593166708,
+      "mean_D_eff_generic_b0": 1.4061279587856608,
+      "mean_alpha_retained_b0": 0.5010160435914823,
+      "mean_alpha_retained_b15": 0.5010160435914822,
+      "mean_alpha_generic_b0": 0.4992810607138318
+    },
+    "N32_g10_S-HH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": -5.555555555555407e-05,
+      "min_CF": -0.0002777777777777694,
+      "max_CF": 0.00011111111111111368,
+      "mean_past_task_acc": 0.9998576388888889,
+      "mean_dlog_alpha": 0.11641757799855366,
+      "mean_delta_rho_c": 0.007807615915970553,
+      "mean_D_eff_generic_b0": 1.2170147238136386,
+      "mean_alpha_retained_b0": 1.8205430416578983,
+      "mean_alpha_retained_b15": 2.048090198197646,
+      "mean_alpha_generic_b0": 0.5050155154066478
+    },
+    "N32_g10_S-HL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.38105208333333335,
+      "min_CF": 0.37194444444444447,
+      "max_CF": 0.3891111111111112,
+      "mean_past_task_acc": 0.6188229166666668,
+      "mean_dlog_alpha": -1.4037843579768252,
+      "mean_delta_rho_c": 0.07981869359588517,
+      "mean_D_eff_generic_b0": 1.2158639327078966,
+      "mean_alpha_retained_b0": 2.063828998141503,
+      "mean_alpha_retained_b15": 0.5050026547280895,
+      "mean_alpha_generic_b0": 0.5079469744328962
+    },
+    "N32_g10_S-LH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.01332291666666668,
+      "min_CF": 0.009472222222222238,
+      "max_CF": 0.017805555555555564,
+      "mean_past_task_acc": 0.9859791666666666,
+      "mean_dlog_alpha": -1.02842233016944,
+      "mean_delta_rho_c": 0.0355240723968957,
+      "mean_D_eff_generic_b0": 1.2170147238136386,
+      "mean_alpha_retained_b0": 1.8205430416578983,
+      "mean_alpha_retained_b15": 0.6522214950774348,
+      "mean_alpha_generic_b0": 0.5050155154066478
+    },
+    "N32_g10_S-LL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.14473611111111112,
+      "min_CF": 0.13991666666666666,
+      "max_CF": 0.14847222222222226,
+      "mean_past_task_acc": 0.8547604166666667,
+      "mean_dlog_alpha": -1.4112806495083863,
+      "mean_delta_rho_c": 0.10849871305848899,
+      "mean_D_eff_generic_b0": 1.2158639327078966,
+      "mean_alpha_retained_b0": 2.063828998141503,
+      "mean_alpha_retained_b15": 0.5010160435914821,
+      "mean_alpha_generic_b0": 0.5079469744328962
+    },
+    "N100_g0.03_S-HH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.02669097222222223,
+      "min_CF": 0.012111111111111125,
+      "max_CF": 0.04961111111111113,
+      "mean_past_task_acc": 0.9713159722222222,
+      "mean_dlog_alpha": 0.033993412045669025,
+      "mean_delta_rho_c": 0.0008441769424683415,
+      "mean_D_eff_generic_b0": 2.8628232179495487,
+      "mean_alpha_retained_b0": 0.2931968354500527,
+      "mean_alpha_retained_b15": 0.30332856803909536,
+      "mean_alpha_generic_b0": 0.29742187931120134
+    },
+    "N100_g0.03_S-HL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.41812499999999997,
+      "min_CF": 0.4019444444444444,
+      "max_CF": 0.4344722222222222,
+      "mean_past_task_acc": 0.5804374999999999,
+      "mean_dlog_alpha": -0.010045631459913607,
+      "mean_delta_rho_c": -5.408150263879613e-05,
+      "mean_D_eff_generic_b0": 2.8918247544905693,
+      "mean_alpha_retained_b0": 0.29092908881329915,
+      "mean_alpha_retained_b15": 0.28805880796966976,
+      "mean_alpha_generic_b0": 0.29740774140195647
+    },
+    "N100_g0.03_S-LH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.23422569444444447,
+      "min_CF": 0.21280555555555558,
+      "max_CF": 0.25061111111111106,
+      "mean_past_task_acc": 0.7637430555555556,
+      "mean_dlog_alpha": 0.016694338375175227,
+      "mean_delta_rho_c": 0.000314365660377236,
+      "mean_D_eff_generic_b0": 2.8628232179495487,
+      "mean_alpha_retained_b0": 0.2931968354500527,
+      "mean_alpha_retained_b15": 0.29813045381193837,
+      "mean_alpha_generic_b0": 0.29742187931120134
+    },
+    "N100_g0.03_S-LL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.3449513888888889,
+      "min_CF": 0.32375000000000004,
+      "max_CF": 0.36975,
+      "mean_past_task_acc": 0.6536770833333333,
+      "mean_dlog_alpha": -0.0032892095551464717,
+      "mean_delta_rho_c": -1.7491456751901613e-05,
+      "mean_D_eff_generic_b0": 2.8918247544905693,
+      "mean_alpha_retained_b0": 0.29092908881329915,
+      "mean_alpha_retained_b15": 0.2900138974577815,
+      "mean_alpha_generic_b0": 0.29740774140195647
+    },
+    "N100_g10_S-HH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": -0.00012152777777777458,
+      "min_CF": -0.00036111111111109353,
+      "max_CF": 0.0,
+      "mean_past_task_acc": 0.9999791666666666,
+      "mean_dlog_alpha": 0.07214794823540653,
+      "mean_delta_rho_c": 0.019343267501306757,
+      "mean_D_eff_generic_b0": 2.7070717361964,
+      "mean_alpha_retained_b0": 1.8282834105616392,
+      "mean_alpha_retained_b15": 1.9671223150385773,
+      "mean_alpha_generic_b0": 0.413219284660688
+    },
+    "N100_g10_S-HL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.38006249999999997,
+      "min_CF": 0.3731111111111111,
+      "max_CF": 0.3862222222222222,
+      "mean_past_task_acc": 0.61990625,
+      "mean_dlog_alpha": -1.5485604639117145,
+      "mean_delta_rho_c": 0.09080741214609106,
+      "mean_D_eff_generic_b0": 2.7087891287698547,
+      "mean_alpha_retained_b0": 1.8486079136301374,
+      "mean_alpha_retained_b15": 0.3932931292070512,
+      "mean_alpha_generic_b0": 0.41368148590082376
+    },
+    "N100_g10_S-LH": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.008659722222222225,
+      "min_CF": 0.007138888888888887,
+      "max_CF": 0.010500000000000006,
+      "mean_past_task_acc": 0.9909166666666667,
+      "mean_dlog_alpha": -0.9738607125653987,
+      "mean_delta_rho_c": 0.08989464438255718,
+      "mean_D_eff_generic_b0": 2.7070717361964,
+      "mean_alpha_retained_b0": 1.8282834105616392,
+      "mean_alpha_retained_b15": 0.6904688530448655,
+      "mean_alpha_generic_b0": 0.413219284660688
+    },
+    "N100_g10_S-LL": {
+      "n": 8,
+      "n_usable": 8,
+      "mean_CF": 0.13808333333333334,
+      "min_CF": 0.13463888888888895,
+      "max_CF": 0.14180555555555557,
+      "mean_past_task_acc": 0.8616041666666667,
+      "mean_dlog_alpha": -1.6589184837212878,
+      "mean_delta_rho_c": 0.11613279364728919,
+      "mean_D_eff_generic_b0": 2.7087891287698547,
+      "mean_alpha_retained_b0": 1.8486079136301374,
+      "mean_alpha_retained_b15": 0.351021742671904,
+      "mean_alpha_generic_b0": 0.41368148590082376
+    }
+  },
+  "verdict": {
+    "N16": {
+      "rich_CF_2x2": "survives",
+      "glue_signs_gamma10": "break",
+      "rich_CF_order": [
+        "S-HL",
+        "S-LL",
+        "S-LH",
+        "S-HH"
+      ],
+      "packing_D_eff_g10_HH": 0.9957792485907208,
+      "lazy_S-HH_mean_CF": 0.05481597222222222,
+      "rich_S-HH_n_usable": 8,
+      "rich_fit_breaks": false,
+      "mean_alpha_retained_b0_HH_g10": 1.8999642487121093,
+      "mean_alpha_retained_b15_HH_g10": 1.9231327331741905
+    },
+    "N32": {
+      "rich_CF_2x2": "survives",
+      "glue_signs_gamma10": "match",
+      "rich_CF_order": [
+        "S-HL",
+        "S-LL",
+        "S-LH",
+        "S-HH"
+      ],
+      "packing_D_eff_g10_HH": 1.2170147238136386,
+      "lazy_S-HH_mean_CF": 0.09600694444444446,
+      "rich_S-HH_n_usable": 8,
+      "rich_fit_breaks": false,
+      "mean_alpha_retained_b0_HH_g10": 1.8205430416578983,
+      "mean_alpha_retained_b15_HH_g10": 2.048090198197646
+    },
+    "N100": {
+      "rich_CF_2x2": "survives",
+      "glue_signs_gamma10": "match",
+      "rich_CF_order": [
+        "S-HL",
+        "S-LL",
+        "S-LH",
+        "S-HH"
+      ],
+      "packing_D_eff_g10_HH": 2.7070717361964,
+      "lazy_S-HH_mean_CF": 0.02669097222222223,
+      "rich_S-HH_n_usable": 8,
+      "rich_fit_breaks": false,
+      "mean_alpha_retained_b0_HH_g10": 1.8282834105616392,
+      "mean_alpha_retained_b15_HH_g10": 1.9671223150385773
+    },
+    "lazy_S-HH_CF_break_confirmed": true,
+    "N32_packing": true,
+    "N16_packing": true
+  }
+}

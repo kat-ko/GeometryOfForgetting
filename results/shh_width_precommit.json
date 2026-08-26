@@ -1,0 +1,57 @@
+{
+  "written": "2026-08-19T13:22:00+02:00",
+  "written_before_any_shh_width_arm_completed": true,
+  "question": "Does S-HH behavioural forgetting stay ~0 at N=32 and N=100, or is the paper’s accuracy/capacity split an overparameterization artefact?",
+  "why": "The paper’s ‘behavioural forgetting ~0’ is an S-HH fact (CF ~0, past-task accuracy ~1 from N=150 to 600). The N=32/100 smoke ran S-HL, where CF is already 0.39 at N=300, so it could not speak to that split. N=32 is past the frozen-W readout floor (A+B median MSE 0.098 > 0.05). N=100 still hits the lazy loss target. This run asks the S-HH question at those two widths.",
+  "reference_band": {
+    "source": "results/phase1/ and results/width/, S-HH, stream 0 seed 0 (and N=150/600 width files)",
+    "N300_gamma10_CF": 0.0,
+    "N300_gamma003_CF": 0.0,
+    "N150_gamma10_CF": 5.6e-5,
+    "N150_gamma003_CF": 0.00158,
+    "N600_gamma10_CF": 8.3e-5,
+    "band": "CF ≤ 0.01 and past-task accuracy ≥ 0.99 is the observed S-HH band at N≥150"
+  },
+  "design": {
+    "N": [32, 100],
+    "gamma": [0.03, 10.0],
+    "condition": ["S-HH"],
+    "stream_id": [0],
+    "seed": [0, 1, 2, 3],
+    "n_arms": 16,
+    "n_t": 200,
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "T": 16,
+    "directory": "results/shh_width/",
+    "never": ["results/phase1/", "results/width/", "results/width_smoke/", "results/width_g10_n40/"]
+  },
+  "sampling_unit": "initialisation, one arrangement (stream_id=0). Four seeds are four inits of the same stream. This is not an arrangement-level claim. No pooling with N=300 or with the S-HL smoke.",
+  "statistics": {
+    "primary": "For each (N, γ): mean over 4 seeds of (i) CF from forgetting_metrics, (ii) past-task accuracy = mean of the last accuracy-matrix row excluding the current task. Unusable arms (a task missed loss 0.05) are still scored on accuracy/CF and are flagged; they are not dropped.",
+    "secondary": "per-seed CF and past-task accuracy, n_converged, end ‖ΔW‖/‖W‖, train accuracy on the current task. GLUE Δ log α and D_eff are logged as descriptive only — at N=32 they sit in a packed ambient and are not the decision.",
+    "clouds": "Module-A ReLU clouds at init / t=0 / t=15 for N=32, seed 0, both γ."
+  },
+  "decision_rule": {
+    "split_survives": "At N=32, for BOTH γ: mean CF over 4 seeds ≤ 0.01 AND mean past-task accuracy ≥ 0.99 AND every seed has CF ≤ 0.02. Then the S-HH accuracy/capacity split is not an overparameterization artefact down to this width. STOP. Do not spend a four-corner grid. Clouds may still be used as a sequel illustration of richness, not as evidence about CF.",
+    "split_breaks": "At N=32, at EITHER γ: mean CF ≥ 0.05 OR mean past-task accuracy < 0.95. Then a sequel paragraph is licensed: S-HH behavioural silence does not survive at this width. Next step would be more arrangements at N=32 S-HH, still not a GLUE-share grid, still not pooled with the paper.",
+    "intermediate": "Neither rule. Report the four-seed means and range. Do not expand. Do not rewrite the paper.",
+    "n100_is_control": "N=100 is not a W1 replica. If it also leaves the 0.01/0.99 band, that is reported; it does not by itself license a grid. If it stays in band and N=32 breaks, the break is located between 32 and 100.",
+    "lazy_miss_is_not_CF": "γ=0.03 at N=32 missing loss 0.05 is a predicted capacity-floor outcome. It does not count as behavioural forgetting. CF and past-task accuracy are still the primary, computed on the trained readout as it stands.",
+    "fixed_before_the_arms_exist": true,
+    "will_not_quote": [
+      "GLUE channel shares at N=32 as a test of §5",
+      "an arrangement-level claim from stream_id=0",
+      "pooling with the registered grid or the S-HL smoke",
+      "arm-level p-values on 4 inits"
+    ]
+  },
+  "can_show": "whether S-HH past-task accuracy at one arrangement stays in the N≥150 band at N=32 and N=100, over 4 inits",
+  "cannot_show": [
+    "arrangement variance of S-HH CF at small N",
+    "four-corner ordering",
+    "width invariance of Δ log α",
+    "a located N* where the split breaks, finer than {32, 100, 150}"
+  ],
+  "reporting": "off-design, own directory, never adopted by grid.load(). Score with scripts/analyse_shh_width.py. Expand only if split_breaks fires."
+}

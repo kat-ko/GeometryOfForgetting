@@ -1,0 +1,105 @@
+{
+  "n_t_measured": 20,
+  "n_t_design": 200,
+  "isolated_latency_s": 5.7139081954956055,
+  "isolated_latency_s_at_design_n_t": 57.139081954956055,
+  "rows": [
+    {
+      "workers": 1,
+      "evals": 2,
+      "wall_s": 12.030311584472656,
+      "mean_eval_latency_s": 5.7139081954956055,
+      "throughput_evals_per_s": 0.16624673317533772,
+      "effective_cores": 0.9499185711649334,
+      "slowdown_vs_isolated": 1.0,
+      "parallel_efficiency": 0.9499185711649334
+    },
+    {
+      "workers": 8,
+      "evals": 16,
+      "wall_s": 13.41949462890625,
+      "mean_eval_latency_s": 6.06129889190197,
+      "throughput_evals_per_s": 1.1922952720987878,
+      "effective_cores": 7.22685801159234,
+      "slowdown_vs_isolated": 1.0607973884985096,
+      "parallel_efficiency": 0.9033572514490426
+    },
+    {
+      "workers": 16,
+      "evals": 32,
+      "wall_s": 14.30072546005249,
+      "mean_eval_latency_s": 6.259898670017719,
+      "throughput_evals_per_s": 2.2376487185484746,
+      "effective_cores": 14.00745423720845,
+      "slowdown_vs_isolated": 1.0955546459343763,
+      "parallel_efficiency": 0.8754658898255281
+    },
+    {
+      "workers": 32,
+      "evals": 64,
+      "wall_s": 15.693305969238281,
+      "mean_eval_latency_s": 6.7694669514894485,
+      "throughput_evals_per_s": 4.07817193684056,
+      "effective_cores": 27.607050148933887,
+      "slowdown_vs_isolated": 1.184734986961457,
+      "parallel_efficiency": 0.862720317154184
+    },
+    {
+      "workers": 64,
+      "evals": 128,
+      "wall_s": 27.626444101333618,
+      "mean_eval_latency_s": 11.269795801490545,
+      "throughput_evals_per_s": 4.633241959424703,
+      "effective_cores": 52.21569078161435,
+      "slowdown_vs_isolated": 1.9723445697595847,
+      "parallel_efficiency": 0.8158701684627242
+    },
+    {
+      "workers": 96,
+      "evals": 192,
+      "wall_s": 37.82741856575012,
+      "mean_eval_latency_s": 15.10634714861711,
+      "throughput_evals_per_s": 5.075683387336442,
+      "effective_cores": 76.67503526557309,
+      "slowdown_vs_isolated": 2.6437854147754356,
+      "parallel_efficiency": 0.7986982840163863
+    },
+    {
+      "workers": 128,
+      "evals": 256,
+      "wall_s": 49.52257537841797,
+      "mean_eval_latency_s": 20.438909262418747,
+      "throughput_evals_per_s": 5.169359590930428,
+      "effective_cores": 105.65607162384111,
+      "slowdown_vs_isolated": 3.577045441250031,
+      "parallel_efficiency": 0.8254380595612587
+    },
+    {
+      "workers": 192,
+      "evals": 384,
+      "wall_s": 92.5276358127594,
+      "mean_eval_latency_s": 40.255495198071,
+      "throughput_evals_per_s": 4.150111441051724,
+      "effective_cores": 167.0647911867172,
+      "slowdown_vs_isolated": 7.045177104841352,
+      "parallel_efficiency": 0.870129120764152
+    },
+    {
+      "workers": 254,
+      "evals": 508,
+      "wall_s": 135.52029466629028,
+      "mean_eval_latency_s": 60.104223291704976,
+      "throughput_evals_per_s": 3.748516052528636,
+      "effective_cores": 225.30164583372164,
+      "slowdown_vs_isolated": 10.518934017716001,
+      "parallel_efficiency": 0.8870143536760694
+    }
+  ],
+  "best_workers": 128,
+  "best_throughput_evals_per_s": 5.169359590930428,
+  "grid_projection": {
+    "evals": 48640,
+    "wall_hours_at_best": 26.13691478305393,
+    "wall_hours_naive_254": 3.0394192325995872
+  }
+}

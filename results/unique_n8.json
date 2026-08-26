@@ -1,0 +1,436 @@
+{
+  "generated_by": "scripts/audit_unique_n.py",
+  "question": "which paper conclusions change status when the grid is read at unique n=8",
+  "n_files": 960,
+  "n_unique": 192,
+  "copies_per_unique": 5.0,
+  "unique_seeds_per_cell": 8,
+  "note": "point estimates unchanged; SEMs/CIs/sign tests recomputed on one file per seed",
+  "fig4": {
+    "3": {
+      "cells": {
+        "S-HH": {
+          "corner": "S-HH",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.056203168058095145,
+          "sem_files": 0.0019832914409829263,
+          "sem_unique": 0.004681336083018076,
+          "n_declining_files": 0,
+          "n_declining_unique": 0,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": 0.9724227787367286
+        },
+        "S-HL": {
+          "corner": "S-HL",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.0034398787971088307,
+          "sem_files": 0.0018977883763785118,
+          "sem_unique": 0.004479515728596087,
+          "n_declining_files": 20,
+          "n_declining_unique": 4,
+          "p_files": 1.0,
+          "p_unique": 1.0,
+          "spearman_median": -0.0492365963917331
+        },
+        "S-LH": {
+          "corner": "S-LH",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.09360103673517021,
+          "sem_files": 0.001920143742772504,
+          "sem_unique": 0.0045322830532498045,
+          "n_declining_files": 0,
+          "n_declining_unique": 0,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": 0.9847319278346618
+        },
+        "S-LL": {
+          "corner": "S-LL",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.03785621126615923,
+          "sem_files": 0.001400531175079876,
+          "sem_unique": 0.0033057961073253944,
+          "n_declining_files": 0,
+          "n_declining_unique": 0,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": 0.7754763931697961
+        }
+      },
+      "effects": {
+        "readout": 0.05425405736499865,
+        "feature": -0.035907100573062734,
+        "interaction": -0.001490768104012337,
+        "additive_prediction_SHH": 0.05918470426611982,
+        "measured_SHH": 0.056203168058095145
+      },
+      "interaction_sem_files": 0.0018154534713586395,
+      "interaction_sem_unique": 0.0042851734580670675,
+      "interaction_over_sem_files": 0.8211546743176423,
+      "interaction_over_sem_unique": 0.3478897922337044
+    },
+    "10": {
+      "cells": {
+        "S-HH": {
+          "corner": "S-HH",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.05512530652148888,
+          "sem_files": 0.0032995160340093693,
+          "sem_unique": 0.007788135998232107,
+          "n_declining_files": 0,
+          "n_declining_unique": 0,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": 0.8862587350511956
+        },
+        "S-HL": {
+          "corner": "S-HL",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": -0.05503208224769035,
+          "sem_files": 0.0033169757358788377,
+          "sem_unique": 0.007829347658138112,
+          "n_declining_files": 40,
+          "n_declining_unique": 8,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": -0.7877855422677295
+        },
+        "S-LH": {
+          "corner": "S-LH",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.10983220016990759,
+          "sem_files": 0.0028575818314185712,
+          "sem_unique": 0.006745000084791772,
+          "n_declining_files": 0,
+          "n_declining_unique": 0,
+          "p_files": 1.8189894035458565e-12,
+          "p_unique": 0.0078125,
+          "spearman_median": 0.8862587350511957
+        },
+        "S-LL": {
+          "corner": "S-LL",
+          "n_files": 40,
+          "n_unique": 8,
+          "delta_mean": 0.011404365019769838,
+          "sem_files": 0.0025516302492180694,
+          "sem_unique": 0.006022835832067601,
+          "n_declining_files": 15,
+          "n_declining_unique": 3,
+          "p_files": 0.1538599441628321,
+          "p_unique": 0.7265625,
+          "spearman_median": 0.06154574548966636
+        }
+      },
+      "effects": {
+        "readout": 0.1042926119596585,
+        "feature": -0.06057167045793945,
+        "interaction": 0.005864776809520737,
+        "additive_prediction_SHH": 0.043395752902447404,
+        "measured_SHH": 0.05512530652148888
+      },
+      "interaction_sem_files": 0.003023479987657933,
+      "interaction_sem_unique": 0.007136583998714477,
+      "interaction_over_sem_files": 1.9397438823677309,
+      "interaction_over_sem_unique": 0.8217904827543777
+    }
+  },
+  "gamma5": {
+    "S-HH": {
+      "corner": "S-HH",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": 0.06490332488136011,
+      "sem_files": 0.0025640941999293654,
+      "sem_unique": 0.005733488931754997,
+      "n_declining_files": 0,
+      "n_declining_unique": 0,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": 0.9724227787367286
+    },
+    "S-HL": {
+      "corner": "S-HL",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": -0.00639150707995037,
+      "sem_files": 0.0020575377657287,
+      "sem_unique": 0.0046007943104424106,
+      "n_declining_files": 12,
+      "n_declining_unique": 3,
+      "p_files": 0.076812744140625,
+      "p_unique": 0.625,
+      "spearman_median": -0.3323470256441984
+    },
+    "S-LH": {
+      "corner": "S-LH",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": 0.10569941695829868,
+      "sem_files": 0.004267679359265679,
+      "sem_unique": 0.009542821153490803,
+      "n_declining_files": 0,
+      "n_declining_unique": 0,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": 0.947804480540862
+    },
+    "S-LL": {
+      "corner": "S-LL",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": 0.03890512465524125,
+      "sem_files": 0.0029707928105796024,
+      "sem_unique": 0.0066428946715236465,
+      "n_declining_files": 0,
+      "n_declining_unique": 0,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": 0.8000946913656627
+    }
+  },
+  "shh_radius": {
+    "0.03": {
+      "n_unique": 8,
+      "mean": 0.00589757350405791,
+      "sem_unique": 0.000363212863649478,
+      "gate_3sigma": 0.008388261906003822,
+      "R_eff_floors": 2.1092236640239292,
+      "mean_over_sem": 16.237237428213497,
+      "clears_3sigma_gate": false,
+      "resolvable_as_mean_3sem": true
+    },
+    "0.1": {
+      "n_unique": 8,
+      "mean": 0.03345307257030729,
+      "sem_unique": 0.0012660142490014416,
+      "gate_3sigma": 0.00919589151798465,
+      "R_eff_floors": 10.91348430053211,
+      "mean_over_sem": 26.423930533714866,
+      "clears_3sigma_gate": true,
+      "resolvable_as_mean_3sem": true
+    },
+    "0.3": {
+      "n_unique": 8,
+      "mean": 0.043014394368481174,
+      "sem_unique": 0.004332164276533898,
+      "gate_3sigma": 0.018482946340418437,
+      "R_eff_floors": 6.981743101382726,
+      "mean_over_sem": 9.929077390134516,
+      "clears_3sigma_gate": true,
+      "resolvable_as_mean_3sem": true
+    },
+    "1": {
+      "n_unique": 8,
+      "mean": -0.015430233651223618,
+      "sem_unique": 0.003961902853005638,
+      "gate_3sigma": 0.024142594737902,
+      "R_eff_floors": -1.917387151472913,
+      "mean_over_sem": 3.8946521971172774,
+      "clears_3sigma_gate": false,
+      "resolvable_as_mean_3sem": true
+    },
+    "3": {
+      "n_unique": 8,
+      "mean": -0.0015321380070752871,
+      "sem_unique": 0.004501627012140928,
+      "gate_3sigma": 0.021373679826888058,
+      "R_eff_floors": -0.21505019530813685,
+      "mean_over_sem": 0.3403520555885899,
+      "clears_3sigma_gate": false,
+      "resolvable_as_mean_3sem": false
+    },
+    "10": {
+      "n_unique": 8,
+      "mean": -0.012365045958720053,
+      "sem_unique": 0.004859237008611725,
+      "gate_3sigma": 0.03356156817169318,
+      "R_eff_floors": -1.1052861918248293,
+      "mean_over_sem": 2.5446476343521107,
+      "clears_3sigma_gate": false,
+      "resolvable_as_mean_3sem": false
+    }
+  },
+  "variance_gamma10_three": {
+    "files": {
+      "n": 1200,
+      "alpha_asymptote": 0.5255835492505827,
+      "distance + lag": 0.5885656752387449,
+      "condition alone": 0.5232450573297602,
+      "stream alone": 0.0,
+      "seed alone": 0.007392170252679353,
+      "condition + distance + lag": 0.8821483206577821,
+      "+ stream + seed": 0.8919247328966512,
+      "total_sd": 0.43621581352282496,
+      "residual_sd": 0.14340508926719178
+    },
+    "unique": {
+      "n": 240,
+      "alpha_asymptote": 0.5255835492505826,
+      "distance + lag": 0.5885656752387451,
+      "condition alone": 0.5232450573297603,
+      "stream alone": 0.0,
+      "seed alone": 0.007392170252679353,
+      "condition + distance + lag": 0.8821483206577821,
+      "+ stream + seed": 0.8919247328966512,
+      "total_sd": 0.4369452719145069,
+      "residual_sd": 0.1436448972762849
+    }
+  },
+  "peak_lag12": {
+    "n_units_unique": 8,
+    "ci_unique": [
+      1.115517165860341,
+      1.3532382486996002
+    ],
+    "ci_files": [
+      1.1766417413775898,
+      1.2823275614362841
+    ],
+    "n_units_files": 40,
+    "ci_width_in_steps_unique": 0.16045403927705057
+  },
+  "status_changes": [
+    {
+      "quantity": "\u03b3=3 S-HH \u0394\u03c1_c sign test",
+      "files": "0/40 p=1.819e-12",
+      "unique": "0/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=3 S-HL \u0394\u03c1_c sign test",
+      "files": "20/40 p=1",
+      "unique": "4/8 p=1",
+      "status_files": "does not reject",
+      "status_unique": "does not reject",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=3 S-LH \u0394\u03c1_c sign test",
+      "files": "0/40 p=1.819e-12",
+      "unique": "0/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=3 S-LL \u0394\u03c1_c sign test",
+      "files": "0/40 p=1.819e-12",
+      "unique": "0/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=3 Figure 4 interaction / SEM",
+      "files": "0.82 SEM",
+      "unique": "0.35 SEM",
+      "status_files": "unresolved",
+      "status_unique": "unresolved",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=10 S-HH \u0394\u03c1_c sign test",
+      "files": "0/40 p=1.819e-12",
+      "unique": "0/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=10 S-HL \u0394\u03c1_c sign test",
+      "files": "40/40 p=1.819e-12",
+      "unique": "8/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=10 S-LH \u0394\u03c1_c sign test",
+      "files": "0/40 p=1.819e-12",
+      "unique": "0/8 p=0.007812",
+      "status_files": "rejects",
+      "status_unique": "rejects",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=10 S-LL \u0394\u03c1_c sign test",
+      "files": "15/40 p=0.1539",
+      "unique": "3/8 p=0.7266",
+      "status_files": "does not reject",
+      "status_unique": "does not reject",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=10 Figure 4 interaction / SEM",
+      "files": "1.94 SEM",
+      "unique": "0.82 SEM",
+      "status_files": "unresolved",
+      "status_unique": "unresolved",
+      "changed": false
+    },
+    {
+      "quantity": "\u03b3=5 S-HL sign test",
+      "files": "12/16 p=0.07681",
+      "unique": "3/4 p=0.625",
+      "status_files": "does not reject",
+      "status_unique": "does not reject",
+      "changed": false
+    },
+    {
+      "quantity": "S-HH radius at \u03b3=1",
+      "files": "below 3\u03c3 gate",
+      "unique": "mean |z|\u22653 (3.89 SEM8)",
+      "status_files": "below 3\u03c3 gate",
+      "status_unique": "mean |z|\u22653",
+      "changed": false,
+      "note": "gate kept; mean reading added"
+    },
+    {
+      "quantity": "S-HH radius at \u03b3=3",
+      "files": "below 3\u03c3 gate",
+      "unique": "mean |z|<3 (0.34 SEM8)",
+      "status_files": "below 3\u03c3 gate",
+      "status_unique": "mean |z|<3",
+      "changed": false,
+      "note": "gate kept; mean reading added"
+    },
+    {
+      "quantity": "S-HH radius at \u03b3=10",
+      "files": "below 3\u03c3 gate",
+      "unique": "mean |z|<3 (2.54 SEM8)",
+      "status_files": "below 3\u03c3 gate",
+      "status_unique": "mean |z|<3",
+      "changed": false,
+      "note": "gate kept; mean reading added"
+    },
+    {
+      "quantity": "S-HH peak paired-bootstrap CI at lag 12",
+      "files": "[1.18, 1.28] n=40",
+      "unique": "[1.12, 1.35] n=8",
+      "status_files": "quoted (peak already declined as a location)",
+      "status_unique": "wider; still beside the point (peak moves with lag)",
+      "changed": false,
+      "note": "interpolated peak 1.23 is a mean and is unchanged"
+    },
+    {
+      "quantity": "\u00a7B stream R\u00b2 at \u03b3=10 (three-corner)",
+      "files": "0 (n=1200)",
+      "unique": "0 (n=240)",
+      "status_files": "quoted as empty",
+      "status_unique": "tautological: stream_id did not vary the stream",
+      "changed": true,
+      "note": "stream dummy is a label on identical copies"
+    }
+  ],
+  "n_status_changes": 1
+}

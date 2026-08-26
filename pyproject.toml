@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "continual-geometry"
+version = "0.1.0"
+description = "Geometric signatures of sequential learning"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "flake8>=7.0"]
+# Figures only (`scripts/fig_*.py`); no measurement code imports it.
+figures = ["matplotlib>=3.8"]
+# Only needed to run the vendored estimators; pymanopt is pinned by replicaMFT's
+# use of `pymanopt.solvers`, removed upstream in 1.0.
+vendored = ["cvxopt>=1.3", "autograd>=1.6", "pymanopt==0.2.5"]
+# `notebooks/results.ipynb` only, which reads stored results and trains nothing. Kept out of the
+# default set so that no measurement path can acquire a dependency on notebook tooling.
+notebook = ["ipykernel>=6.29", "nbformat>=5.10", "nbconvert>=7.16"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

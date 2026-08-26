@@ -1,0 +1,36 @@
+{
+  "written": "2026-08-19T07:35:00Z",
+  "written_before_any_gamma5_k8_arm_completed": true,
+  "question": "does the S-HL centre decorrelation at gamma_0 = 5 hold with the arrangement as the sampling unit, rather than the arm?",
+  "why": "results/gamma_5_n40/ is 5 arrangements x 8 initialisations. Its 40 arms are crossed, not independent: the arm-level statistics the paper quotes (-0.0102 +/- 0.0032, 31/40, p = 6.8e-4) are an inference about new arms, while the onset is a claim about gamma_0, i.e. about new arrangements. Re-pooled by arrangement the effect is 3/5 with a 95% t interval of [-0.0368, +0.0165], which includes zero, and a sign test on 5 units has a floor of p = 0.0625 so it could not have cleared alpha = 0.05 under any outcome. n = 8 arrangements is the smallest count whose sign-test floor (0.0078) clears 0.05. See docs/14-claim-security.md section 6 and results/seed_security.json.",
+  "design": {
+    "stream_id": "0..7 (arrangement; stream_rng(stream_id))",
+    "seed": "0..7 (initialisation; paired_init(seed))",
+    "gamma": [5],
+    "corners": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "n_arms": 256,
+    "directory": "results/gamma_5_k8/",
+    "never": ["results/phase1/", "results/gamma_5_n40/", "results/gamma_5/"]
+  },
+  "sampling_unit": "arrangement. The 8 initialisations are averaged within each arrangement first; every statistic below is computed on the 8 arrangement means.",
+  "statistics": {
+    "primary": "95% two-sided t interval on the 8 arrangement means of Delta rho_c for S-HL. Uses the magnitudes, so it is the statistic with power at n = 8.",
+    "secondary": "two-sided sign test on the 8 arrangement means (distribution-free). Ceiling: 8/8 gives p = 0.0078 and clears alpha = 0.05; 7/8 gives p = 0.0703 and does not.",
+    "descriptive": "per-arrangement mean and per-arrangement arm sign counts, reported in full whatever the outcome, plus the lazy-arm drift band [+0.0051, +0.0101] drawn alongside so an arrangement that merely failed to move is legible as such."
+  },
+  "decision_rule": {
+    "stands_at_arrangement_level": "primary interval excludes zero AND at least 7 of 8 arrangement means are negative. Then paper/body.tex quotes the arrangement-level mean and interval, states the unit, and may keep 'the onset sits between 3 and 5'.",
+    "suggestive_only": "at least 7 of 8 arrangement means negative BUT the primary interval includes zero. Then the paper reports the 3 -> 10 bracket, states that gamma_0 = 5 is negative in 7 of 8 arrangements with an interval that includes zero, and makes no onset-location claim at 5.",
+    "arrangement_dependent": "fewer than 7 of 8 arrangement means negative. Then the paper reports the 3 -> 10 bracket (factor 3.33) and describes gamma_0 = 5 as arrangement-dependent, giving the per-arrangement counts.",
+    "fixed_before_the_arms_exist": true,
+    "no_other_reading_will_be_substituted": "the arm-level p = 6.8e-4 will not be quoted as the onset evidence under any outcome, because it is an inference about a different unit."
+  },
+  "can_show": "whether the gamma_0 = 5 decorrelation generalises across manifold arrangements, at the smallest arrangement count that can clear alpha = 0.05",
+  "cannot_show": [
+    "a finer onset location than the 3 / 5 / 10 sampling allows",
+    "initialisation-level variance beyond the 8 inits already in use",
+    "the arrangement standard deviation to better than about +/-27% (relative SE of an SD at n = 8 is 1/sqrt(2*7) = 0.267)"
+  ],
+  "built_in_reproducibility_check": "arms with stream_id 0..4 and seed 0..7 have identical specs to results/gamma_5_n40/, and every arm is a deterministic function of its spec, so the first five arrangements must reproduce that set bitwise. A mismatch means the code moved and invalidates the comparison rather than the new arms.",
+  "reporting": "off-design, own directory, never pooled with the registered grid. Supersedes results/gamma_5_n40/ for the onset claim only; gamma_5_n40 remains the record of the 5-arrangement run. The registered-grid endpoints gamma_0 = 3 and 10 stay at unique n = 8 and the mixed-population sentence must continue to name both units."
+}

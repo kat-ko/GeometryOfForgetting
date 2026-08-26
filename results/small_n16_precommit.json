@@ -1,0 +1,40 @@
+{
+  "written": "2026-08-19T15:06:00+02:00",
+  "written_before_any_N16_arm_completed": true,
+  "question": "Does the N=32 picture of declining width — rich 2×2 intact, lazy matched-loss failing, GLUE packed but signs intact — continue at N=16, where P/N=1 and P(D+1)/N=5?",
+  "why": "The small-n grid at N=32/100 showed richness keeping CF and Δ log α signs organised like N=300, while lazy S-HH CF broke and N=32 D_eff collapsed to ~1.22. N=16 is one more octave down: module width equals P, concatenated readout is 32 parameters, packing is 5× worse than N=32. This is to read the capacity decline, not to enter the paper. Same 2×2, same 8 seeds, same stream, same two γ. N=32 and N=100 are not retrained.",
+  "design": {
+    "N": [16],
+    "gamma": [0.03, 10.0],
+    "condition": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "stream_id": [0],
+    "seed": [0, 1, 2, 3, 4, 5, 6, 7],
+    "n_arms": 64,
+    "directory": "results/small_n_grid/",
+    "never": ["results/phase1/"],
+    "P_over_N": 1.0,
+    "packing_P_Dp1_over_N": 5.0
+  },
+  "sampling_unit": "initialisation, one arrangement (stream_id=0). Same unit as the N=32/100 grid. Not pooled with N=300.",
+  "statistics": {
+    "same_as_small_n_grid": "CF, past-task accuracy, Δ log α (task 0, lag 15, module A), Δρ_c, D_eff generic at boundary 0, n_usable. Unusable arms stay in the means.",
+    "init_readout": "Frozen-W module-A and A+B exact-readout MSE at N=16, 33 dichotomies, written beside the arms before training."
+  },
+  "decision_rule": {
+    "rich_CF_2x2_survives": "γ=10: mean CF(S-HH) ≤ 0.01 AND mean CF(S-HL) ≥ 0.25 AND CF order S-HL > S-LL > S-LH > S-HH. Same rule as N=32/100.",
+    "rich_CF_2x2_breaks": "γ=10: mean CF(S-HH) ≥ 0.05 OR mean CF(S-HL) < 0.20 OR that order fails.",
+    "rich_fit_breaks": "γ=10 S-HH n_usable < 4 of 8. Then even the rich arm cannot match loss 0.05; N=16 is past the training object, not just past GLUE packing. Report loss-at-cap, do not treat CF as matched-loss.",
+    "glue_signs_match": "γ=10: mean Δ log α > 0 on S-HH and < 0 on the other three. Magnitudes and channel shares are not a pass/fail. Packing is expected (D_eff < 2).",
+    "lazy_expected_unusable": "γ=0.03: most tasks will miss 0.05. That is a predicted floor, not a CF finding. Still report CF, flagged by n_usable.",
+    "capacity_decline": "Descriptive: mean retained α at boundary 0 and lag 15, and D_eff, versus N=32/100 on the same stream. No threshold. The point of this run.",
+    "fixed_before_the_N16_arms_exist": true,
+    "will_not_quote": [
+      "N=16 channel shares as §5",
+      "pooling with the registered grid",
+      "arrangement-level claims"
+    ]
+  },
+  "can_show": "whether the rich 2×2 and GLUE signs survive one more octave of width, and how retained α / D_eff move from N=32 to N=16 on this arrangement",
+  "cannot_show": ["a continuous N* ", "arrangement variance", "lazy matched-loss geometry at N=16"],
+  "reporting": "Same directory as N=32/100 so analyse_small_n_grid.py sees all three widths. Off-design. Score after the 64 complete."
+}

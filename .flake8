@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 100
+extend-exclude = .venv,third_party,notebooks
+# E203 disagrees with slice formatting; W503 forbids the line break before a binary operator that
+# PEP 8 now prefers.
+extend-ignore = E203,W503

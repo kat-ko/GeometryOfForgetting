@@ -1,0 +1,18 @@
+{
+  "written": "2026-08-18T11:34:00Z",
+  "written_before_any_unconfound_arm_completed": true,
+  "design": {
+    "stream_id": [0, 1, 2],
+    "seed": "0..39",
+    "gamma": [1, 10],
+    "corners": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "n_arms": 960,
+    "directory": "results/unconfound_k3/",
+    "never": "results/phase1/"
+  },
+  "can_show": "whether the channel reorganisation (alignment up, radius down) and the corner ordering (S-LH largest positive Δρ_c, S-HL the only decorrelating corner, S-HH a gain) reproduce across three independent arrangements",
+  "cannot_show": "arrangement-level variance with any precision; K=3 is detection, not estimation",
+  "if_reproduces": "the results are not arrangement-specific",
+  "if_not": "that is a finding and the paper's scope narrows to the registered-grid arrangements",
+  "reporting": "out of registration; fixed RNG; not pooled with the grid. Appendix robustness arm with one sentence in Setup or Discussion, the same status as γ=30 and the width arm."
+}

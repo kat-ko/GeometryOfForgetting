@@ -1,0 +1,649 @@
+{
+  "generated_by": "scripts/analyse_genuine_n.py",
+  "directory": "results/unconfound_k3",
+  "precommit": {
+    "written": "2026-08-18T11:34:00Z",
+    "written_before_any_unconfound_arm_completed": true,
+    "design": {
+      "stream_id": [
+        0,
+        1,
+        2
+      ],
+      "seed": "0..39",
+      "gamma": [
+        1,
+        10
+      ],
+      "corners": [
+        "S-HH",
+        "S-HL",
+        "S-LH",
+        "S-LL"
+      ],
+      "n_arms": 960,
+      "directory": "results/unconfound_k3/",
+      "never": "results/phase1/"
+    },
+    "can_show": "whether the channel reorganisation (alignment up, radius down) and the corner ordering (S-LH largest positive \u0394\u03c1_c, S-HL the only decorrelating corner, S-HH a gain) reproduce across three independent arrangements",
+    "cannot_show": "arrangement-level variance with any precision; K=3 is detection, not estimation",
+    "if_reproduces": "the results are not arrangement-specific",
+    "if_not": "that is a finding and the paper's scope narrows to the registered-grid arrangements",
+    "reporting": "out of registration; fixed RNG; not pooled with the grid. Appendix robustness arm with one sentence in Setup or Discussion, the same status as \u03b3=30 and the width arm."
+  },
+  "n_files": 960,
+  "n_usable": 960,
+  "n_arrangements": 3,
+  "by_arrangement": {
+    "0": {
+      "gamma": {
+        "1": {
+          "three": {
+            "n": 120,
+            "floors": -26.491941282979962,
+            "dlog_alpha": -0.49082426596288864,
+            "shares": {
+              "utility": 0.32312630854913227,
+              "radius": 0.26105340955909645,
+              "dimension": 0.4158202818917713
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 11.563498459456016,
+            "dlog_alpha": 0.2142404583605156,
+            "shares": {
+              "utility": 0.5567250014931374,
+              "radius": 0.011557789110219522,
+              "dimension": 0.4317172093966431
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.032295142472238414,
+                "delta_sem": 0.0011572441465017272,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.7877855422677295
+              },
+              "S-HL": {
+                "delta_mean": 0.012458548155404873,
+                "delta_sem": 0.0011652443553046858,
+                "n": 40,
+                "n_declining": 10,
+                "p": 0.0022214337732293643,
+                "spearman_median": 0.12309149097933272
+              },
+              "S-LH": {
+                "delta_mean": 0.05858073665882506,
+                "delta_sem": 0.0010835354424576537,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9108770332470622
+              },
+              "S-LL": {
+                "delta_mean": 0.030033638112642907,
+                "delta_sem": 0.0011391427669944394,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.541602560309064
+              }
+            },
+            "effects": {
+              "readout": 0.024191846431507846,
+              "feature": -0.021930342071912343,
+              "interaction": -0.004355252114674305,
+              "additive_prediction_SHH": 0.04100564670158702,
+              "measured_SHH": 0.032295142472238414
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": false,
+            "S-HL_is_the_decorrelating_corner": false,
+            "deltas": {
+              "S-HH": 0.032295142472238414,
+              "S-HL": 0.012458548155404873,
+              "S-LH": 0.05858073665882506,
+              "S-LL": 0.030033638112642907
+            },
+            "negative_corners": [],
+            "ok": false
+          },
+          "shh_gain": true
+        },
+        "10": {
+          "three": {
+            "n": 120,
+            "floors": -70.11449098696693,
+            "dlog_alpha": -1.2990325323629341,
+            "shares": {
+              "utility": 0.4527644754725117,
+              "radius": 0.11303660036800348,
+              "dimension": 0.4341989241594849
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 5.742378656046422,
+            "dlog_alpha": 0.10639079856883571,
+            "shares": {
+              "utility": 0.39460005238911766,
+              "radius": 0.0022778724167124387,
+              "dimension": 0.6031220751941698
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.04657809644324999,
+                "delta_sem": 0.0008613201982417437,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9231861823449954
+              },
+              "S-HL": {
+                "delta_mean": -0.0499606000889425,
+                "delta_sem": 0.0008644567413079498,
+                "n": 40,
+                "n_declining": 40,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": -0.7877855422677295
+              },
+              "S-LH": {
+                "delta_mean": 0.12414649250649527,
+                "delta_sem": 0.0006768401216212361,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9847319278346618
+              },
+              "S-LL": {
+                "delta_mean": 0.0016721432467519683,
+                "delta_sem": 0.0009355936229667403,
+                "n": 40,
+                "n_declining": 36,
+                "p": 1.8570244719740003e-07,
+                "spearman_median": -0.20925553466486563
+              }
+            },
+            "effects": {
+              "readout": 0.1095065228959679,
+              "feature": -0.06460056969946988,
+              "interaction": -0.012967826363775407,
+              "additive_prediction_SHH": 0.0725137491708008,
+              "measured_SHH": 0.04657809644324999
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": true,
+            "S-HL_is_the_decorrelating_corner": true,
+            "deltas": {
+              "S-HH": 0.04657809644324999,
+              "S-HL": -0.0499606000889425,
+              "S-LH": 0.12414649250649527,
+              "S-LL": 0.0016721432467519683
+            },
+            "negative_corners": [
+              "S-HL"
+            ],
+            "ok": true
+          },
+          "shh_gain": true
+        }
+      },
+      "channel_reorg": {
+        "alignment_up": true,
+        "radius_down": true,
+        "utility_1": 0.32312630854913227,
+        "utility_10": 0.4527644754725117,
+        "radius_1": 0.26105340955909645,
+        "radius_10": 0.11303660036800348,
+        "ok": true
+      },
+      "corner_ordering_g10": {
+        "S-LH_largest_positive": true,
+        "S-HL_only_decorrelating": true,
+        "S-HL_is_the_decorrelating_corner": true,
+        "deltas": {
+          "S-HH": 0.04657809644324999,
+          "S-HL": -0.0499606000889425,
+          "S-LH": 0.12414649250649527,
+          "S-LL": 0.0016721432467519683
+        },
+        "negative_corners": [
+          "S-HL"
+        ],
+        "ok": true
+      },
+      "shh_gain_g10": true,
+      "leading_reproduces": true,
+      "strict_S-HL_only": true,
+      "reproduces": true
+    },
+    "1": {
+      "gamma": {
+        "1": {
+          "three": {
+            "n": 120,
+            "floors": -27.976448318261816,
+            "dlog_alpha": -0.5183281800070089,
+            "shares": {
+              "utility": 0.30988457797803537,
+              "radius": 0.2729300161792833,
+              "dimension": 0.41718540584268127
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 11.676653156871733,
+            "dlog_alpha": 0.21633690990802842,
+            "shares": {
+              "utility": 0.5455490301634419,
+              "radius": 0.025051980373175596,
+              "dimension": 0.42939898946338256
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.039378667686467986,
+                "delta_sem": 0.0009365961287416227,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9354953314429287
+              },
+              "S-HL": {
+                "delta_mean": 0.019554939402459892,
+                "delta_sem": 0.0009855620758528211,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.6154574548966636
+              },
+              "S-LH": {
+                "delta_mean": 0.05327519109011179,
+                "delta_sem": 0.0010808622460687844,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9354953314429287
+              },
+              "S-LL": {
+                "delta_mean": 0.030465414016410546,
+                "delta_sem": 0.0009668776004522649,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.6893123494842632
+              }
+            },
+            "effects": {
+              "readout": 0.021316752678854668,
+              "feature": -0.012403499008797232,
+              "interaction": -0.0014930243948465764,
+              "additive_prediction_SHH": 0.042364716476161135,
+              "measured_SHH": 0.039378667686467986
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": false,
+            "S-HL_is_the_decorrelating_corner": false,
+            "deltas": {
+              "S-HH": 0.039378667686467986,
+              "S-HL": 0.019554939402459892,
+              "S-LH": 0.05327519109011179,
+              "S-LL": 0.030465414016410546
+            },
+            "negative_corners": [],
+            "ok": false
+          },
+          "shh_gain": true
+        },
+        "10": {
+          "three": {
+            "n": 120,
+            "floors": -71.41532903499085,
+            "dlog_alpha": -1.323133555132003,
+            "shares": {
+              "utility": 0.4385710415723729,
+              "radius": 0.11106983844830123,
+              "dimension": 0.45035911997932593
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 5.1720314993357706,
+            "dlog_alpha": 0.09582380306079505,
+            "shares": {
+              "utility": 0.4109659876622351,
+              "radius": 0.07114179552066872,
+              "dimension": 0.5178922168170961
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.04876869334421765,
+                "delta_sem": 0.0007906632704036757,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9354953314429287
+              },
+              "S-HL": {
+                "delta_mean": -0.051070429821317,
+                "delta_sem": 0.0009226531258561054,
+                "n": 40,
+                "n_declining": 40,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": -0.7631672440718629
+              },
+              "S-LH": {
+                "delta_mean": 0.10803806278874277,
+                "delta_sem": 0.0009863356894629271,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.8862587350511957
+              },
+              "S-LL": {
+                "delta_mean": 0.018175313554808042,
+                "delta_sem": 0.0010907317837672943,
+                "n": 40,
+                "n_declining": 7,
+                "p": 4.2277022657799534e-05,
+                "spearman_median": 0.07385489458759964
+              }
+            },
+            "effects": {
+              "readout": 0.09485093619973468,
+              "feature": -0.06425755641032509,
+              "interaction": 0.004988186965799963,
+              "additive_prediction_SHH": 0.03879231941261772,
+              "measured_SHH": 0.04876869334421765
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": true,
+            "S-HL_is_the_decorrelating_corner": true,
+            "deltas": {
+              "S-HH": 0.04876869334421765,
+              "S-HL": -0.051070429821317,
+              "S-LH": 0.10803806278874277,
+              "S-LL": 0.018175313554808042
+            },
+            "negative_corners": [
+              "S-HL"
+            ],
+            "ok": true
+          },
+          "shh_gain": true
+        }
+      },
+      "channel_reorg": {
+        "alignment_up": true,
+        "radius_down": true,
+        "utility_1": 0.30988457797803537,
+        "utility_10": 0.4385710415723729,
+        "radius_1": 0.2729300161792833,
+        "radius_10": 0.11106983844830123,
+        "ok": true
+      },
+      "corner_ordering_g10": {
+        "S-LH_largest_positive": true,
+        "S-HL_only_decorrelating": true,
+        "S-HL_is_the_decorrelating_corner": true,
+        "deltas": {
+          "S-HH": 0.04876869334421765,
+          "S-HL": -0.051070429821317,
+          "S-LH": 0.10803806278874277,
+          "S-LL": 0.018175313554808042
+        },
+        "negative_corners": [
+          "S-HL"
+        ],
+        "ok": true
+      },
+      "shh_gain_g10": true,
+      "leading_reproduces": true,
+      "strict_S-HL_only": true,
+      "reproduces": true
+    },
+    "2": {
+      "gamma": {
+        "1": {
+          "three": {
+            "n": 120,
+            "floors": -29.570100445050404,
+            "dlog_alpha": -0.5478542584085845,
+            "shares": {
+              "utility": 0.3002548054567679,
+              "radius": 0.27738777343462573,
+              "dimension": 0.4223574211086064
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 12.271267074619361,
+            "dlog_alpha": 0.22735350308979346,
+            "shares": {
+              "utility": 0.5366353414602196,
+              "radius": 0.04776154934863657,
+              "dimension": 0.41560310919114374
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.04081714669465239,
+                "delta_sem": 0.001142947906156643,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.8616404368553291
+              },
+              "S-HL": {
+                "delta_mean": 0.030771836353834726,
+                "delta_sem": 0.001076481885374995,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.8124038404635959
+              },
+              "S-LH": {
+                "delta_mean": 0.049479994979907,
+                "delta_sem": 0.0012482707761988486,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9108770332470622
+              },
+              "S-LL": {
+                "delta_mean": 0.017692606755233188,
+                "delta_sem": 0.0012855667094244278,
+                "n": 40,
+                "n_declining": 2,
+                "p": 1.4933903003111482e-09,
+                "spearman_median": 0.4308202184276646
+              }
+            },
+            "effects": {
+              "readout": 0.020916349282745737,
+              "feature": 0.0022081906566734574,
+              "interaction": -0.010871038941928075,
+              "additive_prediction_SHH": 0.06255922457850854,
+              "measured_SHH": 0.04081714669465239
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": false,
+            "S-HL_is_the_decorrelating_corner": false,
+            "deltas": {
+              "S-HH": 0.04081714669465239,
+              "S-HL": 0.030771836353834726,
+              "S-LH": 0.049479994979907,
+              "S-LL": 0.017692606755233188
+            },
+            "negative_corners": [],
+            "ok": false
+          },
+          "shh_gain": true
+        },
+        "10": {
+          "three": {
+            "n": 120,
+            "floors": -76.46458714604093,
+            "dlog_alpha": -1.4166826982295504,
+            "shares": {
+              "utility": 0.4326014165607131,
+              "radius": 0.11932621431393879,
+              "dimension": 0.4480723691253481
+            }
+          },
+          "S-HH": {
+            "n": 40,
+            "floors": 4.583520715183262,
+            "dlog_alpha": 0.08492028449424602,
+            "shares": {
+              "utility": 0.3968522938210122,
+              "radius": 0.06718147915468148,
+              "dimension": 0.5359662270243063
+            }
+          },
+          "rho_c": {
+            "cells": {
+              "S-HH": {
+                "delta_mean": 0.06076307315363796,
+                "delta_sem": 0.0008048777400672452,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9354953314429287
+              },
+              "S-HL": {
+                "delta_mean": -0.0262228740052442,
+                "delta_sem": 0.001026787551970892,
+                "n": 40,
+                "n_declining": 40,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": -0.6154574548966636
+              },
+              "S-LH": {
+                "delta_mean": 0.09959034118601658,
+                "delta_sem": 0.0008077854865240695,
+                "n": 40,
+                "n_declining": 0,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": 0.9354953314429287
+              },
+              "S-LL": {
+                "delta_mean": -0.019464987037803666,
+                "delta_sem": 0.0011855658441765947,
+                "n": 40,
+                "n_declining": 40,
+                "p": 1.8189894035458565e-12,
+                "spearman_median": -0.6893123494842632
+              }
+            },
+            "effects": {
+              "readout": 0.1030206376913512,
+              "feature": -0.022792577499909577,
+              "interaction": -0.016034690532469042,
+              "additive_prediction_SHH": 0.09283245421857604,
+              "measured_SHH": 0.06076307315363796
+            }
+          },
+          "ordering": {
+            "S-LH_largest_positive": true,
+            "S-HL_only_decorrelating": false,
+            "S-HL_is_the_decorrelating_corner": true,
+            "deltas": {
+              "S-HH": 0.06076307315363796,
+              "S-HL": -0.0262228740052442,
+              "S-LH": 0.09959034118601658,
+              "S-LL": -0.019464987037803666
+            },
+            "negative_corners": [
+              "S-HL",
+              "S-LL"
+            ],
+            "ok": true
+          },
+          "shh_gain": true
+        }
+      },
+      "channel_reorg": {
+        "alignment_up": true,
+        "radius_down": true,
+        "utility_1": 0.3002548054567679,
+        "utility_10": 0.4326014165607131,
+        "radius_1": 0.27738777343462573,
+        "radius_10": 0.11932621431393879,
+        "ok": true
+      },
+      "corner_ordering_g10": {
+        "S-LH_largest_positive": true,
+        "S-HL_only_decorrelating": false,
+        "S-HL_is_the_decorrelating_corner": true,
+        "deltas": {
+          "S-HH": 0.06076307315363796,
+          "S-HL": -0.0262228740052442,
+          "S-LH": 0.09959034118601658,
+          "S-LL": -0.019464987037803666
+        },
+        "negative_corners": [
+          "S-HL",
+          "S-LL"
+        ],
+        "ok": true
+      },
+      "shh_gain_g10": true,
+      "leading_reproduces": true,
+      "strict_S-HL_only": false,
+      "reproduces": true
+    }
+  },
+  "n_arrangements_reproducing": 3,
+  "n_arrangements_S-HL_strictly_only": 2,
+  "reproduces_across_K": true,
+  "verdict": "the results are not arrangement-specific Leading pattern 3/3. 'S-HL the only decorrelating corner' is 2/3: arrangement 2 has S-LL also decorrelating (40/40). That is the unresolved S-LL corner, not a failure of channel reorganisation or of S-HL/S-LH/S-HH.",
+  "variance_three_corner": {
+    "1": {
+      "n": 3600,
+      "alpha_asymptote": 0.3953028573526911,
+      "distance + lag": 0.4633788506520554,
+      "condition alone": 0.63799387501523,
+      "stream alone": 0.001194453984996402,
+      "seed alone": 0.001074455120947504,
+      "condition + distance + lag": 0.875486865578808,
+      "+ stream + seed": 0.879152522689988,
+      "total_sd": 0.24281952708566576,
+      "residual_sd": 0.08441165269841727
+    },
+    "10": {
+      "n": 3600,
+      "alpha_asymptote": 0.5987504768799318,
+      "distance + lag": 0.689962059476517,
+      "condition alone": 0.44260671383132044,
+      "stream alone": 0.0011844808693185493,
+      "seed alone": 0.0007777858141053695,
+      "condition + distance + lag": 0.898890046116286,
+      "+ stream + seed": 0.9003316553295487,
+      "total_sd": 0.46132690816970123,
+      "residual_sd": 0.1456422600016747
+    }
+  },
+  "stream_R2_gamma10": 0.0011844808693185493,
+  "seed_R2_gamma10": 0.0007777858141053695
+}

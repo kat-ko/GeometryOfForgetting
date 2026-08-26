@@ -1,0 +1,42 @@
+% MEASUREMENT HARNESS --- not the submission.
+%
+% This exists to answer one question: how many pages is paper/body.tex? Every length decision was
+% waiting on that number and it was UNKNOWN. It is deliberately in a subdirectory so that
+% scripts/check_submission.py, which globs paper/*.tex non-recursively, does not mistake it for the
+% real document. The real assembly happens in the jmlr skeleton outside this repository.
+%
+% The title block is placeholder text, anonymous by construction. Do not copy it anywhere.
+%
+%   /tmp/tectonic -X compile paper/harness/main.tex
+
+\documentclass[wcp]{jmlr}
+
+\usepackage{graphicx}
+\graphicspath{{../../}}
+
+\jmlrvolume{}
+\jmlryear{2026}
+\jmlrworkshop{Symmetry and Geometry in Neural Representations}
+
+\title[Retained capacity decomposes forgetting]
+      {What changes when a network forgets: a three-factor decomposition of retained
+       manifold capacity}
+
+\author{\Name{Anonymous Author} \Email{anon@example.invalid}}
+\editors{Anonymous}
+
+\begin{document}
+\maketitle
+
+% \typeout markers rather than a page-counting library: the count has to come from TeX itself,
+% because a regex over the PDF bytes reads zero once the output uses compressed object streams,
+% which is how the first attempt at this number silently returned 0 pages.
+\input{../body}
+\typeout{HARNESS BODYEND=\thepage}
+\input{../figures}
+\typeout{HARNESS FIGSEND=\thepage}
+
+\bibliography{../references}
+\typeout{HARNESS TOTAL=\thepage}
+
+\end{document}

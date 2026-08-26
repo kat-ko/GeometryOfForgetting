@@ -1,0 +1,364 @@
+{
+  "generated_by": "scripts/analyse_shh_width.py",
+  "precommit": {
+    "written": "2026-08-19T13:22:00+02:00",
+    "written_before_any_shh_width_arm_completed": true,
+    "question": "Does S-HH behavioural forgetting stay ~0 at N=32 and N=100, or is the paper\u2019s accuracy/capacity split an overparameterization artefact?",
+    "why": "The paper\u2019s \u2018behavioural forgetting ~0\u2019 is an S-HH fact (CF ~0, past-task accuracy ~1 from N=150 to 600). The N=32/100 smoke ran S-HL, where CF is already 0.39 at N=300, so it could not speak to that split. N=32 is past the frozen-W readout floor (A+B median MSE 0.098 > 0.05). N=100 still hits the lazy loss target. This run asks the S-HH question at those two widths.",
+    "reference_band": {
+      "source": "results/phase1/ and results/width/, S-HH, stream 0 seed 0 (and N=150/600 width files)",
+      "N300_gamma10_CF": 0.0,
+      "N300_gamma003_CF": 0.0,
+      "N150_gamma10_CF": 5.6e-05,
+      "N150_gamma003_CF": 0.00158,
+      "N600_gamma10_CF": 8.3e-05,
+      "band": "CF \u2264 0.01 and past-task accuracy \u2265 0.99 is the observed S-HH band at N\u2265150"
+    },
+    "design": {
+      "N": [
+        32,
+        100
+      ],
+      "gamma": [
+        0.03,
+        10.0
+      ],
+      "condition": [
+        "S-HH"
+      ],
+      "stream_id": [
+        0
+      ],
+      "seed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_arms": 16,
+      "n_t": 200,
+      "lr0": 5.0,
+      "target_loss": 0.05,
+      "T": 16,
+      "directory": "results/shh_width/",
+      "never": [
+        "results/phase1/",
+        "results/width/",
+        "results/width_smoke/",
+        "results/width_g10_n40/"
+      ]
+    },
+    "sampling_unit": "initialisation, one arrangement (stream_id=0). Four seeds are four inits of the same stream. This is not an arrangement-level claim. No pooling with N=300 or with the S-HL smoke.",
+    "statistics": {
+      "primary": "For each (N, \u03b3): mean over 4 seeds of (i) CF from forgetting_metrics, (ii) past-task accuracy = mean of the last accuracy-matrix row excluding the current task. Unusable arms (a task missed loss 0.05) are still scored on accuracy/CF and are flagged; they are not dropped.",
+      "secondary": "per-seed CF and past-task accuracy, n_converged, end \u2016\u0394W\u2016/\u2016W\u2016, train accuracy on the current task. GLUE \u0394 log \u03b1 and D_eff are logged as descriptive only \u2014 at N=32 they sit in a packed ambient and are not the decision.",
+      "clouds": "Module-A ReLU clouds at init / t=0 / t=15 for N=32, seed 0, both \u03b3."
+    },
+    "decision_rule": {
+      "split_survives": "At N=32, for BOTH \u03b3: mean CF over 4 seeds \u2264 0.01 AND mean past-task accuracy \u2265 0.99 AND every seed has CF \u2264 0.02. Then the S-HH accuracy/capacity split is not an overparameterization artefact down to this width. STOP. Do not spend a four-corner grid. Clouds may still be used as a sequel illustration of richness, not as evidence about CF.",
+      "split_breaks": "At N=32, at EITHER \u03b3: mean CF \u2265 0.05 OR mean past-task accuracy < 0.95. Then a sequel paragraph is licensed: S-HH behavioural silence does not survive at this width. Next step would be more arrangements at N=32 S-HH, still not a GLUE-share grid, still not pooled with the paper.",
+      "intermediate": "Neither rule. Report the four-seed means and range. Do not expand. Do not rewrite the paper.",
+      "n100_is_control": "N=100 is not a W1 replica. If it also leaves the 0.01/0.99 band, that is reported; it does not by itself license a grid. If it stays in band and N=32 breaks, the break is located between 32 and 100.",
+      "lazy_miss_is_not_CF": "\u03b3=0.03 at N=32 missing loss 0.05 is a predicted capacity-floor outcome. It does not count as behavioural forgetting. CF and past-task accuracy are still the primary, computed on the trained readout as it stands.",
+      "fixed_before_the_arms_exist": true,
+      "will_not_quote": [
+        "GLUE channel shares at N=32 as a test of \u00a75",
+        "an arrangement-level claim from stream_id=0",
+        "pooling with the registered grid or the S-HL smoke",
+        "arm-level p-values on 4 inits"
+      ]
+    },
+    "can_show": "whether S-HH past-task accuracy at one arrangement stays in the N\u2265150 band at N=32 and N=100, over 4 inits",
+    "cannot_show": [
+      "arrangement variance of S-HH CF at small N",
+      "four-corner ordering",
+      "width invariance of \u0394 log \u03b1",
+      "a located N* where the split breaks, finer than {32, 100, 150}"
+    ],
+    "reporting": "off-design, own directory, never adopted by grid.load(). Score with scripts/analyse_shh_width.py. Expand only if split_breaks fires."
+  },
+  "n_arms": 16,
+  "cells": {
+    "N32_g0.03": {
+      "n": 4,
+      "mean_CF": 0.08573611111111112,
+      "min_CF": 0.061527777777777785,
+      "max_CF": 0.11327777777777781,
+      "mean_past_task_acc": 0.9124861111111112,
+      "min_past_task_acc": 0.8851944444444445,
+      "max_past_task_acc": 0.9369722222222223,
+      "n_usable": 2,
+      "per_seed": [
+        {
+          "N": 32,
+          "gamma_0": 0.03,
+          "seed": 0,
+          "usable": false,
+          "n_converged": 15,
+          "task0_converged": false,
+          "task0_final_loss": 0.061793599591135284,
+          "CF": 0.09008333333333335,
+          "past_task_acc": 0.9081388888888889,
+          "final_mean_accuracy": 0.9137760416666667,
+          "diag_acc_mean": 0.9982291666666666,
+          "weight_change_A_end": 0.04406491321193489
+        },
+        {
+          "N": 32,
+          "gamma_0": 0.03,
+          "seed": 1,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04999939899473191,
+          "CF": 0.07805555555555556,
+          "past_task_acc": 0.919638888888889,
+          "final_mean_accuracy": 0.924609375,
+          "diag_acc_mean": 0.9977864583333333,
+          "weight_change_A_end": 0.05293362647032347
+        },
+        {
+          "N": 32,
+          "gamma_0": 0.03,
+          "seed": 2,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.049998541790331155,
+          "CF": 0.061527777777777785,
+          "past_task_acc": 0.9369722222222223,
+          "final_mean_accuracy": 0.940859375,
+          "diag_acc_mean": 0.9985416666666667,
+          "weight_change_A_end": 0.03362109468898674
+        },
+        {
+          "N": 32,
+          "gamma_0": 0.03,
+          "seed": 3,
+          "usable": false,
+          "n_converged": 15,
+          "task0_converged": false,
+          "task0_final_loss": 0.05755200526153345,
+          "CF": 0.11327777777777781,
+          "past_task_acc": 0.8851944444444445,
+          "final_mean_accuracy": 0.89234375,
+          "diag_acc_mean": 0.9985416666666667,
+          "weight_change_A_end": 0.05330448746258147
+        }
+      ]
+    },
+    "N32_g10": {
+      "n": 4,
+      "mean_CF": 2.083333333333289e-05,
+      "min_CF": -0.00022222222222221996,
+      "max_CF": 0.00011111111111111368,
+      "mean_past_task_acc": 0.9997777777777778,
+      "min_past_task_acc": 0.9995833333333334,
+      "max_past_task_acc": 1.0,
+      "n_usable": 4,
+      "per_seed": [
+        {
+          "N": 32,
+          "gamma_0": 10.0,
+          "seed": 0,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04725542104728805,
+          "CF": -0.00022222222222221996,
+          "past_task_acc": 1.0,
+          "final_mean_accuracy": 1.0,
+          "diag_acc_mean": 0.9997916666666666,
+          "weight_change_A_end": 0.6673549706263412
+        },
+        {
+          "N": 32,
+          "gamma_0": 10.0,
+          "seed": 1,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04691911049318361,
+          "CF": 0.00011111111111110628,
+          "past_task_acc": 0.9998333333333334,
+          "final_mean_accuracy": 0.99984375,
+          "diag_acc_mean": 0.9999479166666667,
+          "weight_change_A_end": 0.6883330853441224
+        },
+        {
+          "N": 32,
+          "gamma_0": 10.0,
+          "seed": 2,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04714241049000166,
+          "CF": 8.333333333333156e-05,
+          "past_task_acc": 0.9996944444444444,
+          "final_mean_accuracy": 0.9997135416666667,
+          "diag_acc_mean": 0.9997916666666666,
+          "weight_change_A_end": 0.5974915401568094
+        },
+        {
+          "N": 32,
+          "gamma_0": 10.0,
+          "seed": 3,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04633312140714212,
+          "CF": 0.00011111111111111368,
+          "past_task_acc": 0.9995833333333334,
+          "final_mean_accuracy": 0.999609375,
+          "diag_acc_mean": 0.9997135416666666,
+          "weight_change_A_end": 0.7349301402979413
+        }
+      ]
+    },
+    "N100_g0.03": {
+      "n": 4,
+      "mean_CF": 0.03456944444444445,
+      "min_CF": 0.02166666666666667,
+      "max_CF": 0.04961111111111113,
+      "mean_past_task_acc": 0.9631041666666667,
+      "min_past_task_acc": 0.9478888888888889,
+      "max_past_task_acc": 0.9776388888888891,
+      "n_usable": 4,
+      "per_seed": [
+        {
+          "N": 100,
+          "gamma_0": 0.03,
+          "seed": 0,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04999907271042458,
+          "CF": 0.04961111111111113,
+          "past_task_acc": 0.9478888888888889,
+          "final_mean_accuracy": 0.9508333333333333,
+          "diag_acc_mean": 0.99734375,
+          "weight_change_A_end": 0.009632808258133783
+        },
+        {
+          "N": 100,
+          "gamma_0": 0.03,
+          "seed": 1,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04998818727702575,
+          "CF": 0.03399999999999998,
+          "past_task_acc": 0.9620555555555554,
+          "final_mean_accuracy": 0.9643229166666667,
+          "diag_acc_mean": 0.9961979166666667,
+          "weight_change_A_end": 0.010645516883412151
+        },
+        {
+          "N": 100,
+          "gamma_0": 0.03,
+          "seed": 2,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.0499847574576229,
+          "CF": 0.02166666666666667,
+          "past_task_acc": 0.9776388888888891,
+          "final_mean_accuracy": 0.9789583333333334,
+          "diag_acc_mean": 0.9992708333333333,
+          "weight_change_A_end": 0.007706749103240068
+        },
+        {
+          "N": 100,
+          "gamma_0": 0.03,
+          "seed": 3,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04998203079975348,
+          "CF": 0.03300000000000003,
+          "past_task_acc": 0.9648333333333333,
+          "final_mean_accuracy": 0.9669270833333333,
+          "diag_acc_mean": 0.9978645833333333,
+          "weight_change_A_end": 0.006163311841494694
+        }
+      ]
+    },
+    "N100_g10": {
+      "n": 4,
+      "mean_CF": -9.02777777777771e-05,
+      "min_CF": -0.0001666666666666631,
+      "max_CF": 0.0,
+      "mean_past_task_acc": 0.9999583333333333,
+      "min_past_task_acc": 0.9998888888888888,
+      "max_past_task_acc": 1.0,
+      "n_usable": 4,
+      "per_seed": [
+        {
+          "N": 100,
+          "gamma_0": 10.0,
+          "seed": 0,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.0459945640579117,
+          "CF": -8.333333333333156e-05,
+          "past_task_acc": 1.0,
+          "final_mean_accuracy": 1.0,
+          "diag_acc_mean": 0.9999218750000001,
+          "weight_change_A_end": 0.717336343484457
+        },
+        {
+          "N": 100,
+          "gamma_0": 10.0,
+          "seed": 1,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.047529366624143525,
+          "CF": 0.0,
+          "past_task_acc": 0.9999444444444445,
+          "final_mean_accuracy": 0.9999479166666667,
+          "diag_acc_mean": 0.9999479166666667,
+          "weight_change_A_end": 0.7500678039197838
+        },
+        {
+          "N": 100,
+          "gamma_0": 10.0,
+          "seed": 2,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.04833913931759435,
+          "CF": -0.0001666666666666631,
+          "past_task_acc": 1.0,
+          "final_mean_accuracy": 1.0,
+          "diag_acc_mean": 0.9998437499999999,
+          "weight_change_A_end": 0.7065756655255295
+        },
+        {
+          "N": 100,
+          "gamma_0": 10.0,
+          "seed": 3,
+          "usable": true,
+          "n_converged": 16,
+          "task0_converged": true,
+          "task0_final_loss": 0.045952840178228045,
+          "CF": -0.00011111111111111368,
+          "past_task_acc": 0.9998888888888888,
+          "final_mean_accuracy": 0.9998958333333333,
+          "diag_acc_mean": 0.9997916666666666,
+          "weight_change_A_end": 0.6943332819851983
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "label": "split_breaks",
+    "n32_survives": false,
+    "n32_breaks": true,
+    "n100_survives": false,
+    "n100_breaks": false,
+    "expand": true
+  },
+  "reading": "Sampling unit is init, one arrangement. split_survives \u2192 stop. split_breaks \u2192 sequel paragraph, then more arrangements, not a GLUE grid."
+}

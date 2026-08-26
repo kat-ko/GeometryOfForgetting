@@ -1,0 +1,116 @@
+{
+  "zero_padding": {
+    "design": "one point cloud per seed, padded with zero rows to raise N; capacity is invariant under isometric embedding, so any change is estimator artifact",
+    "P": 16,
+    "M": 60,
+    "D": 4,
+    "R": 1.0,
+    "N_base": 300,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "results": {
+      "sim": {
+        "300": {
+          "mean": 0.4337345812930019,
+          "sd": 0.0250601395933967
+        },
+        "600": {
+          "mean": 0.43448774383933964,
+          "sd": 0.01616324738655998
+        },
+        "1200": {
+          "mean": 0.46075231957584906,
+          "sd": 0.013513133674191866
+        },
+        "drift_pct_300_to_1200": 6.22909480777503
+      },
+      "core": {
+        "300": {
+          "mean": 0.4385984585111135,
+          "sd": 0.006438094774338609
+        },
+        "600": {
+          "mean": 0.4338538904457465,
+          "sd": 0.007783907964086502
+        },
+        "1200": {
+          "mean": 0.43715755029792847,
+          "sd": 0.0039629508778638535
+        },
+        "drift_pct_300_to_1200": -0.3285255990357141
+      }
+    },
+    "verdict": "alpha_sim drift CONFIRMED as estimator artifact"
+  },
+  "cost_vs_M": {
+    "measured": [
+      {
+        "M": 150,
+        "s_per_sample": 0.2419288211967796,
+        "cost_factor_vs_M150": 1.0,
+        "full_grid_wall_hours": 2.8172043010752685,
+        "robustness_arm_wall_hours": 0.1267741935483871
+      },
+      {
+        "M": 400,
+        "s_per_sample": 1.1729983474127947,
+        "cost_factor_vs_M150": 4.8485266931413005,
+        "full_grid_wall_hours": 13.659290253795922,
+        "robustness_arm_wall_hours": 0.6146680614208164
+      },
+      {
+        "M": 800,
+        "s_per_sample": 4.067103779618629,
+        "cost_factor_vs_M150": 16.81115858581618,
+        "full_grid_wall_hours": 47.36046827401977,
+        "robustness_arm_wall_hours": 2.1312210723308898
+      }
+    ],
+    "scaling_exponent": 1.6807597429674777,
+    "note": "cost ~ M^1.68 at P=16, N=300; robustness arm = 4.5% of the grid (1 condition x 2 gamma x 3 streams x 3 seeds = 54 runs)"
+  },
+  "mde": {
+    "caveat": "computed from estimator Monte-Carlo CV at fixed manifolds (results/cost_model.json). The Phase-1 across-seed variance also contains network-init and stream variability, so these are LOWER BOUNDS on the true MDE. Recompute from Phase 0 pilot spread.",
+    "per_measure": {
+      "alpha": {
+        "cv_pct": 1.87,
+        "mde_pct_n5": 3.77857466870124,
+        "mde_pct_n8": 2.8170067739585147,
+        "relative_gain": 0.2544789977839005
+      },
+      "D_eff": {
+        "cv_pct": 1.26,
+        "mde_pct_n5": 2.545991488001905,
+        "mde_pct_n8": 1.8980901257688387,
+        "relative_gain": 0.2544789977839005
+      },
+      "R_eff": {
+        "cv_pct": 0.5,
+        "mde_pct_n5": 1.0103140825404384,
+        "mde_pct_n8": 0.7532103673685868,
+        "relative_gain": 0.2544789977839004
+      },
+      "Psi_eff": {
+        "cv_pct": 1.39,
+        "mde_pct_n5": 2.808673149462418,
+        "mde_pct_n8": 2.0939248212846713,
+        "relative_gain": 0.25447899778390026
+      },
+      "rho_c_glue": {
+        "cv_pct": 0.97,
+        "mde_pct_n5": 1.9600093201284503,
+        "mde_pct_n8": 1.4612281126950584,
+        "relative_gain": 0.2544789977839004
+      }
+    },
+    "seed_cost": {
+      "wall_hours_5_seeds": 2.8172043010752685,
+      "extra_wall_hours_for_8_seeds": 1.6903225806451614
+    }
+  }
+}

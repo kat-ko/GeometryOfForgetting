@@ -1,0 +1,964 @@
+{
+  "generated_by": "scripts/audit_seed_security.py",
+  "grid_duplication": {
+    "question": "are the five stream_id files per seed identical, or merely similar?",
+    "gamma": 10.0,
+    "by_corner": {
+      "S-HH": {
+        "unique_inits": 8,
+        "copies_per_init": [
+          5
+        ],
+        "max_spread_within_init": 0.0
+      },
+      "S-HL": {
+        "unique_inits": 8,
+        "copies_per_init": [
+          5
+        ],
+        "max_spread_within_init": 0.0
+      },
+      "S-LH": {
+        "unique_inits": 8,
+        "copies_per_init": [
+          5
+        ],
+        "max_spread_within_init": 0.0
+      },
+      "S-LL": {
+        "unique_inits": 8,
+        "copies_per_init": [
+          5
+        ],
+        "max_spread_within_init": 0.0
+      }
+    },
+    "worst_spread_across_copies": 0.0,
+    "verdict": "identical to floating point: the five copies of each seed carry the same \u0394\u03c1_c, so the extra files add no information",
+    "arms_on_disk_a0": 960,
+    "sign_test_n_on_grid": 8
+  },
+  "sign_test_ceilings": {
+    "question": "what is the best a two-sided sign test can do at each n we have?",
+    "by_n": {
+      "4": {
+        "p_if_unanimous": 0.125,
+        "p_if_one_flips": 0.625,
+        "can_reach_005_when_unanimous": false,
+        "still_005_after_one_flip": false
+      },
+      "5": {
+        "p_if_unanimous": 0.0625,
+        "p_if_one_flips": 0.375,
+        "can_reach_005_when_unanimous": false,
+        "still_005_after_one_flip": false
+      },
+      "8": {
+        "p_if_unanimous": 0.0078125,
+        "p_if_one_flips": 0.0703125,
+        "can_reach_005_when_unanimous": true,
+        "still_005_after_one_flip": false
+      },
+      "16": {
+        "p_if_unanimous": 3.0517578125e-05,
+        "p_if_one_flips": 0.000518798828125,
+        "can_reach_005_when_unanimous": true,
+        "still_005_after_one_flip": true
+      },
+      "40": {
+        "p_if_unanimous": 1.8189894035458565e-12,
+        "p_if_one_flips": 7.457856554538012e-11,
+        "can_reach_005_when_unanimous": true,
+        "still_005_after_one_flip": true
+      }
+    },
+    "reading": "n=4 (\u03b3=30 probe, duplicate-stream \u03b3=5) cannot reach \u03b1=0.05 however unanimous. n=8 (registered grid) reaches 0.0078 when unanimous and 0.070 \u2014 above 0.05 \u2014 as soon as one seed flips, so every 8/8 result on the grid is one seed from not clearing."
+  },
+  "gamma5_onset": {
+    "question": "the \u03b3=5 onset at 5 arrangements \u00d7 8 initialisations, by unit",
+    "directory": "results/gamma_5_n40",
+    "corners": {
+      "S-HH": {
+        "mean_delta": 0.059321260638388454,
+        "arm_unit": {
+          "sign_test_on_spearman": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "sem_assuming_independent_arms": 0.002288795072959876
+        },
+        "arrangement_unit": {
+          "n": 5,
+          "means": {
+            "0": 0.051843325579747135,
+            "1": 0.059387965924697035,
+            "2": 0.06608300692889169,
+            "3": 0.039216653327823404,
+            "4": 0.08007535143078298
+          },
+          "spread": {
+            "n_units": 5,
+            "mean": 0.059321260638388454,
+            "min": 0.039216653327823404,
+            "max": 0.08007535143078298,
+            "sd": 0.015301737605290074,
+            "sem": 0.00684314509185869,
+            "t_ci_95": [
+              0.040321643943939056,
+              0.07832087733283785
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 5,
+            "n_declining": 0,
+            "p": 0.0625,
+            "p_floor": 0.0625,
+            "p_one_flip": 0.375,
+            "can_reach_005": false
+          },
+          "per_arrangement_arm_signs": {
+            "0": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "1": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "2": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "3": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "4": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            }
+          }
+        },
+        "init_unit": {
+          "n": 8,
+          "spread": {
+            "n_units": 8,
+            "mean": 0.059321260638388454,
+            "min": 0.05687033545959401,
+            "max": 0.06360581726403289,
+            "sd": 0.0024359546495965135,
+            "sem": 0.0008612400256962974,
+            "t_ci_95": [
+              0.057284751587184594,
+              0.06135776968959231
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-HL": {
+        "mean_delta": -0.010174061301681187,
+        "arm_unit": {
+          "sign_test_on_spearman": {
+            "n": 40,
+            "n_declining": 31,
+            "p": 0.0006795482549932785,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "sem_assuming_independent_arms": 0.003194192438828295
+        },
+        "arrangement_unit": {
+          "n": 5,
+          "means": {
+            "0": -0.011382325989589492,
+            "1": -0.016911289546837585,
+            "2": 0.008428833230705354,
+            "3": -0.0419041005691601,
+            "4": 0.010898576366475891
+          },
+          "spread": {
+            "n_units": 5,
+            "mean": -0.010174061301681187,
+            "min": -0.0419041005691601,
+            "max": 0.010898576366475891,
+            "sd": 0.021469567317342838,
+            "sem": 0.009601482393817277,
+            "t_ci_95": [
+              -0.03683205009663801,
+              0.01648392749327563
+            ],
+            "ci_excludes_zero": false,
+            "sign_stable": false
+          },
+          "sign_test": {
+            "n": 5,
+            "n_declining": 3,
+            "p": 1.0,
+            "p_floor": 0.0625,
+            "p_one_flip": 0.375,
+            "can_reach_005": false
+          },
+          "per_arrangement_arm_signs": {
+            "0": {
+              "n": 8,
+              "n_declining": 8,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "1": {
+              "n": 8,
+              "n_declining": 8,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "2": {
+              "n": 8,
+              "n_declining": 5,
+              "p": 0.7265625,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "3": {
+              "n": 8,
+              "n_declining": 8,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "4": {
+              "n": 8,
+              "n_declining": 2,
+              "p": 0.2890625,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            }
+          }
+        },
+        "init_unit": {
+          "n": 8,
+          "spread": {
+            "n_units": 8,
+            "mean": -0.010174061301681185,
+            "min": -0.012939114044741129,
+            "max": -0.007698544576632038,
+            "sd": 0.0017057800229407054,
+            "sem": 0.0006030843107169586,
+            "t_ci_95": [
+              -0.011600129088557624,
+              -0.008747993514804746
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-LH": {
+        "mean_delta": 0.10888109111255775,
+        "arm_unit": {
+          "sign_test_on_spearman": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "sem_assuming_independent_arms": 0.002531347373451884
+        },
+        "arrangement_unit": {
+          "n": 5,
+          "means": {
+            "0": 0.11617092352310739,
+            "1": 0.10466891953178231,
+            "2": 0.09766641609761781,
+            "3": 0.09277392414919002,
+            "4": 0.13312527226109122
+          },
+          "spread": {
+            "n_units": 5,
+            "mean": 0.10888109111255775,
+            "min": 0.09277392414919002,
+            "max": 0.13312527226109122,
+            "sd": 0.016154520488389782,
+            "sem": 0.007224521191190531,
+            "t_ci_95": [
+              0.08882260461387903,
+              0.12893957761123648
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 5,
+            "n_declining": 0,
+            "p": 0.0625,
+            "p_floor": 0.0625,
+            "p_one_flip": 0.375,
+            "can_reach_005": false
+          },
+          "per_arrangement_arm_signs": {
+            "0": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "1": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "2": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "3": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "4": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            }
+          }
+        },
+        "init_unit": {
+          "n": 8,
+          "spread": {
+            "n_units": 8,
+            "mean": 0.10888109111255775,
+            "min": 0.10301383313132409,
+            "max": 0.11260524824021365,
+            "sd": 0.002773042522784349,
+            "sem": 0.0009804185861897322,
+            "t_ci_95": [
+              0.1065627695469412,
+              0.1111994126781743
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-LL": {
+        "mean_delta": 0.02866970320790151,
+        "arm_unit": {
+          "sign_test_on_spearman": {
+            "n": 40,
+            "n_declining": 3,
+            "p": 1.946500560734421e-08,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "sem_assuming_independent_arms": 0.0026758605481014305
+        },
+        "arrangement_unit": {
+          "n": 5,
+          "means": {
+            "0": 0.0266451134192039,
+            "1": 0.036086324558946295,
+            "2": 0.009163315586666547,
+            "3": 0.017677730560690823,
+            "4": 0.05377603191399999
+          },
+          "spread": {
+            "n_units": 5,
+            "mean": 0.028669703207901513,
+            "min": 0.009163315586666547,
+            "max": 0.05377603191399999,
+            "sd": 0.017253663363781858,
+            "sem": 0.007716072828462783,
+            "t_ci_95": [
+              0.007246450571966285,
+              0.050092955843836745
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 5,
+            "n_declining": 0,
+            "p": 0.0625,
+            "p_floor": 0.0625,
+            "p_one_flip": 0.375,
+            "can_reach_005": false
+          },
+          "per_arrangement_arm_signs": {
+            "0": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "1": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "2": {
+              "n": 8,
+              "n_declining": 3,
+              "p": 0.7265625,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "3": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            },
+            "4": {
+              "n": 8,
+              "n_declining": 0,
+              "p": 0.0078125,
+              "p_floor": 0.0078125,
+              "p_one_flip": 0.0703125,
+              "can_reach_005": true
+            }
+          }
+        },
+        "init_unit": {
+          "n": 8,
+          "spread": {
+            "n_units": 8,
+            "mean": 0.02866970320790151,
+            "min": 0.024561084191775117,
+            "max": 0.03207759809040249,
+            "sd": 0.0026063829572743106,
+            "sem": 0.0009214955317288562,
+            "t_ci_95": [
+              0.026490712525841068,
+              0.03084869388996195
+            ],
+            "ci_excludes_zero": true,
+            "sign_stable": true
+          },
+          "sign_test": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      }
+    }
+  },
+  "width": {
+    "question": "is the 0.62% width gap larger than the arrangement-to-arrangement spread at fixed width, and does it survive pairing?",
+    "directory": "results/width_g10_n40",
+    "by_N": {
+      "150": {
+        "pooled_floors": 71.55908430369082,
+        "per_arrangement_floors": {
+          "0": 69.8866431839112,
+          "1": 71.4977651155874,
+          "2": 74.508703108105,
+          "3": 73.69075424128403,
+          "4": 68.21155586956652
+        },
+        "spread_pct_across_arrangements": 8.79992708097535,
+        "spread": {
+          "n_units": 5,
+          "mean": 71.55908430369084,
+          "min": 68.21155586956652,
+          "max": 74.508703108105,
+          "sd": 2.6101261355259417,
+          "sem": 1.167283893776967,
+          "t_ci_95": [
+            68.31818465043754,
+            74.79998395694413
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        }
+      },
+      "600": {
+        "pooled_floors": 72.00703573623247,
+        "per_arrangement_floors": {
+          "0": 70.0834496885846,
+          "1": 71.62332639260946,
+          "2": 76.07992736565923,
+          "3": 73.77861325418763,
+          "4": 68.46986198012144
+        },
+        "spread_pct_across_arrangements": 10.568502518856729,
+        "spread": {
+          "n_units": 5,
+          "mean": 72.00703573623247,
+          "min": 68.46986198012144,
+          "max": 76.07992736565923,
+          "sd": 3.0035790089153878,
+          "sem": 1.3432413679452506,
+          "t_ci_95": [
+            68.27759981510168,
+            75.73647165736325
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        }
+      }
+    },
+    "width_gap_pct": 0.6240350194280871,
+    "worst_within_width_arrangement_spread_pct": 10.568502518856729,
+    "arrangement_spread_over_width_gap": 16.935752305283287,
+    "paired_within_arrangement": {
+      "differences_floors_600_minus_150": {
+        "0": 0.19680650467338978,
+        "1": 0.125561277022058,
+        "2": 1.5712242575542348,
+        "3": 0.08785901290360698,
+        "4": 0.25830611055491204
+      },
+      "spread": {
+        "n_units": 5,
+        "mean": 0.4479514325416403,
+        "min": 0.08785901290360698,
+        "max": 1.5712242575542348,
+        "sd": 0.6313443841149392,
+        "sem": 0.2823457920187485,
+        "t_ci_95": [
+          -0.33596615968200955,
+          1.2318690247652901
+        ],
+        "ci_excludes_zero": false,
+        "sign_stable": true
+      },
+      "n_arrangements_with_600_larger_loss": 5,
+      "sign_test_p": 0.0625,
+      "sign_test_p_floor": 0.0625
+    },
+    "reading": "marginally, arrangement moves the magnitude 17\u00d7 further than width does. Paired within arrangement the direction is consistent (N=600 the slightly larger loss in every arrangement) but the interval includes zero and five arrangements cannot reach \u03b1=0.05, so 0.62% is a bound either way"
+  },
+  "k3_arrangement_component": {
+    "S-HH_gain_by_arrangement": {
+      "1": {
+        "per_arrangement_floors": {
+          "0": 11.563498459456016,
+          "1": 11.676653156871733,
+          "2": 12.271267074619361
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 11.837139563649037,
+          "min": 11.563498459456016,
+          "max": 12.271267074619361,
+          "sd": 0.3801986562611415,
+          "sem": 0.21950779653790406,
+          "t_ci_95": [
+            10.89267374368564,
+            12.781605383612435
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        }
+      },
+      "10": {
+        "per_arrangement_floors": {
+          "0": 5.742378656046422,
+          "1": 5.1720314993357706,
+          "2": 4.583520715183262
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 5.165976956855151,
+          "min": 4.583520715183262,
+          "max": 5.742378656046422,
+          "sd": 0.5794526942632057,
+          "sem": 0.33454716901551573,
+          "t_ci_95": [
+            3.7265366668784257,
+            6.605417246831877
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        }
+      }
+    },
+    "question": "with arrangement as a real factor, how big is the component the registered grid could not see?",
+    "directory": "results/unconfound_k3",
+    "n_arrangements": 3,
+    "n_inits": 40,
+    "corners": {
+      "S-HH": {
+        "per_arrangement_mean": {
+          "0": 0.04657809644324999,
+          "1": 0.04876869334421765,
+          "2": 0.06076307315363796
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 0.052036620980368535,
+          "min": 0.04657809644324999,
+          "max": 0.06076307315363796,
+          "sd": 0.007636288649920279,
+          "sem": 0.0044088133076411575,
+          "t_ci_95": [
+            0.03306702836752563,
+            0.07100621359321144
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "median_within_arrangement_sem": 0.0008048777400672452,
+        "between_over_within_sem": 5.477618634692039,
+        "grid_sem_unique_n8": 0.007788135998232107,
+        "grid_sem_over_between_arrangement_sem": 1.7664925808344072,
+        "grid_value_at_unique_n8": 0.05512530652148888,
+        "grid_value_inside_arrangement_range": true,
+        "per_arrangement_arm_sign_tests": {
+          "0": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-HL": {
+        "per_arrangement_mean": {
+          "0": -0.0499606000889425,
+          "1": -0.051070429821317,
+          "2": -0.0262228740052442
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": -0.042417967971834565,
+          "min": -0.051070429821317,
+          "max": -0.0262228740052442,
+          "sd": 0.014036336129800197,
+          "sem": 0.008103882442976214,
+          "t_ci_95": [
+            -0.07728615988624281,
+            -0.007549776057426322
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "median_within_arrangement_sem": 0.0009226531258561054,
+        "between_over_within_sem": 8.78323848462209,
+        "grid_sem_unique_n8": 0.007829347658138112,
+        "grid_sem_over_between_arrangement_sem": 0.9661230543791949,
+        "grid_value_at_unique_n8": -0.05503208224769035,
+        "grid_value_inside_arrangement_range": false,
+        "per_arrangement_arm_sign_tests": {
+          "0": {
+            "n": 40,
+            "n_declining": 40,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 40,
+            "n_declining": 40,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 40,
+            "n_declining": 40,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-LH": {
+        "per_arrangement_mean": {
+          "0": 0.12414649250649527,
+          "1": 0.10803806278874277,
+          "2": 0.09959034118601658
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 0.11059163216041822,
+          "min": 0.09959034118601658,
+          "max": 0.12414649250649527,
+          "sd": 0.012475643443146773,
+          "sem": 0.00720281610021458,
+          "t_ci_95": [
+            0.07960041580533064,
+            0.1415828485155058
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "median_within_arrangement_sem": 0.0008077854865240695,
+        "between_over_within_sem": 8.916743640949234,
+        "grid_sem_unique_n8": 0.006745000084791772,
+        "grid_sem_over_between_arrangement_sem": 0.9364393024820988,
+        "grid_value_at_unique_n8": 0.1098322001699076,
+        "grid_value_inside_arrangement_range": true,
+        "per_arrangement_arm_sign_tests": {
+          "0": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 40,
+            "n_declining": 0,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          }
+        }
+      },
+      "S-LL": {
+        "per_arrangement_mean": {
+          "0": 0.0016721432467519683,
+          "1": 0.018175313554808042,
+          "2": -0.019464987037803666
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 0.00012748992125211425,
+          "min": -0.019464987037803666,
+          "max": 0.018175313554808042,
+          "sd": 0.018867631610711626,
+          "sem": 0.01089323218941505,
+          "t_ci_95": [
+            -0.04674230529374844,
+            0.04699728513625266
+          ],
+          "ci_excludes_zero": false,
+          "sign_stable": false
+        },
+        "median_within_arrangement_sem": 0.0010907317837672943,
+        "between_over_within_sem": 9.987086056840443,
+        "grid_sem_unique_n8": 0.006022835832067601,
+        "grid_sem_over_between_arrangement_sem": 0.55289703986297,
+        "grid_value_at_unique_n8": 0.011404365019769838,
+        "grid_value_inside_arrangement_range": true,
+        "per_arrangement_arm_sign_tests": {
+          "0": {
+            "n": 40,
+            "n_declining": 36,
+            "p": 1.8570244719740003e-07,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 40,
+            "n_declining": 7,
+            "p": 4.2277022657799534e-05,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 40,
+            "n_declining": 40,
+            "p": 1.8189894035458565e-12,
+            "p_floor": 1.8189894035458565e-12,
+            "p_one_flip": 7.457856554538012e-11,
+            "can_reach_005": true
+          }
+        }
+      }
+    },
+    "effects": {
+      "readout": {
+        "per_arrangement": {
+          "0": 0.1095065228959679,
+          "1": 0.09485093619973468,
+          "2": 0.1030206376913512
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": 0.10245936559568458,
+          "min": 0.09485093619973468,
+          "max": 0.1095065228959679,
+          "sd": 0.007343897134814222,
+          "sem": 0.004240000987685913,
+          "t_ci_95": [
+            0.08421611377210345,
+            0.12070261741926572
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "grid_value_at_unique_n8": 0.1042926119596585
+      },
+      "feature": {
+        "per_arrangement": {
+          "0": -0.06460056969946988,
+          "1": -0.06425755641032509,
+          "2": -0.022792577499909577
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": -0.05055023453656818,
+          "min": -0.06460056969946988,
+          "max": -0.022792577499909577,
+          "sd": 0.024039447948168542,
+          "sem": 0.013879181744045106,
+          "t_ci_95": [
+            -0.11026753375353271,
+            0.009167064680396353
+          ],
+          "ci_excludes_zero": false,
+          "sign_stable": true
+        },
+        "grid_value_at_unique_n8": -0.06057167045793946
+      },
+      "interaction": {
+        "per_arrangement": {
+          "0": -0.012967826363775407,
+          "1": 0.004988186965799963,
+          "2": -0.016034690532469042
+        },
+        "spread": {
+          "n_units": 3,
+          "mean": -0.008004776643481495,
+          "min": -0.016034690532469042,
+          "max": 0.004988186965799963,
+          "sd": 0.011356242401049233,
+          "sem": 0.006556529607228417,
+          "t_ci_95": [
+            -0.036215246655356415,
+            0.020205693368393424
+          ],
+          "ci_excludes_zero": false,
+          "sign_stable": false
+        },
+        "grid_value_at_unique_n8": 0.00586477680952073
+      }
+    },
+    "S-HL_inits_declining_in_all_arrangements": 40,
+    "S-HL_inits_total": 40,
+    "caveat": "three arrangements estimate a standard deviation to about \u00b150% (relative SE of an SD at n=3 is 1/sqrt(2(n-1)) = 0.50), so the between-arrangement numbers below are themselves coarse; they bound the component rather than measure it"
+  },
+  "floors": {
+    "question": "how well is the ruler itself known?",
+    "n_measurement_seeds": 4,
+    "relative_se_of_a_cv": 0.4082482904638631,
+    "factor_uncertainty_on_a_floor": 1.5041805885050241,
+    "ratio_between_plus_and_minus_1se_ends": 2.2625592428353207,
+    "reading": "a CV from 4 seeds carries ~41% relative standard error, so any floor is good to about \u00d7/\u00f71.5 and margins under ~40% of a floor are inside the ruler's own uncertainty"
+  }
+}

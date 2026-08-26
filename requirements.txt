@@ -1,0 +1,15 @@
+# Minimal runtime for §2 manifolds + glue core (expand as build proceeds).
+numpy>=1.24
+scipy>=1.11          # NNLS dual of the anchor QP in src/glue/core.py
+pytest>=7.0
+
+# Figures only (scripts/fig_*.py). Nothing in src/ imports it, so a measurement run
+# does not need it.
+matplotlib>=3.8
+
+# Required only to run the vendored estimators (third_party/). Their versions are
+# fixed by upstream, not by us: replicaMFT imports `pymanopt.solvers`, which was
+# removed in pymanopt 1.0, so it must stay on the 0.2.x line.
+cvxopt>=1.3          # SVM QP in correlated_capacity
+autograd>=1.6        # replicaMFT
+pymanopt==0.2.5      # replicaMFT — do NOT upgrade

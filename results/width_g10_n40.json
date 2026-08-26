@@ -1,0 +1,152 @@
+{
+  "generated_by": "scripts/analyse_genuine_n.py",
+  "directory": "results/width_g10_n40",
+  "n_files": 320,
+  "n_usable": 320,
+  "population": "genuine n=40 per (N, condition) cell at \u03b3=10; not pooled with the grid",
+  "by_N": {
+    "150": {
+      "three": {
+        "n": 120,
+        "floors": -71.55908430369082,
+        "dlog_alpha": -1.3257969527850582,
+        "shares": {
+          "utility": 0.4596546233478106,
+          "radius": 0.1463023017353857,
+          "dimension": 0.3940430749168036
+        }
+      },
+      "four": {
+        "n": 160,
+        "floors": -52.83853477993019,
+        "dlog_alpha": -0.9789556292190509,
+        "shares": {
+          "utility": 0.4607378231960927,
+          "radius": 0.1509313082627741,
+          "dimension": 0.3883308685411332
+        }
+      },
+      "corners": {
+        "S-HH": {
+          "n": 40,
+          "floors": 3.323113791351742,
+          "dlog_alpha": 0.06156834147897143,
+          "shares": {
+            "utility": 0.30146336631422666,
+            "radius": 0.11426195588341423,
+            "dimension": 0.584274677802359
+          }
+        },
+        "S-HL": {
+          "n": 40,
+          "floors": -78.85630752319615,
+          "dlog_alpha": -1.4609948302083378,
+          "shares": {
+            "utility": 0.48064144364260225,
+            "radius": 0.1258541482204986,
+            "dimension": 0.3935044081368991
+          }
+        },
+        "S-LH": {
+          "n": 40,
+          "floors": -57.829450875303365,
+          "dlog_alpha": -1.0714238520203643,
+          "shares": {
+            "utility": 0.4267393892582177,
+            "radius": 0.1796446520911,
+            "dimension": 0.39361595865068244
+          }
+        },
+        "S-LL": {
+          "n": 40,
+          "floors": -77.99149451257298,
+          "dlog_alpha": -1.4449721761264727,
+          "shares": {
+            "utility": 0.4628412113121303,
+            "radius": 0.142254374046802,
+            "dimension": 0.3949044146410677
+          }
+        }
+      }
+    },
+    "600": {
+      "three": {
+        "n": 120,
+        "floors": -72.00703573623247,
+        "dlog_alpha": -1.3340962854279828,
+        "shares": {
+          "utility": 0.4398240670225472,
+          "radius": 0.09757998336335053,
+          "dimension": 0.4625959496141022
+        }
+      },
+      "four": {
+        "n": 160,
+        "floors": -53.17189832863173,
+        "dlog_alpha": -0.9851319572330095,
+        "shares": {
+          "utility": 0.4418635506721707,
+          "radius": 0.10147003152780307,
+          "dimension": 0.4566664178000262
+        }
+      },
+      "corners": {
+        "S-HH": {
+          "n": 40,
+          "floors": 3.3335138941705122,
+          "dlog_alpha": 0.06176102735191049,
+          "shares": {
+            "utility": 0.23800461647593957,
+            "radius": 0.11574880682297382,
+            "dimension": 0.6462465767010865
+          }
+        },
+        "S-HL": {
+          "n": 40,
+          "floors": -79.53584729111103,
+          "dlog_alpha": -1.4735848704857446,
+          "shares": {
+            "utility": 0.46446077183094076,
+            "radius": 0.07402535637601516,
+            "dimension": 0.461513871793044
+          }
+        },
+        "S-LH": {
+          "n": 40,
+          "floors": -58.731937737215944,
+          "dlog_alpha": -1.0881445010210467,
+          "shares": {
+            "utility": 0.39721254123406885,
+            "radius": 0.13761624441131667,
+            "dimension": 0.46517121435461445
+          }
+        },
+        "S-LL": {
+          "n": 40,
+          "floors": -77.75332218037043,
+          "dlog_alpha": -1.440559484777157,
+          "shares": {
+            "utility": 0.4468097014992338,
+            "radius": 0.09143272222218027,
+            "dimension": 0.461757576278586
+          }
+        }
+      }
+    }
+  },
+  "three_corner_spread_pct": 0.6240350194280871,
+  "utility_share_150": 0.4596546233478106,
+  "utility_share_600": 0.4398240670225472,
+  "utility_share_delta": 0.01983055632526337,
+  "radius_share_150": 0.1463023017353857,
+  "radius_share_600": 0.09757998336335053,
+  "dimension_share_150": 0.3940430749168036,
+  "dimension_share_600": 0.4625959496141022,
+  "radius_plus_dimension_150": 0.5403453766521893,
+  "radius_plus_dimension_600": 0.5601759329774527,
+  "alignment_nonalignment_split_stable": true,
+  "shh_gain_at_both_widths": true,
+  "old_bound_spread_pct": 1.5,
+  "old_sampling_gap_pct": 4.5,
+  "reading": "still a bound: spread is smaller than the old sampling gap, and N=300 is a different population (grid unique n=8)"
+}

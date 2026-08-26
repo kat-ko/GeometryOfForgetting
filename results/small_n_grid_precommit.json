@@ -1,0 +1,56 @@
+{
+  "written": "2026-08-19T14:02:00+02:00",
+  "written_before_any_new_small_n_grid_arm_completed": true,
+  "question": "At N=32 and N=100, on the full Hiratani 2×2, do CF and GLUE (Δ log α sign) still organise like the N=300 grid, over 8 inits of one arrangement?",
+  "why": "S-HH-only n=4 found lazy CF leaving the N≥150 band at N=32 (mean 0.086) while rich S-HH stayed at CF=0. That cannot locate a corner effect versus a lazy-width effect without S-HL/S-LH/S-LL, and n=4 is short of the paper’s unique n=8. GLUE was logged but not scored. This expansion scores both currencies on the full similarity grid. N=32 GLUE is packed (D_eff ~1.3 in the S-HL smoke); signs are the GLUE claim, not channel-share magnitudes.",
+  "reference_N300_stream0_unique_n8": {
+    "source": "results/phase1/ a=0, stream_id=0, seeds 0–7 (the grid’s unique n=8)",
+    "gamma_0.03_CF": {"S-HH": 0.0013, "S-HL": 0.4227, "S-LH": 0.1137, "S-LL": 0.2842},
+    "gamma_10_CF": {"S-HH": 0.0001, "S-HL": 0.4067, "S-LH": 0.0128, "S-LL": 0.1546},
+    "gamma_10_dlog_alpha_task0_lag15": {"S-HH": 0.058, "S-HL": -1.549, "S-LH": -1.037, "S-LL": -1.335},
+    "gamma_10_CF_order": ["S-HL", "S-LL", "S-LH", "S-HH"],
+    "note_S-LH_rich_CF_is_small": "S-LH at γ=10 has CF 0.013, not 0.4. High readout similarity preserves accuracy. S-HH is the only corner with CF~0 at both γ."
+  },
+  "design": {
+    "N": [32, 100],
+    "gamma": [0.03, 10.0],
+    "condition": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "stream_id": [0],
+    "seed": [0, 1, 2, 3, 4, 5, 6, 7],
+    "n_arms": 128,
+    "n_new": 108,
+    "imported_not_retrained": "20 arms: results/shh_width/ (S-HH, seeds 0–3, both N and γ) and results/width_smoke/ (S-HL, seed 0, both N and γ). Copied into this directory; specs identical.",
+    "directory": "results/small_n_grid/",
+    "never": ["results/phase1/", "results/width/", "results/width_g10_n40/"]
+  },
+  "sampling_unit": "initialisation. Eight seeds are eight inits of stream_rng(0). Not an arrangement-level claim. Not pooled with N=300.",
+  "statistics": {
+    "CF": "Per (N, γ, condition): mean, min, max over 8 seeds of forgetting_metrics CF, and of past-task accuracy (last accuracy-matrix row, current task excluded). Unusable arms are kept in the mean and counted.",
+    "GLUE": "Per (N, γ, condition): mean over 8 seeds of Δ log α (task 0, lag 15, module A, retained) and of Δρ_c_signed (boundary 15 − 0, task 0, module A). Channel shares and D_eff are logged. At N=32, D_eff is expected packed; magnitudes of Δ log α are not compared to N=300.",
+    "clouds": "N=32, seed 0, all four conditions, both γ (8 npz). Not a decision input."
+  },
+  "decision_rule": {
+    "rich_CF_2x2_survives": "At a given N, γ=10: mean CF(S-HH) ≤ 0.01 AND mean CF(S-HL) ≥ 0.25 AND the order of the four mean CFs is S-HL > S-LL > S-LH > S-HH. Then the rich behavioural 2×2 is intact at that width, on this arrangement.",
+    "rich_CF_2x2_breaks": "At that N, γ=10: mean CF(S-HH) ≥ 0.05 OR mean CF(S-HL) < 0.20 OR the CF order among the four corners is not S-HL > S-LL > S-LH > S-HH. Then rich behavioural organisation does not match N=300 at that width.",
+    "lazy_S-HH_CF_break_confirmed": "At N=32, γ=0.03: mean CF(S-HH) ≥ 0.05 over 8 seeds. Then the n=4 lazy-S-HH break stands at n=8. (Already expected from shh_width.)",
+    "glue_signs_match": "At a given N, γ=10: mean Δ log α > 0 on S-HH and < 0 on S-HL, S-LH, S-LL. Then GLUE’s gain-vs-loss pattern matches N=300 in sign. Magnitudes at N=32 are not a pass/fail.",
+    "glue_signs_break": "At that N, γ=10: S-HH mean Δ log α ≤ 0, or any of the three loss corners has mean Δ log α ≥ 0. Then the GLUE 2×2 sign pattern failed.",
+    "N32_packing": "If mean D_eff (generic, boundary 0, module A) at N=32 is < 2.0, packing is confirmed. GLUE signs may still be scored; channel shares must not be quoted as a test of §5.",
+    "intermediate": "Any cell that is neither survive nor break on that rule: report means and range, do not rewrite the paper.",
+    "fixed_before_the_new_arms_exist": true,
+    "will_not_quote": [
+      "N=32 channel shares as §5",
+      "arrangement-level claims",
+      "pooling with the registered grid",
+      "the imported 20 as a fresh sample — they are overlap"
+    ]
+  },
+  "can_show": "whether, at one arrangement and 8 inits, the 2×2 of CF and the sign pattern of Δ log α at γ=10 still match N=300 at N=32 and N=100, and whether the lazy-S-HH CF break replicates at n=8",
+  "cannot_show": [
+    "arrangement variance",
+    "a γ onset",
+    "W1 magnitude invariance",
+    "located N* finer than {32, 100, 150, 300}"
+  ],
+  "reporting": "off-design, own directory, never adopted by grid.load(). Score with scripts/analyse_small_n_grid.py. The imported 20 are listed in the score file."
+}

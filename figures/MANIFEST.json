@@ -1,0 +1,119 @@
+{
+  "generated_by": "scripts/make_figures.py",
+  "generated_at": "2026-08-17T14:18:22+00:00",
+  "git_sha": "443945dc",
+  "git_dirty": true,
+  "module_hashes": {
+    "attribution": "d71d6a286c123fd4",
+    "core": "2a2f3bea1a985849",
+    "grid": "d1141c73c8ce7b64"
+  },
+  "figures": {
+    "fig2": {
+      "caption": "Figure 2 \u2014 forgetting decomposes; channel mix shifts with richness (\u00a75.1)",
+      "script": "scripts/fig2_gamma_sweep.py",
+      "args": [
+        "--condition",
+        "forgetting",
+        "--lag",
+        "12"
+      ],
+      "command": "python scripts/fig2_gamma_sweep.py --condition forgetting --lag 12",
+      "result_set_sha": "8dd793134c38",
+      "n_arms": 960,
+      "outputs": {
+        "fig2_gamma_sweep__forgetting__lag12__960arms__8dd793134c38.json": "1968b589822175ba",
+        "fig2_gamma_sweep__forgetting__lag12__960arms__8dd793134c38.pdf": "08d0aef3fdeedb93",
+        "fig2_gamma_sweep__forgetting__lag12__960arms__8dd793134c38.png": "b4e3bbbb985df1f4"
+      }
+    },
+    "fig2_benign": {
+      "caption": "Figure S \u2014 the benign corner gains retained capacity (\u00a75.1)",
+      "script": "scripts/fig2_gamma_sweep.py",
+      "args": [
+        "--condition",
+        "S-HH",
+        "--lag",
+        "12"
+      ],
+      "command": "python scripts/fig2_gamma_sweep.py --condition S-HH --lag 12",
+      "result_set_sha": "8dd793134c38",
+      "n_arms": 960,
+      "outputs": {
+        "fig2_gamma_sweep__S-HH__lag12__960arms__8dd793134c38.json": "bb1f9974aac8b45b",
+        "fig2_gamma_sweep__S-HH__lag12__960arms__8dd793134c38.pdf": "a010505dd2384c4e",
+        "fig2_gamma_sweep__S-HH__lag12__960arms__8dd793134c38.png": "26101f7b4aa45476"
+      }
+    },
+    "fig2_lag4": {
+      "caption": "Figure S \u2014 composition holds at a shorter lag (\u00a75.3)",
+      "script": "scripts/fig2_gamma_sweep.py",
+      "args": [
+        "--condition",
+        "forgetting",
+        "--lag",
+        "4",
+        "--task",
+        "0"
+      ],
+      "command": "python scripts/fig2_gamma_sweep.py --condition forgetting --lag 4 --task 0",
+      "result_set_sha": "8dd793134c38",
+      "n_arms": 960,
+      "outputs": {
+        "fig2_gamma_sweep__forgetting__lag4__task0__960arms__8dd793134c38.json": "28789f484358a17a",
+        "fig2_gamma_sweep__forgetting__lag4__task0__960arms__8dd793134c38.pdf": "24c59a1584bd3a72",
+        "fig2_gamma_sweep__forgetting__lag4__task0__960arms__8dd793134c38.png": "efebf8c8d20c0415"
+      }
+    },
+    "fig4": {
+      "caption": "Figure 4 \u2014 center correlation across the 2\u00d72 (\u00a75.4)",
+      "script": "scripts/fig4_corners_rho_c.py",
+      "args": [
+        "--gamma",
+        "10"
+      ],
+      "command": "python scripts/fig4_corners_rho_c.py --gamma 10",
+      "result_set_sha": "8dd793134c38",
+      "n_arms": 960,
+      "outputs": {
+        "fig4_corners_rho_c__gamma10__960arms__8dd793134c38.json": "fd90fb4fcf88199a",
+        "fig4_corners_rho_c__gamma10__960arms__8dd793134c38.pdf": "9509c8f04f7824fd",
+        "fig4_corners_rho_c__gamma10__960arms__8dd793134c38.png": "b3407fd46b8f357a"
+      }
+    },
+    "fig4_gamma3": {
+      "caption": "Figure S \u2014 the same at \u03b3\u2080 = 3, where S-HL has not yet appeared (\u00a75.4)",
+      "script": "scripts/fig4_corners_rho_c.py",
+      "args": [
+        "--gamma",
+        "3"
+      ],
+      "command": "python scripts/fig4_corners_rho_c.py --gamma 3",
+      "result_set_sha": "8dd793134c38",
+      "n_arms": 960,
+      "outputs": {
+        "fig4_corners_rho_c__gamma3__960arms__8dd793134c38.json": "c234e6e0d81ba880",
+        "fig4_corners_rho_c__gamma3__960arms__8dd793134c38.pdf": "d065f663095adc1d",
+        "fig4_corners_rho_c__gamma3__960arms__8dd793134c38.png": "d90fd62e06802f0b"
+      }
+    },
+    "fig_width": {
+      "caption": "Figure S \u2014 width robustness in Figure 2's form (\u00a75.3)",
+      "script": "scripts/fig_width_invariance.py",
+      "args": [
+        "--lag",
+        "12"
+      ],
+      "command": "python scripts/fig_width_invariance.py --lag 12",
+      "result_set_sha": "f2a0863ede1c",
+      "n_arms": 144,
+      "outputs": {
+        "fig_width_invariance__lag12__2f8b522a6423.json": "92329f83a0d04dc6",
+        "fig_width_invariance__lag12__2f8b522a6423.pdf": "03d0dce2689df609",
+        "fig_width_invariance__lag12__2f8b522a6423.png": "f505851f806b0fa0"
+      }
+    }
+  },
+  "moved_to_superseded": [],
+  "fig2_partial_regen": "scripts/fig2_gamma_sweep.py --condition forgetting --lag 12 (hatch \u03b3=0.1)"
+}

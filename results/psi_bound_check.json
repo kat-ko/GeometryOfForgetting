@@ -1,0 +1,50 @@
+{
+  "code": {
+    "git_sha": "36399f28",
+    "git_dirty": true,
+    "modules": {
+      "attribution": "fe9daafc00437f30",
+      "core": "2a2f3bea1a985849",
+      "pipeline": "6ed6be5e1235948e",
+      "run_psi_bound_check": "8169a50782296e31"
+    },
+    "stale": {},
+    "unregistered": []
+  },
+  "args": {
+    "real": true,
+    "synthetic": false,
+    "gamma": 10.0,
+    "P": 8,
+    "N": 120,
+    "M": 20,
+    "radius": 1.0,
+    "sep": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "n_t": 200,
+    "n_rep": 10,
+    "tol": 0.15,
+    "seed": 20260812,
+    "out": "results/psi_bound_check.json"
+  },
+  "checks": [
+    {
+      "check": "real_arm",
+      "found": true,
+      "key": "gamma=10,a=0,cond=S-HH,stream=0,seed=0",
+      "module": "A",
+      "stored_Psi_eff": 1.491825651189115,
+      "Psi_eff": 1.491825651189115,
+      "alpha_glue": 1.8541039659348242,
+      "alpha_sim": 1.8823529411764706,
+      "rel_err": 0.015007268097124639,
+      "identity_residual": 1.1975844343393021e-16,
+      "agrees": true
+    }
+  ]
+}

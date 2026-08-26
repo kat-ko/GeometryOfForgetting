@@ -1,0 +1,97 @@
+{
+  "generated_by": "scripts/audit_gamma30_unique.py",
+  "n_files": 64,
+  "n_unique": 16,
+  "unique_seeds_per_cell": 4,
+  "copies_per_unique": 4.0,
+  "cells": {
+    "S-HH": {
+      "corner": "S-HH",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": 0.04613369461487078,
+      "sem_files": 0.002899081322057932,
+      "sem_unique": 0.006482542908421497,
+      "n_declining_files": 0,
+      "n_declining_unique": 0,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": 0.8862587350511957
+    },
+    "S-HL": {
+      "corner": "S-HL",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": -0.09559025661581586,
+      "sem_files": 0.00406120715623275,
+      "sem_unique": 0.009081135272045036,
+      "n_declining_files": 16,
+      "n_declining_unique": 4,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": -0.8370221386594625
+    },
+    "S-LH": {
+      "corner": "S-LH",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": 0.09487380577779775,
+      "sem_files": 0.005441166631456283,
+      "sem_unique": 0.012166818464839795,
+      "n_declining_files": 0,
+      "n_declining_unique": 0,
+      "p_files": 3.0517578125e-05,
+      "p_unique": 0.125,
+      "spearman_median": 0.812403840463596
+    },
+    "S-LL": {
+      "corner": "S-LL",
+      "n_files": 16,
+      "n_unique": 4,
+      "delta_mean": -0.014922069463571885,
+      "sem_files": 0.0036072608977620055,
+      "sem_unique": 0.008066080579972762,
+      "n_declining_files": 12,
+      "n_declining_unique": 3,
+      "p_files": 0.076812744140625,
+      "p_unique": 0.625,
+      "spearman_median": -0.06154574548966636
+    }
+  },
+  "effects": {
+    "readout": 0.12575991323602814,
+    "feature": -0.06470414915758546,
+    "interaction": 0.015964037994658502,
+    "additive_prediction_SHH": 0.014205618625553779,
+    "measured_SHH": 0.04613369461487078
+  },
+  "interaction_sem_files": 0.004108427362554233,
+  "interaction_sem_unique": 0.00918672286329144,
+  "interaction_over_sem_files": 3.8856809640011667,
+  "interaction_over_sem_unique": 1.737729354876704,
+  "clears_3sem_files": true,
+  "clears_3sem_unique": false,
+  "bootstrap_ci_files": [
+    0.008174505911524587,
+    0.023861917332466485
+  ],
+  "bootstrap_ci_unique": [
+    0.0005923391474833592,
+    0.03193881780780365
+  ],
+  "paired_seed_interactions": [
+    0.025217397423035387,
+    0.04412444736411114,
+    -0.006248388491162521,
+    0.0051488291656068
+  ],
+  "paired_seed_mean": 0.017060571365397702,
+  "paired_seed_sem": 0.011121242463701728,
+  "paired_seed_over_sem": 1.5340526403485188,
+  "paired_seed_bootstrap_ci": [
+    -0.0005497796627778606,
+    0.034670922393573264
+  ],
+  "paired_seed_ci_excludes_0": false,
+  "verdict": "STATUS CHANGED: resolved at 16 files/corner (3.9 SEM); unresolved at 4 unique seeds (1.74 SEM). The additivity-failure claim is not licensed at unique n."
+}

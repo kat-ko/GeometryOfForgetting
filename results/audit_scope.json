@@ -1,0 +1,715 @@
+{
+  "n_arms": 1280,
+  "rows": [
+    {
+      "status": "PASS",
+      "check": "C2 arms are homogeneous in \u03b3",
+      "evidence": "resolved per-module ScalingConfig over 24 arms; \u03b3 identical in all; 0 violations"
+    },
+    {
+      "status": "PASS",
+      "check": "module set is the (A, B) control only",
+      "evidence": "distinct module_list values on disk: [('A', 'B')]"
+    },
+    {
+      "status": "PASS",
+      "check": "`a` is a single scalar per arm (homogeneous)",
+      "evidence": "one `a` per spec, broadcast to both modules; values seen: [0.0, 0.5, 1.0]"
+    },
+    {
+      "status": "WARN",
+      "check": "two control modules are independent draws",
+      "evidence": "max|W_A\u2212W_B| at init: a=0.0: 4.94e+00, a=0.5: 0.00e+00 \u2014 modules are IDENTICAL for a>0, affecting 320 arms on disk; geometry is unaffected (per-module measurement) but A and B are not two samples there"
+    },
+    {
+      "status": "PASS",
+      "check": "nothing imported from outside continual_geometry",
+      "evidence": "24 monorepo modules imported; all under continual_geometry/ \u2014 the sibling projects (_icml_ws_extract, a1b2_modular, dynamics_of_specialization, \u2026) are not on the import path"
+    },
+    {
+      "status": "PASS",
+      "check": "no a1b2 machinery in the imported code path",
+      "evidence": "23 project modules imported by run_phase1, 2,004 identifiers scanned; no routing / task-conditioned heads / task-ID input / comms / gating / a1b2 config names"
+    },
+    {
+      "status": "PASS",
+      "check": "single shared readout per module, no task conditioning",
+      "evidence": "readout is `u[module]`, indexed by module only \u2014 no task index appears in any readout access (5 sites)"
+    },
+    {
+      "status": "PASS",
+      "check": "estimation_mode == 'full_P'",
+      "evidence": "values on disk: ['full_P']"
+    },
+    {
+      "status": "PASS",
+      "check": "n_t == 200",
+      "evidence": "values on disk: [200]"
+    },
+    {
+      "status": "PASS",
+      "check": "T == 16",
+      "evidence": "values on disk: [16]"
+    },
+    {
+      "status": "PASS",
+      "check": "center_policy == 'all'",
+      "evidence": "values on disk: ['all']"
+    },
+    {
+      "status": "PASS",
+      "check": "P == 16",
+      "evidence": "values on disk: [16]"
+    },
+    {
+      "status": "PASS",
+      "check": "M == 150",
+      "evidence": "values on disk: [150]"
+    },
+    {
+      "status": "PASS",
+      "check": "N == 300",
+      "evidence": "values on disk: [300]"
+    },
+    {
+      "status": "PASS",
+      "check": "d == 150",
+      "evidence": "values on disk: [150]"
+    },
+    {
+      "status": "PASS",
+      "check": "D == 4",
+      "evidence": "values on disk: [4]"
+    },
+    {
+      "status": "PASS",
+      "check": "\u03b3 grid",
+      "evidence": "[0.03, 0.1, 0.3, 1.0, 3.0, 10.0]"
+    },
+    {
+      "status": "PASS",
+      "check": "conditions are Hiratani 2\u00d72 only",
+      "evidence": "['S-HH', 'S-HL', 'S-LH', 'S-LL']"
+    },
+    {
+      "status": "PASS",
+      "check": "8 seeds",
+      "evidence": "[0, 1, 2, 3, 4, 5, 6, 7]"
+    },
+    {
+      "status": "PASS",
+      "check": "shared streams",
+      "evidence": "stream_ids: [0, 1, 2, 3, 4]"
+    },
+    {
+      "status": "PASS",
+      "check": "rho_convention: both is recorded",
+      "evidence": "every geometry row carries rho_c_glue and rho_c_signed"
+    },
+    {
+      "status": "PASS",
+      "check": "ccgp_enabled: false",
+      "evidence": "no ccgp field in any resolved spec"
+    },
+    {
+      "status": "PASS",
+      "check": "every record carries a version stamp",
+      "evidence": "1280 records, 0 unstamped; git_sha(s): ['36399f28', '7544bb3a']"
+    },
+    {
+      "status": "PASS",
+      "check": "zero arms report stale code",
+      "evidence": "0 stale"
+    },
+    {
+      "status": "PASS",
+      "check": "zero arms report unregistered modules",
+      "evidence": "0 unregistered"
+    },
+    {
+      "status": "PASS",
+      "check": "code drift from the arms on disk is declared and derivation-only",
+      "evidence": "attribution: arms ['fe9daafc00437f30'] vs tree d71d6a286c123fd4; pipeline: arms ['6ed6be5e1235948e'] vs tree 995fc31a36ee53e2. Declared: ['attribution', 'pipeline']"
+    },
+    {
+      "status": "PASS",
+      "check": "current code re-derives the stored identity exactly",
+      "evidence": "worst |\u0394| 0.00e+00 over 25,600 re-derived attributions (\u0394 log \u03b1 and all three terms)"
+    },
+    {
+      "status": "PASS",
+      "check": "identity residual \u2264 1e-14 across all arms",
+      "evidence": "max 4.44e-16 over 48,640 evaluations (median 1.16e-16)"
+    },
+    {
+      "status": "PASS",
+      "check": "rho_c_signed stays in [0.04, 0.80]",
+      "evidence": "32 cells; worst coverage 0.03|0.0|S-HH at 100.0%; 0 cells left the fitted range"
+    },
+    {
+      "status": "PASS",
+      "check": "rho_c_glue above 1 (unnormalized, expected)",
+      "evidence": "1,325/35,840 measurements (4%) \u2014 why the unnormalized convention cannot feed the calibration"
+    },
+    {
+      "status": "PASS",
+      "check": "richness separation \u2265 1 order of magnitude",
+      "evidence": "S-HH: \u00d7246; S-HL: \u00d7157; S-LH: \u00d7117; S-LL: \u00d7112"
+    },
+    {
+      "status": "PASS",
+      "check": "no module below 5% output-variance share",
+      "evidence": "min share 0.247 over 30,720 module-boundary records"
+    },
+    {
+      "status": "PASS",
+      "check": "completeness 1280/1280 arms",
+      "evidence": "1280 on disk, 1280 usable, 0 non-converged"
+    }
+  ],
+  "rho_coverage": {
+    "0.03|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4843921895747761,
+        "max": 0.5235791073027646,
+        "median": 0.4981597175898106
+      },
+      "rho_c_glue": {
+        "min": 0.5500687158643681,
+        "max": 0.6424429563440459,
+        "median": 0.5747140984074093,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.03|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.48027356072193267,
+        "max": 0.5222609499774584,
+        "median": 0.49924353798437016
+      },
+      "rho_c_glue": {
+        "min": 0.5292413062376731,
+        "max": 0.6686388016979502,
+        "median": 0.596938223591253,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.03|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.47813087447905767,
+        "max": 0.5238135531319503,
+        "median": 0.4972768455195513
+      },
+      "rho_c_glue": {
+        "min": 0.5377178109176757,
+        "max": 0.6409702257195427,
+        "median": 0.5827775416634542,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.03|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.48017131074090674,
+        "max": 0.5134151888748902,
+        "median": 0.49737818712203685
+      },
+      "rho_c_glue": {
+        "min": 0.5206452101675875,
+        "max": 0.6683206161895524,
+        "median": 0.5865576939081766,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.1|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.48057759650398457,
+        "max": 0.5206064443134273,
+        "median": 0.49560481168906806
+      },
+      "rho_c_glue": {
+        "min": 0.5225999956865587,
+        "max": 0.6314296913092124,
+        "median": 0.5600143113050541,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.1|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.47754259979888014,
+        "max": 0.5185003877886326,
+        "median": 0.49735052136137525
+      },
+      "rho_c_glue": {
+        "min": 0.5200018412262487,
+        "max": 0.675469892919521,
+        "median": 0.5924181358119235,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.1|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.47693839606807786,
+        "max": 0.5228199907032348,
+        "median": 0.4966508105067824
+      },
+      "rho_c_glue": {
+        "min": 0.5222627103848335,
+        "max": 0.6333855855517355,
+        "median": 0.5728096287056126,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.1|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.47754259979888014,
+        "max": 0.5112037673349977,
+        "median": 0.49632986836293413
+      },
+      "rho_c_glue": {
+        "min": 0.5124064395573348,
+        "max": 0.6687580188331251,
+        "median": 0.5822699989747087,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.3|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4630134240341525,
+        "max": 0.5101119862343851,
+        "median": 0.48278302057801953
+      },
+      "rho_c_glue": {
+        "min": 0.4308121098352854,
+        "max": 0.5885377270552259,
+        "median": 0.5046141184132394,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.3|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.46494291277203054,
+        "max": 0.5117934340035543,
+        "median": 0.492225490464231
+      },
+      "rho_c_glue": {
+        "min": 0.4762779164739179,
+        "max": 0.692388816441115,
+        "median": 0.5937438511900961,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.3|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.47133770738287795,
+        "max": 0.5191706595066717,
+        "median": 0.49309669766853415
+      },
+      "rho_c_glue": {
+        "min": 0.48871844044568097,
+        "max": 0.6189280062975308,
+        "median": 0.5470310906985856,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "0.3|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.46494291277203054,
+        "max": 0.5097860018712155,
+        "median": 0.49158719132669826
+      },
+      "rho_c_glue": {
+        "min": 0.47813831921345373,
+        "max": 0.6675968159570721,
+        "median": 0.5669159533574109,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4125374478983143,
+        "max": 0.4901767619391772,
+        "median": 0.45062231897865357
+      },
+      "rho_c_glue": {
+        "min": 0.3011445596063943,
+        "max": 0.5037879911768254,
+        "median": 0.37544372098155654,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.43282115479924826,
+        "max": 0.510933992838789,
+        "median": 0.47585191442546093
+      },
+      "rho_c_glue": {
+        "min": 0.3684648454907801,
+        "max": 0.7951609687386415,
+        "median": 0.6385556469527076,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4326608746102397,
+        "max": 0.5124959908764279,
+        "median": 0.48100489834291915
+      },
+      "rho_c_glue": {
+        "min": 0.37282492988357313,
+        "max": 0.5951296942712262,
+        "median": 0.4995581802172115,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.43282115479924826,
+        "max": 0.5015504554410877,
+        "median": 0.4754013795351909
+      },
+      "rho_c_glue": {
+        "min": 0.3684648454907801,
+        "max": 0.6973955791183886,
+        "median": 0.5445980108606421,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.5|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.3881080168552178,
+        "max": 0.47838380915571094,
+        "median": 0.4369694341400753
+      },
+      "rho_c_glue": {
+        "min": 0.3265303323043354,
+        "max": 0.5345650321293085,
+        "median": 0.41068352504987177,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.5|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4050308940326698,
+        "max": 0.48514138673008894,
+        "median": 0.45676079834844
+      },
+      "rho_c_glue": {
+        "min": 0.40357553416031183,
+        "max": 0.95718500305972,
+        "median": 0.6704748847812727,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.5|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4061908773205994,
+        "max": 0.5070902962055539,
+        "median": 0.47327445590445133
+      },
+      "rho_c_glue": {
+        "min": 0.41302891946873965,
+        "max": 0.6786358124109391,
+        "median": 0.5199196870681488,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|0.5|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.4050308940326698,
+        "max": 0.5043833259341325,
+        "median": 0.46696301200450185
+      },
+      "rho_c_glue": {
+        "min": 0.4187222941900528,
+        "max": 0.8430177615709682,
+        "median": 0.558769470344371,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|1.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.3759718148051737,
+        "max": 0.4783714866815706,
+        "median": 0.43068589277856995
+      },
+      "rho_c_glue": {
+        "min": 0.3652943207254731,
+        "max": 0.6323389720515686,
+        "median": 0.46537902350213856,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|1.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.39469500237878663,
+        "max": 0.47905343283552,
+        "median": 0.4481318687122069
+      },
+      "rho_c_glue": {
+        "min": 0.40617473960295525,
+        "max": 1.0658187765348675,
+        "median": 0.6841205449807288,
+        "n_above_one": 30
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|1.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.39398799330942524,
+        "max": 0.5102518509601114,
+        "median": 0.4737474901823202
+      },
+      "rho_c_glue": {
+        "min": 0.42617020576526504,
+        "max": 0.8244426431684926,
+        "median": 0.534594853259315,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "1.0|1.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.39469500237878663,
+        "max": 0.505708261634265,
+        "median": 0.46477085846573907
+      },
+      "rho_c_glue": {
+        "min": 0.42875108314650545,
+        "max": 0.9748506997383455,
+        "median": 0.5619007048137621,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "3.0|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.3643766077414438,
+        "max": 0.4662166240707597,
+        "median": 0.4113225893297391
+      },
+      "rho_c_glue": {
+        "min": 0.21830626991114857,
+        "max": 0.43129934785379537,
+        "median": 0.277599366339608,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "3.0|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.38127254795374094,
+        "max": 0.5011904335355957,
+        "median": 0.4446371991774797
+      },
+      "rho_c_glue": {
+        "min": 0.2544459487054989,
+        "max": 1.1000993595870996,
+        "median": 0.7804265034365898,
+        "n_above_one": 35
+      },
+      "in_calibration_range": 1.0
+    },
+    "3.0|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.3803457766926263,
+        "max": 0.5101402084344986,
+        "median": 0.4614403314611981
+      },
+      "rho_c_glue": {
+        "min": 0.24548057977655788,
+        "max": 0.7264650927088139,
+        "median": 0.4805480477311285,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "3.0|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.39021513454321044,
+        "max": 0.5039161208948633,
+        "median": 0.4524661315272237
+      },
+      "rho_c_glue": {
+        "min": 0.2544459487054989,
+        "max": 0.9625946117181009,
+        "median": 0.564516862938431,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "10.0|0.0|S-HH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.34378169409493625,
+        "max": 0.4625682967566144,
+        "median": 0.39651060869415206
+      },
+      "rho_c_glue": {
+        "min": 0.1907121697341267,
+        "max": 0.4769843622662905,
+        "median": 0.27402370763037703,
+        "n_above_one": 0
+      },
+      "in_calibration_range": 1.0
+    },
+    "10.0|0.0|S-HL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.2918033550087427,
+        "max": 0.49844506803889205,
+        "median": 0.40161099756932805
+      },
+      "rho_c_glue": {
+        "min": 0.19558513605799946,
+        "max": 2.2428160626164746,
+        "median": 1.3163324264067224,
+        "n_above_one": 790
+      },
+      "in_calibration_range": 1.0
+    },
+    "10.0|0.0|S-LH": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.3491864232527461,
+        "max": 0.5248537575279587,
+        "median": 0.44601166194604075
+      },
+      "rho_c_glue": {
+        "min": 0.20888308044430287,
+        "max": 1.6013677105310473,
+        "median": 0.6409111319563575,
+        "n_above_one": 95
+      },
+      "in_calibration_range": 1.0
+    },
+    "10.0|0.0|S-LL": {
+      "n": 1120,
+      "rho_c_signed": {
+        "min": 0.312097547235494,
+        "max": 0.5147675333383487,
+        "median": 0.4299003123941123
+      },
+      "rho_c_glue": {
+        "min": 0.19558513605799946,
+        "max": 2.140796906321944,
+        "median": 0.80672262953163,
+        "n_above_one": 375
+      },
+      "in_calibration_range": 1.0
+    }
+  },
+  "richness_separation": {
+    "S-HH": {
+      "gamma_lo": 0.03,
+      "gamma_hi": 10.0,
+      "dW_lo": 0.0024639945468948226,
+      "dW_hi": 0.6055991856868508,
+      "ratio": 245.77943423212503
+    },
+    "S-HL": {
+      "gamma_lo": 0.03,
+      "gamma_hi": 10.0,
+      "dW_lo": 0.004876281119408958,
+      "dW_hi": 0.7675185749767166,
+      "ratio": 157.3983443903139
+    },
+    "S-LH": {
+      "gamma_lo": 0.03,
+      "gamma_hi": 10.0,
+      "dW_lo": 0.0076806639600477495,
+      "dW_hi": 0.9020092246312909,
+      "ratio": 117.43896482429668
+    },
+    "S-LL": {
+      "gamma_lo": 0.03,
+      "gamma_hi": 10.0,
+      "dW_lo": 0.008340349622781,
+      "dW_hi": 0.9376010408722245,
+      "ratio": 112.41747447987575
+    }
+  },
+  "timing_by_gamma": {
+    "0.03": {
+      "n": 160,
+      "median_wall_min": 115.92032931844393,
+      "median_steps": 1469.0
+    },
+    "0.1": {
+      "n": 160,
+      "median_wall_min": 69.99735469619434,
+      "median_steps": 846.5
+    },
+    "0.3": {
+      "n": 160,
+      "median_wall_min": 46.08717889388402,
+      "median_steps": 311.0
+    },
+    "1.0": {
+      "n": 160,
+      "median_wall_min": 33.08881271878878,
+      "median_steps": 93.0
+    },
+    "3.0": {
+      "n": 160,
+      "median_wall_min": 27.066580468416213,
+      "median_steps": 32.0
+    },
+    "10.0": {
+      "n": 160,
+      "median_wall_min": 26.769952193895975,
+      "median_steps": 11.0
+    }
+  },
+  "non_converged": []
+}

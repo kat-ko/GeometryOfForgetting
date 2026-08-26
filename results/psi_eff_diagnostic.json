@@ -1,0 +1,67 @@
+{
+  "purpose": "02 \u00a72c diagnostic (reclassified from gate 2026-08-11)",
+  "expectation": "mismatch",
+  "n_t": 200,
+  "cases": [
+    {
+      "config": {
+        "P": 8,
+        "d": 200,
+        "D": 4,
+        "R": 1.0,
+        "M": 60
+      },
+      "replicaMFT": {
+        "estimator": "replicaMFT@d56eda1d86a71f4f4601ef1acc3254e20259a80c",
+        "alpha_mf_harmonic": 0.398904011106741,
+        "alpha_mf_arithmetic": 0.4019459541514348,
+        "R_M_mean": 1.0690346351824642,
+        "D_M_mean": 3.260950285870186,
+        "center_cos_abs": 0.142631537400598,
+        "psi_eff_via_identity": 0.6937570211641095
+      },
+      "glue_core": {
+        "estimator": "glue_core",
+        "alpha": 0.4174323109318165,
+        "R_eff": 1.000587420663601,
+        "D_eff": 3.6963812992489213,
+        "Psi_eff_direct": 0.7719475526158008,
+        "rho_c_glue": 0.04431819505010908,
+        "rho_c_signed": 0.0248681623108919,
+        "identity_residual": 1.3298240164337693e-16
+      },
+      "psi_relative_gap": 0.10128995316681419,
+      "verdict": "MISMATCH as expected \u2014 R_M/D_M are PRX eq-28/29 functionals, not R_eff/D_eff"
+    },
+    {
+      "config": {
+        "P": 16,
+        "d": 300,
+        "D": 4,
+        "R": 1.0,
+        "M": 60
+      },
+      "replicaMFT": {
+        "estimator": "replicaMFT@d56eda1d86a71f4f4601ef1acc3254e20259a80c",
+        "alpha_mf_harmonic": 0.4150538685439306,
+        "alpha_mf_arithmetic": 0.41679731886239046,
+        "R_M_mean": 0.9665362064344639,
+        "D_M_mean": 3.3190492912867877,
+        "center_cos_abs": 0.07422238839328858,
+        "psi_eff_via_identity": 0.6653570864666257
+      },
+      "glue_core": {
+        "estimator": "glue_core",
+        "alpha": 0.4325253963695785,
+        "R_eff": 0.9919405632529327,
+        "D_eff": 3.581771026438982,
+        "Psi_eff_direct": 0.7683354426410218,
+        "rho_c_glue": 0.04037617895920652,
+        "rho_c_signed": 0.00040430856927831154,
+        "identity_residual": 1.283419463855607e-16
+      },
+      "psi_relative_gap": 0.13402786134715536,
+      "verdict": "MISMATCH as expected \u2014 R_M/D_M are PRX eq-28/29 functionals, not R_eff/D_eff"
+    }
+  ]
+}

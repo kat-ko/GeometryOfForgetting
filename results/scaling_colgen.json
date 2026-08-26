@@ -1,0 +1,22 @@
+{
+  "colgen@128": {
+    "mean_latency_s": 33.38324122002632,
+    "throughput_eval_per_s": 2.8292691168240904,
+    "grid_hours": 4.7754775361481325
+  },
+  "colgen@192": {
+    "mean_latency_s": 45.29128549043768,
+    "throughput_eval_per_s": 3.3903205340577487,
+    "grid_hours": 3.9852016867974913
+  },
+  "colgen@254": {
+    "mean_latency_s": 66.86217584035462,
+    "throughput_eval_per_s": 3.4697729156225017,
+    "grid_hours": 3.8939467912375245
+  },
+  "nnls@128": {
+    "mean_latency_s": 218.30986905949612,
+    "throughput_eval_per_s": 0.5466176169045257,
+    "grid_hours": 24.717664951276188
+  }
+}

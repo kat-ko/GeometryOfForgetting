@@ -216,3 +216,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Geometry of Forgetting (project-specific) ---
+
+# Human-only reference PDFs. papers/.gitignore also excludes them.
+papers/*.pdf
+
+# Per-arm campaign records (thousands of JSON files).
+# Summaries live as results/*.json and results/LOG.md and stay tracked.
+# Any new campaign directory under results/ is ignored automatically.
+/results/*/
+!/results/figures/
+!/results/logs/
+
+# Compiled paper PDF; TeX sources are tracked.
+paper/harness/main.pdf
+paper/harness/main.aux
+paper/harness/main.out
+paper/harness/main.toc
+paper/harness/main.bbl
+

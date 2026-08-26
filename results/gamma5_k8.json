@@ -1,0 +1,666 @@
+{
+  "generated_by": "scripts/analyse_gamma5_k8.py",
+  "directory": "results/gamma_5_k8",
+  "precommit": {
+    "written": "2026-08-19T07:35:00Z",
+    "written_before_any_gamma5_k8_arm_completed": true,
+    "question": "does the S-HL centre decorrelation at gamma_0 = 5 hold with the arrangement as the sampling unit, rather than the arm?",
+    "why": "results/gamma_5_n40/ is 5 arrangements x 8 initialisations. Its 40 arms are crossed, not independent: the arm-level statistics the paper quotes (-0.0102 +/- 0.0032, 31/40, p = 6.8e-4) are an inference about new arms, while the onset is a claim about gamma_0, i.e. about new arrangements. Re-pooled by arrangement the effect is 3/5 with a 95% t interval of [-0.0368, +0.0165], which includes zero, and a sign test on 5 units has a floor of p = 0.0625 so it could not have cleared alpha = 0.05 under any outcome. n = 8 arrangements is the smallest count whose sign-test floor (0.0078) clears 0.05. See docs/14-claim-security.md section 6 and results/seed_security.json.",
+    "design": {
+      "stream_id": "0..7 (arrangement; stream_rng(stream_id))",
+      "seed": "0..7 (initialisation; paired_init(seed))",
+      "gamma": [
+        5
+      ],
+      "corners": [
+        "S-HH",
+        "S-HL",
+        "S-LH",
+        "S-LL"
+      ],
+      "n_arms": 256,
+      "directory": "results/gamma_5_k8/",
+      "never": [
+        "results/phase1/",
+        "results/gamma_5_n40/",
+        "results/gamma_5/"
+      ]
+    },
+    "sampling_unit": "arrangement. The 8 initialisations are averaged within each arrangement first; every statistic below is computed on the 8 arrangement means.",
+    "statistics": {
+      "primary": "95% two-sided t interval on the 8 arrangement means of Delta rho_c for S-HL. Uses the magnitudes, so it is the statistic with power at n = 8.",
+      "secondary": "two-sided sign test on the 8 arrangement means (distribution-free). Ceiling: 8/8 gives p = 0.0078 and clears alpha = 0.05; 7/8 gives p = 0.0703 and does not.",
+      "descriptive": "per-arrangement mean and per-arrangement arm sign counts, reported in full whatever the outcome, plus the lazy-arm drift band [+0.0051, +0.0101] drawn alongside so an arrangement that merely failed to move is legible as such."
+    },
+    "decision_rule": {
+      "stands_at_arrangement_level": "primary interval excludes zero AND at least 7 of 8 arrangement means are negative. Then paper/body.tex quotes the arrangement-level mean and interval, states the unit, and may keep 'the onset sits between 3 and 5'.",
+      "suggestive_only": "at least 7 of 8 arrangement means negative BUT the primary interval includes zero. Then the paper reports the 3 -> 10 bracket, states that gamma_0 = 5 is negative in 7 of 8 arrangements with an interval that includes zero, and makes no onset-location claim at 5.",
+      "arrangement_dependent": "fewer than 7 of 8 arrangement means negative. Then the paper reports the 3 -> 10 bracket (factor 3.33) and describes gamma_0 = 5 as arrangement-dependent, giving the per-arrangement counts.",
+      "fixed_before_the_arms_exist": true,
+      "no_other_reading_will_be_substituted": "the arm-level p = 6.8e-4 will not be quoted as the onset evidence under any outcome, because it is an inference about a different unit."
+    },
+    "can_show": "whether the gamma_0 = 5 decorrelation generalises across manifold arrangements, at the smallest arrangement count that can clear alpha = 0.05",
+    "cannot_show": [
+      "a finer onset location than the 3 / 5 / 10 sampling allows",
+      "initialisation-level variance beyond the 8 inits already in use",
+      "the arrangement standard deviation to better than about +/-27% (relative SE of an SD at n = 8 is 1/sqrt(2*7) = 0.267)"
+    ],
+    "built_in_reproducibility_check": "arms with stream_id 0..4 and seed 0..7 have identical specs to results/gamma_5_n40/, and every arm is a deterministic function of its spec, so the first five arrangements must reproduce that set bitwise. A mismatch means the code moved and invalidates the comparison rather than the new arms.",
+    "reporting": "off-design, own directory, never pooled with the registered grid. Supersedes results/gamma_5_n40/ for the onset claim only; gamma_5_n40 remains the record of the 5-arrangement run. The registered-grid endpoints gamma_0 = 3 and 10 stay at unique n = 8 and the mixed-population sentence must continue to name both units."
+  },
+  "n_files": 256,
+  "n_usable": 256,
+  "n_arrangements": 8,
+  "n_inits": 8,
+  "overlap_with_gamma_5_n40": {
+    "n_overlap_expected": 160,
+    "n_identical": 160,
+    "n_mismatched": 0,
+    "missing_in_k8": [],
+    "missing_in_n40": [],
+    "worst_rho_c_diff": 0.0,
+    "ok": true,
+    "verdict": "identical: arrangements 0\u20134 reproduce gamma_5_n40"
+  },
+  "corners": {
+    "S-HH": {
+      "mean_delta": 0.0633496653410701,
+      "arm_unit": {
+        "sign_test_on_spearman": {
+          "n": 64,
+          "n_declining": 0,
+          "p": 1.0842021724855044e-19,
+          "p_floor": 1.0842021724855044e-19,
+          "p_one_flip": 7.047314121155779e-18,
+          "can_reach_005": true
+        },
+        "sem_assuming_independent_arms": 0.0017152443326822323
+      },
+      "arrangement_unit": {
+        "n": 8,
+        "means": {
+          "0": 0.051843325579747135,
+          "1": 0.059387965924697035,
+          "2": 0.06608300692889169,
+          "3": 0.039216653327823404,
+          "4": 0.08007535143078298,
+          "5": 0.07470660071396987,
+          "6": 0.06059162750647338,
+          "7": 0.07489279131617534
+        },
+        "spread": {
+          "n_units": 8,
+          "mean": 0.0633496653410701,
+          "min": 0.039216653327823404,
+          "max": 0.08007535143078298,
+          "sd": 0.013562255544846144,
+          "sem": 0.004794981431972782,
+          "t_ci_95": [
+            0.052011335961090165,
+            0.07468799472105003
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        },
+        "per_arrangement_arm_signs": {
+          "0": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "3": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "4": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "5": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "6": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "7": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "init_unit": {
+        "n": 8,
+        "spread": {
+          "n_units": 8,
+          "mean": 0.0633496653410701,
+          "min": 0.060149871422569716,
+          "max": 0.06576940009648544,
+          "sd": 0.0016691611322808885,
+          "sem": 0.000590137577764416,
+          "t_ci_95": [
+            0.06195421171291214,
+            0.06474511896922806
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        }
+      }
+    },
+    "S-HL": {
+      "mean_delta": -0.0068633099096639975,
+      "arm_unit": {
+        "sign_test_on_spearman": {
+          "n": 64,
+          "n_declining": 53,
+          "p": 1.0058579844832594e-07,
+          "p_floor": 1.0842021724855044e-19,
+          "p_one_flip": 7.047314121155779e-18,
+          "can_reach_005": true
+        },
+        "sem_assuming_independent_arms": 0.002445769198154291
+      },
+      "arrangement_unit": {
+        "n": 8,
+        "means": {
+          "0": -0.011382325989589492,
+          "1": -0.016911289546837585,
+          "2": 0.008428833230705354,
+          "3": -0.0419041005691601,
+          "4": 0.010898576366475891,
+          "5": 0.0015381138604264183,
+          "6": 0.01656417207634344,
+          "7": -0.022138458705675906
+        },
+        "spread": {
+          "n_units": 8,
+          "mean": -0.0068633099096639975,
+          "min": -0.0419041005691601,
+          "max": 0.01656417207634344,
+          "sd": 0.019825436984497718,
+          "sem": 0.007009350465862456,
+          "t_ci_95": [
+            -0.023437790009155544,
+            0.009711170189827548
+          ],
+          "ci_excludes_zero": false,
+          "sign_stable": false
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 4,
+          "p": 1.0,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        },
+        "per_arrangement_arm_signs": {
+          "0": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 8,
+            "n_declining": 5,
+            "p": 0.7265625,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "3": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "4": {
+            "n": 8,
+            "n_declining": 2,
+            "p": 0.2890625,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "5": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "6": {
+            "n": 8,
+            "n_declining": 6,
+            "p": 0.2890625,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "7": {
+            "n": 8,
+            "n_declining": 8,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "init_unit": {
+        "n": 8,
+        "spread": {
+          "n_units": 8,
+          "mean": -0.0068633099096639975,
+          "min": -0.008776143457939874,
+          "max": -0.005093241201520646,
+          "sd": 0.001256863781484033,
+          "sem": 0.0004443684514575634,
+          "t_ci_95": [
+            -0.007914074326623282,
+            -0.005812545492704712
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 8,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        }
+      }
+    },
+    "S-LH": {
+      "mean_delta": 0.10892830526132559,
+      "arm_unit": {
+        "sign_test_on_spearman": {
+          "n": 64,
+          "n_declining": 0,
+          "p": 1.0842021724855044e-19,
+          "p_floor": 1.0842021724855044e-19,
+          "p_one_flip": 7.047314121155779e-18,
+          "can_reach_005": true
+        },
+        "sem_assuming_independent_arms": 0.0017066804471815766
+      },
+      "arrangement_unit": {
+        "n": 8,
+        "means": {
+          "0": 0.11617092352310739,
+          "1": 0.10466891953178231,
+          "2": 0.09766641609761781,
+          "3": 0.09277392414919002,
+          "4": 0.13312527226109122,
+          "5": 0.11648542346448909,
+          "6": 0.10039841820568658,
+          "7": 0.1101371448576403
+        },
+        "spread": {
+          "n_units": 8,
+          "mean": 0.10892830526132559,
+          "min": 0.09277392414919002,
+          "max": 0.13312527226109122,
+          "sd": 0.012957157848665302,
+          "sem": 0.004581047089847866,
+          "t_ci_95": [
+            0.09809585021498278,
+            0.1197607603076684
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        },
+        "per_arrangement_arm_signs": {
+          "0": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "3": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "4": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "5": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "6": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "7": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "init_unit": {
+        "n": 8,
+        "spread": {
+          "n_units": 8,
+          "mean": 0.10892830526132559,
+          "min": 0.10623185759029144,
+          "max": 0.11124013838752744,
+          "sd": 0.0014952005581846412,
+          "sem": 0.0005286332269631354,
+          "t_ci_95": [
+            0.1076782863126508,
+            0.11017832421000037
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        }
+      }
+    },
+    "S-LL": {
+      "mean_delta": 0.031909656812302574,
+      "arm_unit": {
+        "sign_test_on_spearman": {
+          "n": 64,
+          "n_declining": 3,
+          "p": 4.742842403537839e-15,
+          "p_floor": 1.0842021724855044e-19,
+          "p_one_flip": 7.047314121155779e-18,
+          "can_reach_005": true
+        },
+        "sem_assuming_independent_arms": 0.002061803796378938
+      },
+      "arrangement_unit": {
+        "n": 8,
+        "means": {
+          "0": 0.0266451134192039,
+          "1": 0.036086324558946295,
+          "2": 0.009163315586666547,
+          "3": 0.017677730560690823,
+          "4": 0.05377603191399999,
+          "5": 0.05342253325028032,
+          "6": 0.021349047285751932,
+          "7": 0.03715715792288081
+        },
+        "spread": {
+          "n_units": 8,
+          "mean": 0.031909656812302574,
+          "min": 0.009163315586666547,
+          "max": 0.05377603191399999,
+          "sd": 0.01623536126919826,
+          "sem": 0.005740067024231761,
+          "t_ci_95": [
+            0.018336555121036123,
+            0.045482758503569025
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        },
+        "per_arrangement_arm_signs": {
+          "0": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "1": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "2": {
+            "n": 8,
+            "n_declining": 3,
+            "p": 0.7265625,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "3": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "4": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "5": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "6": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          },
+          "7": {
+            "n": 8,
+            "n_declining": 0,
+            "p": 0.0078125,
+            "p_floor": 0.0078125,
+            "p_one_flip": 0.0703125,
+            "can_reach_005": true
+          }
+        }
+      },
+      "init_unit": {
+        "n": 8,
+        "spread": {
+          "n_units": 8,
+          "mean": 0.031909656812302574,
+          "min": 0.028997328302629882,
+          "max": 0.03538430004207471,
+          "sd": 0.0023909124528267013,
+          "sem": 0.0008453152043085609,
+          "t_ci_95": [
+            0.02991080397995444,
+            0.033908509644650704
+          ],
+          "ci_excludes_zero": true,
+          "sign_stable": true
+        },
+        "sign_test": {
+          "n": 8,
+          "n_declining": 0,
+          "p": 0.0078125,
+          "p_floor": 0.0078125,
+          "p_one_flip": 0.0703125,
+          "can_reach_005": true
+        }
+      }
+    }
+  },
+  "S-HL_arrangement_means": {
+    "0": -0.011382325989589492,
+    "1": -0.016911289546837585,
+    "2": 0.008428833230705354,
+    "3": -0.0419041005691601,
+    "4": 0.010898576366475891,
+    "5": 0.0015381138604264183,
+    "6": 0.01656417207634344,
+    "7": -0.022138458705675906
+  },
+  "S-HL_n_arrangements_negative": 4,
+  "S-HL_t_ci_95": [
+    -0.023437790009155544,
+    0.009711170189827548
+  ],
+  "S-HL_ci_excludes_zero": false,
+  "S-HL_sign_test": {
+    "n": 8,
+    "n_declining": 4,
+    "p": 1.0,
+    "p_floor": 0.0078125,
+    "p_one_flip": 0.0703125,
+    "can_reach_005": true
+  },
+  "S-HL_in_lazy_arm_band": {
+    "0": false,
+    "1": false,
+    "2": true,
+    "3": false,
+    "4": true,
+    "5": true,
+    "6": false,
+    "7": false
+  },
+  "verdict": {
+    "outcome": "arrangement_dependent",
+    "licenses": "fewer than 7 of 8 arrangement means negative. Then the paper reports the 3 -> 10 bracket (factor 3.33) and describes gamma_0 = 5 as arrangement-dependent, giving the per-arrangement counts."
+  },
+  "paper_sentence_this_licenses": "fewer than 7 of 8 arrangement means negative. Then the paper reports the 3 -> 10 bracket (factor 3.33) and describes gamma_0 = 5 as arrangement-dependent, giving the per-arrangement counts."
+}

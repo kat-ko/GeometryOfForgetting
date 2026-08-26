@@ -1,0 +1,198 @@
+{
+  "generated_by": "scripts/fig2_gamma_sweep.py",
+  "n_arms": 960,
+  "result_set_sha": "8dd793134c38",
+  "condition": "pooled",
+  "lag": 12,
+  "only_task": null,
+  "min_floors": 2.0,
+  "resolved_gammas": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+  ],
+  "coverage_note": "center-collapse share reported for 11,195/19,200 comparisons (58%)",
+  "data": {
+    "0.03": {
+      "dlog_alpha": 0.0011774633986567223,
+      "floors": 0.06355287092189213,
+      "floors_signed": 0.06355287092189213,
+      "terms": {
+        "utility": 0.0005060987683235619,
+        "radius": 0.000580454265046812,
+        "dimension": 9.091036528641183e-05
+      },
+      "term_sem": {
+        "utility": 0.0001527637090186273,
+        "radius": 0.0002952059936588228,
+        "dimension": 0.0003058109431026329
+      },
+      "sign_positive_fraction": {
+        "utility": 0.53125,
+        "radius": 0.5,
+        "dimension": 0.46875
+      },
+      "shares": {
+        "utility": 0.42982123172652664,
+        "radius": 0.49297011330371415,
+        "dimension": 0.07720865496975923
+      },
+      "n": 160,
+      "cancellation_median": 0.0,
+      "center_share_median": null,
+      "center_coverage": 0.0,
+      "R_eff_floor_cv": 0.0028
+    },
+    "0.1": {
+      "dlog_alpha": -0.008309548172697984,
+      "floors": 0.4485028095490555,
+      "floors_signed": -0.4485028095490555,
+      "terms": {
+        "utility": 0.002197195382322513,
+        "radius": -0.002938098031624134,
+        "dimension": -0.007568645523396353
+      },
+      "term_sem": {
+        "utility": 0.000926637992128596,
+        "radius": 0.0018976348346993641,
+        "dimension": 0.0020454419896401973
+      },
+      "sign_positive_fraction": {
+        "utility": 0.4375,
+        "radius": 0.375,
+        "dimension": 0.28125
+      },
+      "shares": {
+        "utility": 0.17295386833637058,
+        "radius": 0.23127457130541204,
+        "dimension": 0.5957715603582173
+      },
+      "n": 160,
+      "cancellation_median": 1.2212453270876722e-15,
+      "center_share_median": 0.038487706559017704,
+      "center_coverage": 0.6875,
+      "R_eff_floor_cv": 0.00307
+    },
+    "0.3": {
+      "dlog_alpha": -0.09618661371425442,
+      "floors": 5.191613983729507,
+      "floors_signed": -5.191613983729507,
+      "terms": {
+        "utility": -0.00972467931964085,
+        "radius": -0.04050459289988445,
+        "dimension": -0.0459573414947292
+      },
+      "term_sem": {
+        "utility": 0.0038842325153979093,
+        "radius": 0.0044666788955163884,
+        "dimension": 0.005675342585111097
+      },
+      "sign_positive_fraction": {
+        "utility": 0.3125,
+        "radius": 0.25,
+        "dimension": 0.25
+      },
+      "shares": {
+        "utility": 0.10110221104706267,
+        "radius": 0.42110426114192046,
+        "dimension": 0.47779352781101697
+      },
+      "n": 160,
+      "cancellation_median": 1.6653345369377348e-16,
+      "center_share_median": 0.12252674003156999,
+      "center_coverage": 0.9375,
+      "R_eff_floor_cv": 0.00618
+    },
+    "1.0": {
+      "dlog_alpha": -0.30881276746593583,
+      "floors": 16.66798133358934,
+      "floors_signed": -16.66798133358934,
+      "terms": {
+        "utility": -0.08780857251062917,
+        "radius": -0.09346654443372912,
+        "dimension": -0.12753765052157756
+      },
+      "term_sem": {
+        "utility": 0.01111077055049278,
+        "radius": 0.004802533574989752,
+        "dimension": 0.011882301044356251
+      },
+      "sign_positive_fraction": {
+        "utility": 0.25,
+        "radius": 0.0,
+        "dimension": 0.25
+      },
+      "shares": {
+        "utility": 0.2843424293340302,
+        "radius": 0.30266411975353036,
+        "dimension": 0.4129934509124395
+      },
+      "n": 160,
+      "cancellation_median": 2.7755575615628914e-16,
+      "center_share_median": 0.2485456611647812,
+      "center_coverage": 0.78125,
+      "R_eff_floor_cv": 0.00808
+    },
+    "3.0": {
+      "dlog_alpha": -0.5796418995528004,
+      "floors": 31.28581904560688,
+      "floors_signed": -31.28581904560688,
+      "terms": {
+        "utility": -0.23563884919171482,
+        "radius": -0.0948491086593342,
+        "dimension": -0.24915394170175137
+      },
+      "term_sem": {
+        "utility": 0.017285827692969775,
+        "radius": 0.005284964282231036,
+        "dimension": 0.017726083979839893
+      },
+      "sign_positive_fraction": {
+        "utility": 0.25,
+        "radius": 0.125,
+        "dimension": 0.25
+      },
+      "shares": {
+        "utility": 0.40652487229358786,
+        "radius": 0.1636339759643174,
+        "dimension": 0.4298411517420949
+      },
+      "n": 160,
+      "cancellation_median": 0.0,
+      "center_share_median": 0.44168591876535146,
+      "center_coverage": 0.75,
+      "R_eff_floor_cv": 0.00715
+    },
+    "10.0": {
+      "dlog_alpha": -0.9402268053245837,
+      "floors": 50.748170061392265,
+      "floors_signed": -50.748170061392265,
+      "terms": {
+        "utility": -0.4213294067577437,
+        "radius": -0.11357612965871558,
+        "dimension": -0.40532126890812437
+      },
+      "term_sem": {
+        "utility": 0.02412155076227189,
+        "radius": 0.0052207188179981805,
+        "dimension": 0.023141848432068925
+      },
+      "sign_positive_fraction": {
+        "utility": 0.25,
+        "radius": 0.0625,
+        "dimension": 0.25
+      },
+      "shares": {
+        "utility": 0.4481146510307085,
+        "radius": 0.12079652379141328,
+        "dimension": 0.43108882517787817
+      },
+      "n": 160,
+      "cancellation_median": 0.0,
+      "center_share_median": 0.44955037657960645,
+      "center_coverage": 0.75,
+      "R_eff_floor_cv": 0.01125
+    }
+  }
+}
