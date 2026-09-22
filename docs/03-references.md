@@ -44,7 +44,7 @@ non-trivial and you'll need to consult them repeatedly.
 | **Chou, Le, Wang & Chung** — *Feature Learning beyond the Lazy-Rich Dichotomy: Insights from Representational Geometry*, ICML 2025 (spotlight). **Pin `arXiv:2503.18114v2`** (11 Jul 2025, post-acceptance). | **Algorithm 2** (the geometric estimator — verified vs v2 PDF 2026-08-10; Algorithm 1 is the α_sim bisection), Definition B.6, Definition 2.3, Appendix B.4/Fig 3c (sign conventions), Appendix B.5 (validation settings), Appendix D.1.1 (generator), Figure 7c (ultra-rich OOD signature), Eq. B.4/B.7. ⚠️ **The paper is internally inconsistent** — see §E.4. | `glue-algorithm.md`, `glue-sign-conventions.md`, `manifold-generator.md`, `validation-settings.md` |
 | **Chou, Kirsanov, Yang & Chung** — *Diagnosing Generalization Failures from Representational Geometry Markers*, ICLR 2026. **Pin `arXiv:2603.01879v1`**. | **Appendix B.3**: the *exact* three-factor identity `α = Ψ_eff·(1+R_eff⁻²)/D_eff`, the `a/b/c` scalar forms, `D_eff`/`R_eff`/`Ψ_eff` definitions, and the ρ_c/ρ_a/ψ conventions (abs, unnormalized, cross-index). Verified 2026-08-10. Closest competitor to RQ2 (§C7 of `04`). | `glue-decomposition.md` |
 | **Chou, Kim, Arend, Yang, Mensh, Slatton, Wakhloo, Shim, Perich & Chung** — *Geometry linked to untangling efficiency reveals structure and computation in neural populations*, **bioRxiv 2025**, doi 10.1101/2024.02.26.582157. Open access. | GLUE is the **parent** method; the ICML paper *applies* it. GLUE refined assumptions relative to **prior replica mean-field capacity theory — i.e. exactly what `replicaMFT` implements**. You need *which* assumptions changed (reported: (A1) Gaussian correlations between manifolds, (A2) random task labels). **Supplementary S1** holds the closed-form capacity formula and the relaxed-assumption ρ_a/ψ definitions — not yet extracted. | `glue-refinements.md` |
-| **Graldi, Breccia, Lanzillotta, Hofmann & Noci** — *The Importance of Being Lazy: Scaling Limits of Continual Learning*, ICML 2025. `arXiv:2506.16884`. | Table 1 (the parameterization — **transcribe exactly**), App. A.3 (base-width normalization, N₀=64), metric definitions A.1–A.10, App. A.4 (LR values, epochs, optimizer) | `parameterization.md`, `cl-metrics.md` |
+| **Graldi, Breccia, Lanzillotta, Hofmann & Noci** — *The Importance of Being Lazy: Scaling Limits of Continual Learning*, ICML 2025. `arXiv:2506.16884`. | Table 1 (signed 2026-09-01), App. A.3 (does not write `N/N₀`; caption dangling; V1 signed as independent derivation), metric definitions A.1–A.10 (running-max CF), App. A.4 (MLP arm = our model class; cosine vs matched-loss; `γ₀*` from ResNet) | `parameterization.md`, `parameterization-derivation.md`, `cl-metrics.md` |
 | **Wakhloo, Sussman & Chung** — *Linear Classification of Neural Manifolds with Correlated Variability*, Phys. Rev. Lett. 2023 **+ Supplementary** | Claim 1 (capacity under arbitrary correlations); the centroid↔distance / axis↔radius **duality**. Constrains what §8 attribution can claim (problem P5) and answers cross-module anisotropy. | `correlation-duality.md` |
 | **Wakhloo, Slatton & Chung** — *Neural population geometry and optimal coding of tasks with shared latent structure*, **Nature Neuroscience 2026**, doi 10.1038/s41593-025-02183-y (open access); `arXiv:2402.16770`. | The analytic optimum for tasks sharing a latent structure. Four statistics summarizing dimensionality, factorization and correlation structure govern linear-readout generalization. Sharpened Gate-3 competitor to generic capacity (RQ2). Also: optimal codes are lower-dimensional / higher-correlation **early** and the reverse **late** — converges with Menghi's anticorrelation trajectory (H1d). ⚠️ The specific four statistic names circulating in these docs are **inferred from the abstract**, not transcribed from the body. | `optimal-coding-statistics.md` |
 
@@ -113,10 +113,16 @@ fetch date, capability inventory, and per-repo patch-needs.
 Things that aren't in any paper and that the agent cannot infer.
 
 ### E.1 `docs/reference/parameterization-derivation.md`
-The base-width normalization constant, derived and unit-tested. Graldi states
-μP↔NTP equivalence at base width N₀=64 but does **not** write the constant out.
-Currently **UNCERTAIN** in `00` §4.2. Derive once, test
-(`02` §3 `test_base_width_equivalence`), never re-derive.
+
+Table 1's four cells are **signed 2026-09-01** against source (including σ²=1
+in both, which is I6 at source). Graldi's `D` is the input dimension (our `d`).
+
+Table 1's four cells and A.3 text are signed 2026-09-01. A.3 does **not** write
+`N/N₀`; the caption's "Further details are in App. A.3" is dangling. Independent
+derivation from Table 1: both μP rows give `γ₀ = N^{-1/2}`; `N → N/N₀` makes
+`γ₀ = 1` the NTP point at `N₀ = 64`. Agent's derivation confirmed. Verification 1
+signed off. `parameterization-derivation.md`. At `N = 300`, NTP-equivalent
+`γ₀ ≈ 0.462` (computed, not interpreted).
 
 ### E.2 `results/cost_model.json`
 Measured wall-clock for one GLUE evaluation at target parameters, and the
@@ -247,7 +253,8 @@ docs/reference/
 ├── glue-sign-conventions.md           # [human] DISCREPANCY LOG — see §E.4
 ├── glue-refinements.md                # [drafted→verify] GLUE (bioRxiv) vs prior MFT assumptions; A2↔C4 noted; needs S1
 ├── correlation-duality.md             # [draft→verify] Wakhloo PRL Claim 1 + duality
-├── parameterization-derivation.md     # [human] base-width constant — derived + tested
+├── parameterization-derivation.md     # V1 signed: A.3 dangling; independent derivation
+├── protocol-deviations.md             # [human] D.1.1 balanced-dichotomy departure
 ├── biased-capacity.md                 # [human] NEW — Montanari tilt; replaces fixed-y (§E.6)
 ├── ccgp-protocol.md                   # [draft→verify] Bernardi
 ├── generalization-metrics.md          # [human] Johnston & Fusi probe metric
@@ -268,8 +275,12 @@ third_party/
 
 ## G. What to add first
 
-**Done:** `manifold-generator.md`, `validation-settings.md`, `parameterization.md`,
-`cl-metrics.md`; vendored `replicaMFT` + `correlated_capacity`.
+**Done:** `manifold-generator.md`, `validation-settings.md`, `parameterization.md`
+Table 1, `glue-core-validation.md` (signed 2026-09-01); vendored `replicaMFT` +
+`correlated_capacity`.
+**Open on parameterization:** μP-at-L=3 (blocks sequential depth arms). A.3
+does not license it. Verification 1 is signed: independent derivation from
+Table 1, A.3 does not state the constant.
 **Resolved:** Algorithm numbering — **v2: geometric estimator = Algorithm 2,
 α_sim = Algorithm 1** (verified vs complete PDF 2026-08-10; the earlier "v2 =
 Algorithm 1" note was wrong). GLUE author list (10 authors, incl. Slatton &

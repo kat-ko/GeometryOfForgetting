@@ -84,8 +84,8 @@ def attributions(recs: list[dict], *, module: str | None = None
                  ) -> list[tuple[dict, str, int, int, Attribution]]:
     """`(spec, module, task, lag, Attribution)` for every retained-capacity comparison.
 
-    The `before` point is the task's own boundary — the geometry as the task was left,
-    which is the only baseline against which "forgetting" means anything.
+    The `before` point is the task's first measured boundary — the geometry as the
+    task was left. On the registered K=1 path that boundary equals the task index.
 
     The arm's γ is passed through so the center-collapse share is gated by the `R_eff` noise
     floor measured *at that γ* (W4), rather than by one constant that was too permissive at
@@ -95,13 +95,18 @@ def attributions(recs: list[dict], *, module: str | None = None
     for r in recs:
         pts = {(g["module"], g["task"], g["boundary"]): g
                for g in r["geometry"] if g["task"] is not None}
+        earliest: dict[tuple[str, int], dict] = {}
+        for (mod, task, b), g in pts.items():
+            key = (mod, task)
+            if key not in earliest or b < earliest[key]["boundary"]:
+                earliest[key] = g
         for (mod, task, b), g in sorted(pts.items()):
             if module is not None and mod != module:
                 continue
-            origin = pts.get((mod, task, task))
-            if origin is None or b <= task:
+            origin = earliest.get((mod, task))
+            if origin is None or b <= origin["boundary"]:
                 continue
-            out.append((r["spec"], mod, task, b - task, attribute(
+            out.append((r["spec"], mod, task, b - origin["boundary"], attribute(
                 GeometryPoint.from_result(origin), GeometryPoint.from_result(g),
                 strict=False, gamma=r["spec"]["gamma_0"])))
     return out

@@ -36,7 +36,11 @@ def test_full_precision_is_kept_alongside_the_papers_rounding():
 
 def test_the_ledger_covers_every_family_of_fault_we_have_had():
     kinds = {c.kind for c in L.CORRECTIONS}
-    assert kinds == {"estimand", "error", "guard", "sign", "population", "filename"}
+    assert kinds == {"estimand", "error", "guard", "sign", "population", "filename", "check", "statistic", "operating_point"}
+    operating = [c.quantity for c in L.CORRECTIONS if c.kind == "operating_point"]
+    assert "MSE / BCE shared operating point" in operating
+    assert "μP richness under Adam" in operating
+    assert "Finding 3 under Adam" in operating
 
 
 def test_every_ledger_entry_says_where_it_is_quoted():

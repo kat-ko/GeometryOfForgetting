@@ -6,15 +6,14 @@ Source:       Graldi, Breccia, Lanzillotta, Hofmann & Noci, "The Importance of
               arXiv 2506.16884, Table 1 + Appendix A.3 (parameterization) +
               A.4 (training details).
 Version:      arXiv:2506.16884v2
-Derived from: Table 1 cells read from the rendered arXiv HTML (v2), Table 1
-              rows (Branch/Output/LR/Weight-variance). Prose from the PDF text
-              (A.3/A.4). NOT copied from docs/00-math-spec.md.
+Derived from: Table 1 cells (human, 2026-09-01). Appendix A.2–A.4 pasted from
+              the PDF (human, 2026-09-01). NOT copied from docs/00-math-spec.md.
 Transcribed by: agent (Opus 4.8), 2026-07-31
-Verified by (human): ____________          # blank until checked
-Status: agent-verified against the rendered arXiv HTML table AND cross-checked
-        equal to docs/00-math-spec.md §4.2 (so the spec's Table 1 is also
-        confirmed correct — the earlier circularity is resolved). Still awaiting
-        human sign-off; code may not cite until "Verified by (human)" is filled.
+Verified by (human): Kati, 2026-09-01 — Table 1 four cells, A.3 text, Verification 1
+Status: Table 1 signed. A.3 transcribed: it identifies the table and does not
+        write N/N₀. The caption's "Further details are in App. A.3" is dangling.
+        (N/N_base) is an independent derivation from Table 1, confirmed against
+        the agent's. See parameterization-derivation.md.
 ```
 
 Implemented in `docs/00-math-spec.md` §4.
@@ -40,32 +39,32 @@ parameterization (SP) is **equivalent to the NTP used here**.
 
 ---
 
-## Facts verified from A.3 / A.4 prose
+## Facts from A.2 / A.3 / A.4 (A.3 in hand, 2026-09-01)
 
-- **Base width `N₀ = 64`.** At base width, μP and NTP are equivalent ("at
-  base-width [64] the μP and NTP are equivalent", Figs 8/8-caption). This is the
-  width at which the μP↔NTP normalization is anchored.
-- **Optimizer:** SGD, **no momentum, no weight decay** (A.4). Matches invariants
-  I1, I3.
-- **LR schedule (Graldi's own runs):** cosine schedule, no warmup, **restarted at
-  the start of each task**; batch size 128. *(Our project uses plain SGD at a small
-  fixed epoch count — see `00` §4/§6; we do not inherit the cosine schedule.)*
-- **Readout zero-init:** last layer initialized to 0 so output = 0 at `t = 0`
-  ("advised in Yang et al. 2022b, App. D.2"). Matches invariant I5.
-- **Depth (out of scope for us):** μP+1/√L (Bordelon et al. 2023) decouples feature
-  learning from depth; branch scale `β_ℓ` then depends on `N` and `L`. Recorded
-  only because the corrected-LR arm (`00` §4.3) touches depth `L`.
-- **Split-CIFAR10 (their setting):** 5 tasks × 2 classes, **separate head per
-  task**, 5 epochs/task, `η₀(0) = 30.0`. NB: separate-head + P=2 is exactly what
-  our design rejects (invariant I8; problem P1).
+- **A.3** (verbatim substance): many equivalent parameterizations exist; Tab. 1
+  uses Bordelon et al. (2023, Tab. 1) notation with the NTP of Yang & Hu (2020,
+  Tab. 1); PyTorch SP ≡ this NTP. A.3 does not write the N/N₀ algebra. The
+  Table 1 caption's forward reference to A.3 is dangling.
+- **Base width `N = 64`, base depth `L = 6`** (A.2).
+- **Optimizer:** SGD, **no momentum, no weight decay** (A.4). Matches I1, I3.
+  Infinite-width arm: 2-layer ReLU MLP, full-batch GD on MSE, last layer 0 —
+  the same model class as ours.
+- **LR schedule (Graldi):** cosine, no warmup, **restarted at each task**;
+  batch size 128. **Deviation:** we use constant LR with matched-loss stopping.
+- **Readout zero-init:** last layer 0 so output = 0 at `t = 0` (A.4, Yang et al.
+  2022b App. D.2). Matches I5.
+- **`γ₀* ≈ 0.1` is from their ResNet experiments**, not the MLP arm (30 MNIST
+  samples, 2 tasks, `ρ = 0`). Any comparison of our `γ*` to theirs is across
+  architectures.
+- **Split-CIFAR10:** 5 tasks × 2 classes, **separate head per task**,
+  `η₀(0) = 30.0`. Separate-head + P=2 is what I8 / P1 reject.
 
 ---
 
-## UNCERTAIN — base-width normalization constant (blocks nothing until §4.2 test)
+## Base-width normalization — independent derivation (Verification 1 signed)
 
-`docs/00-math-spec.md` §4.2 requires `μP(γ₀=1, N=64) ≡ NTP(N=64)` to float64.
-**Confirmed by extraction:** Graldi states equivalence at base width 64 but does
-**not** write out the normalization constant. It must be **derived and
-unit-tested**, not guessed (see `docs/02-validation-suite.md` §3
-`test_base_width_equivalence`), and the derivation recorded in
-`parameterization-derivation.md`.
+A.3 does not state the constant. Set μP = NTP in Table 1: both rows give
+`γ₀ = N^{-1/2}`. Making `γ₀ = 1` the NTP point at `N₀ = 64` is `N → N/N₀`:
+`γ_μP = γ₀ (N/N_base)^{1/2}`, `η_μP = η₀ γ₀² (N/N_base)`. Confirmed against
+the agent's. At `N = 300`, NTP-equivalent `γ₀ = (64/300)^{1/2} ≈ 0.462`
+(between 0.3 and 1). No coincidence claim.

@@ -1,0 +1,628 @@
+{
+  "generated_by": "scripts/analyse_corrected_lr.py",
+  "precommit": "results/corrected_lr_precommit.json",
+  "question": "Does channel composition of forgetting change under Atanasov\u2019s \u03b3^(2/L) law versus the quadratic law used on the registered grid?",
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A",
+    "unique_n": 8
+  },
+  "population": "old arrangements, legacy_seed 0\u20137; not the reserved set",
+  "n_corrected": 192,
+  "n_quadratic": 192,
+  "misses": {
+    "n_files": 192,
+    "n_arms_missed": 0,
+    "arm_miss_rate": 0.0,
+    "n_tasks": 3072,
+    "n_tasks_missed": 0,
+    "by_gamma": {
+      "0.03": {
+        "n": 32,
+        "n_miss": 0
+      },
+      "0.1": {
+        "n": 32,
+        "n_miss": 0
+      },
+      "0.3": {
+        "n": 32,
+        "n_miss": 0
+      },
+      "1": {
+        "n": 32,
+        "n_miss": 0
+      },
+      "3": {
+        "n": 32,
+        "n_miss": 0
+      },
+      "10": {
+        "n": 32,
+        "n_miss": 0
+      }
+    },
+    "rule": "an arm that misses target_loss on any task is unusable for composition and is counted here, not dropped silently"
+  },
+  "lr_note": "At L=2, corrected is \u03b7 \u221d \u03b3\u00b9 against quadratic \u03b7 \u221d \u03b3\u00b2, so the rich-regime ratio is \u03b3, not \u03b3\u00b2. At \u03b3=10 that is 10\u00d7 smaller, not 100\u00d7 (A4's 100\u00d7 is a slip).",
+  "steps_and_lr": {
+    "0.03": {
+      "quadratic_mean": 1303.751953125,
+      "corrected_mean": 1303.751953125,
+      "ratio": 1.0,
+      "lr_quadratic": 0.021093749999999998,
+      "lr_corrected": 0.021093749999999998,
+      "lr_ratio_quad_over_corr": 1.0
+    },
+    "0.1": {
+      "quadratic_mean": 772.4453125,
+      "corrected_mean": 772.4453125,
+      "ratio": 1.0,
+      "lr_quadratic": 0.23437500000000006,
+      "lr_corrected": 0.23437500000000006,
+      "lr_ratio_quad_over_corr": 1.0
+    },
+    "0.3": {
+      "quadratic_mean": 322.947265625,
+      "corrected_mean": 322.947265625,
+      "ratio": 1.0,
+      "lr_quadratic": 2.109375,
+      "lr_corrected": 2.109375,
+      "lr_ratio_quad_over_corr": 1.0
+    },
+    "1": {
+      "quadratic_mean": 106.2890625,
+      "corrected_mean": 106.2890625,
+      "ratio": 1.0,
+      "lr_quadratic": 23.4375,
+      "lr_corrected": 23.4375,
+      "lr_ratio_quad_over_corr": 1.0
+    },
+    "3": {
+      "quadratic_mean": 38.375,
+      "corrected_mean": 112.130859375,
+      "ratio": 2.9219767915309447,
+      "lr_quadratic": 210.9375,
+      "lr_corrected": 70.3125,
+      "lr_ratio_quad_over_corr": 3.0
+    },
+    "10": {
+      "quadratic_mean": 13.642578125,
+      "corrected_mean": 120.5390625,
+      "ratio": 8.835504652827488,
+      "lr_quadratic": 2343.75,
+      "lr_corrected": 234.375,
+      "lr_ratio_quad_over_corr": 10.0
+    }
+  },
+  "composition_at_gamma_gt_1": {
+    "3": {
+      "utility_share_quadratic": 0.41417579745822986,
+      "utility_share_corrected": 0.4136363798792202,
+      "floors_quadratic": -45.337070469004274,
+      "floors_corrected": -44.87863455184906
+    },
+    "10": {
+      "utility_share_quadratic": 0.4491856714055256,
+      "utility_share_corrected": 0.45001518780942146,
+      "floors_quadratic": -69.71753861861126,
+      "floors_corrected": -67.13099513464012
+    },
+    "paper_gamma_step_utility_share_1_to_10": 0.11679030338215912
+  },
+  "three_corner_pooled": {
+    "quadratic": {
+      "0.03": {
+        "n": 24,
+        "dlog_alpha": -0.0032536293696641405,
+        "floors_signed": -0.17561266668147726,
+        "shares": {
+          "utility": 0.07616340651372787,
+          "radius": 0.366335153517079,
+          "dimension": 0.5575014399691931
+        },
+        "terms": {
+          "utility": -0.0002478074963267266,
+          "radius": -0.0011919188146235539,
+          "dimension": -0.0018139030587137617
+        },
+        "sign_positive_fraction": {
+          "utility": 0.4166666666666667,
+          "radius": 0.3333333333333333,
+          "dimension": 0.2916666666666667
+        }
+      },
+      "0.1": {
+        "n": 24,
+        "dlog_alpha": -0.03894375447003817,
+        "floors_signed": -2.10196546565415,
+        "shares": {
+          "utility": 0.0833736162820266,
+          "radius": 0.3869295202100009,
+          "dimension": 0.5296968635079726
+        },
+        "terms": {
+          "utility": -0.003246881641766419,
+          "radius": -0.01506848823226794,
+          "dimension": -0.0206283845960038
+        },
+        "sign_positive_fraction": {
+          "utility": 0.25,
+          "radius": 0.16666666666666666,
+          "dimension": 0.041666666666666664
+        }
+      },
+      "0.3": {
+        "n": 24,
+        "dlog_alpha": -0.18594836762183983,
+        "floors_signed": -10.036450066379194,
+        "shares": {
+          "utility": 0.18926926148746165,
+          "radius": 0.36754426078998215,
+          "dimension": 0.44318647772255626
+        },
+        "terms": {
+          "utility": -0.035194310214584655,
+          "radius": -0.06834425532267298,
+          "dimension": -0.08240980208458223
+        },
+        "sign_positive_fraction": {
+          "utility": 0.08333333333333333,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "1": {
+        "n": 24,
+        "dlog_alpha": -0.4848858713456779,
+        "floors_signed": -26.171420044679557,
+        "shares": {
+          "utility": 0.3323953680233665,
+          "radius": 0.24640571129926908,
+          "dimension": 0.4211989206773643
+        },
+        "terms": {
+          "utility": -0.16117381765527736,
+          "radius": -0.11947864802789765,
+          "dimension": -0.2042334056625029
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "3": {
+        "n": 24,
+        "dlog_alpha": -0.8399737148803498,
+        "floors_signed": -45.337070469004274,
+        "shares": {
+          "utility": 0.41417579745822986,
+          "radius": 0.14995084168956668,
+          "dimension": 0.4358733608522035
+        },
+        "terms": {
+          "utility": -0.3478967832045206,
+          "radius": -0.12595476554342053,
+          "dimension": -0.36612216613240856
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "10": {
+        "n": 24,
+        "dlog_alpha": -1.291678074917206,
+        "floors_signed": -69.71753861861126,
+        "shares": {
+          "utility": 0.4491856714055256,
+          "radius": 0.1140478888814123,
+          "dimension": 0.43676643971306217
+        },
+        "terms": {
+          "utility": -0.580203283321482,
+          "radius": -0.14731315755871405,
+          "dimension": -0.56416163403701
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      }
+    },
+    "corrected": {
+      "0.03": {
+        "n": 24,
+        "dlog_alpha": -0.0032536293696641405,
+        "floors_signed": -0.17561266668147726,
+        "shares": {
+          "utility": 0.07616340651372787,
+          "radius": 0.366335153517079,
+          "dimension": 0.5575014399691931
+        },
+        "terms": {
+          "utility": -0.0002478074963267266,
+          "radius": -0.0011919188146235539,
+          "dimension": -0.0018139030587137617
+        },
+        "sign_positive_fraction": {
+          "utility": 0.4166666666666667,
+          "radius": 0.3333333333333333,
+          "dimension": 0.2916666666666667
+        }
+      },
+      "0.1": {
+        "n": 24,
+        "dlog_alpha": -0.03894375447003817,
+        "floors_signed": -2.10196546565415,
+        "shares": {
+          "utility": 0.0833736162820266,
+          "radius": 0.3869295202100009,
+          "dimension": 0.5296968635079726
+        },
+        "terms": {
+          "utility": -0.003246881641766419,
+          "radius": -0.01506848823226794,
+          "dimension": -0.0206283845960038
+        },
+        "sign_positive_fraction": {
+          "utility": 0.25,
+          "radius": 0.16666666666666666,
+          "dimension": 0.041666666666666664
+        }
+      },
+      "0.3": {
+        "n": 24,
+        "dlog_alpha": -0.18594836762183983,
+        "floors_signed": -10.036450066379194,
+        "shares": {
+          "utility": 0.18926926148746165,
+          "radius": 0.36754426078998215,
+          "dimension": 0.44318647772255626
+        },
+        "terms": {
+          "utility": -0.035194310214584655,
+          "radius": -0.06834425532267298,
+          "dimension": -0.08240980208458223
+        },
+        "sign_positive_fraction": {
+          "utility": 0.08333333333333333,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "1": {
+        "n": 24,
+        "dlog_alpha": -0.4848858713456779,
+        "floors_signed": -26.171420044679557,
+        "shares": {
+          "utility": 0.3323953680233665,
+          "radius": 0.24640571129926908,
+          "dimension": 0.4211989206773643
+        },
+        "terms": {
+          "utility": -0.16117381765527736,
+          "radius": -0.11947864802789765,
+          "dimension": -0.2042334056625029
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "3": {
+        "n": 24,
+        "dlog_alpha": -0.8314801329972701,
+        "floors_signed": -44.87863455184906,
+        "shares": {
+          "utility": 0.4136363798792202,
+          "radius": 0.1499729385035228,
+          "dimension": 0.43639068161725697
+        },
+        "terms": {
+          "utility": -0.3439304321544833,
+          "radius": -0.12469951885290055,
+          "dimension": -0.36285018198988617
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      },
+      "10": {
+        "n": 24,
+        "dlog_alpha": -1.2437563958926168,
+        "floors_signed": -67.13099513464012,
+        "shares": {
+          "utility": 0.45001518780942146,
+          "radius": 0.1124188403643412,
+          "dimension": 0.4375659718262374
+        },
+        "terms": {
+          "utility": -0.5597092680867851,
+          "radius": -0.13982165172198044,
+          "dimension": -0.5442254760838513
+        },
+        "sign_positive_fraction": {
+          "utility": 0.0,
+          "radius": 0.0,
+          "dimension": 0.0
+        }
+      }
+    }
+  },
+  "paired_corrected_minus_quadratic": {
+    "three_corner": {
+      "0.03": {
+        "n": 24,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "0.1": {
+        "n": 24,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "0.3": {
+        "n": 24,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "1": {
+        "n": 24,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "3": {
+        "n": 24,
+        "d_utility_term_mean": 0.0039663510500372486,
+        "d_utility_term_sem": 0.0003674640298126209,
+        "d_utility_share_mean": -0.0008020024696294888,
+        "d_utility_share_sem": 0.0005288510236192561,
+        "d_dlog_alpha_mean": 0.00849358188307958,
+        "d_dlog_alpha_sem": 0.0005542567814908662,
+        "p_utility_term": 1.7746778456599143e-10,
+        "p_utility_share": 0.14301800074633317,
+        "ci95_utility_term": [
+          0.0032461215516045114,
+          0.004686580548469986
+        ],
+        "ci95_utility_share": [
+          -0.001838550475923231,
+          0.00023454553666425314
+        ]
+      },
+      "10": {
+        "n": 24,
+        "d_utility_term_mean": 0.02049401523469683,
+        "d_utility_term_sem": 0.0015075105221811116,
+        "d_utility_share_mean": 0.00044888901783336765,
+        "d_utility_share_sem": 0.0008262686931574289,
+        "d_dlog_alpha_mean": 0.04792167902458928,
+        "d_dlog_alpha_sem": 0.0033157113829829794,
+        "p_utility_term": 1.7632505460936766e-12,
+        "p_utility_share": 0.5921691580742283,
+        "ci95_utility_term": [
+          0.01753929461122185,
+          0.023448735858171806
+        ],
+        "ci95_utility_share": [
+          -0.0011705976207551931,
+          0.0020683756564219284
+        ]
+      }
+    },
+    "four_corner": {
+      "0.03": {
+        "n": 32,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "0.1": {
+        "n": 32,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "0.3": {
+        "n": 32,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "1": {
+        "n": 32,
+        "d_utility_term_mean": 0.0,
+        "d_utility_term_sem": 0.0,
+        "d_utility_share_mean": 0.0,
+        "d_utility_share_sem": 0.0,
+        "d_dlog_alpha_mean": 0.0,
+        "d_dlog_alpha_sem": 0.0,
+        "p_utility_term": 1.0,
+        "p_utility_share": 1.0,
+        "ci95_utility_term": [
+          0.0,
+          0.0
+        ],
+        "ci95_utility_share": [
+          0.0,
+          0.0
+        ]
+      },
+      "3": {
+        "n": 32,
+        "d_utility_term_mean": 0.003064812149751615,
+        "d_utility_term_sem": 0.0004014381690800336,
+        "d_utility_share_mean": -0.0011076590251048908,
+        "d_utility_share_sem": 0.0005135200678835315,
+        "d_dlog_alpha_mean": 0.0068013956745257564,
+        "d_dlog_alpha_sem": 0.0006815814329617382,
+        "p_utility_term": 1.3107332231423597e-08,
+        "p_utility_share": 0.03887400026083411,
+        "ci95_utility_term": [
+          0.002277993338354749,
+          0.0038516309611484807
+        ],
+        "ci95_utility_share": [
+          -0.0021141583581566125,
+          -0.00010115969205316908
+        ]
+      },
+      "10": {
+        "n": 32,
+        "d_utility_term_mean": 0.0165839489726752,
+        "d_utility_term_sem": 0.001743407235803006,
+        "d_utility_share_mean": 0.0034884919038277217,
+        "d_utility_share_sem": 0.0036754313726999025,
+        "d_dlog_alpha_mean": 0.03903191251100851,
+        "d_dlog_alpha_sem": 0.003779225804852628,
+        "p_utility_term": 1.0430669547141349e-10,
+        "p_utility_share": 0.34989158814189836,
+        "ci95_utility_term": [
+          0.013166870790501307,
+          0.02000102715484909
+        ],
+        "ci95_utility_share": [
+          -0.0037153535866640873,
+          0.010692337394319532
+        ]
+      }
+    }
+  },
+  "negative_control_gamma_1": {
+    "rule": "At \u03b3 = 1 the two laws are identical. Any composition change there is not the LR law and must be diagnosed, not absorbed.",
+    "three_corner": {
+      "n": 24,
+      "d_utility_term_mean": 0.0,
+      "d_utility_term_sem": 0.0,
+      "d_utility_share_mean": 0.0,
+      "d_utility_share_sem": 0.0,
+      "d_dlog_alpha_mean": 0.0,
+      "d_dlog_alpha_sem": 0.0,
+      "p_utility_term": 1.0,
+      "p_utility_share": 1.0,
+      "ci95_utility_term": [
+        0.0,
+        0.0
+      ],
+      "ci95_utility_share": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "reading": {
+    "key": "composition_unchanged_at_gamma_gt_1",
+    "text": "The quadratic law was harmless here. Existing results stand. This becomes an appendix robustness arm. Primary law remains quadratic.",
+    "primary_law_for_subsequent_axes": "quadratic",
+    "stop_and_diagnose": false,
+    "high_miss_rate": false,
+    "high_miss_text": null,
+    "lazy_changed": false,
+    "rich_changed": false,
+    "gamma_1_ci_excludes_0": false,
+    "operationalization": "\u03b3 changed if the 95% CI of the paired (corrected \u2212 quadratic) signed utility term excludes 0 AND |\u0394 utility share| exceeds the \u03b3=1 |\u0394 share| plus two SEMs of each. Three-corner pool, unique n=8, task 0 lag 12. \u03b3=1 is the re-run envelope: the laws are identical there."
+  }
+}

@@ -9,19 +9,15 @@ Source: Graldi et al. (ICML 2025), Table 1.
 | LR `η(t)` | `η₀(t)` | `η₀(t) · γ₀² · N` |
 | weight variance `σ_ℓ²` | `1` | `1` |
 
-**The base-width constant (`00` §4.2 UNCERTAIN).** Graldi et al. normalize μP to
-agree with NTP at base width `N = 64` but do not write the constant out. Requiring
-`μP(γ₀ = 1, N = N_base) ≡ NTP(N = N_base)` fixes it uniquely: the width factors
-must be *relative* to the base width, i.e. `N^{1/2} → (N/N_base)^{1/2}` in the
-output scale and `N → N/N_base` in the learning rate. At `γ₀ = 1, N = N_base` both
-reduce to `γ_eff = 1` and `η = η₀`, which is NTP exactly. Verified numerically on
-the forward pass and the first gradient step by
-`tests/test_models_parameterization.py::test_base_width_equivalence` (`02` §3).
-
-AGENT-DERIVED, NOT HUMAN-VERIFIED — `docs/reference/parameterization-derivation.md`
-is human-owned and still unwritten. The unit test pins the behaviour; the
-*justification* above is ours and should be checked against Graldi §3 before the
-paper cites it.
+**Base-width constant (`00` §4.2, Verification 1 signed 2026-09-01).** Table 1's
+four cells and A.3 text are human-signed. A.3 identifies the table (Bordelon
+2023 notation, Yang–Hu 2020 NTP, PyTorch SP ≡ NTP) and does not write `N/N₀`;
+the caption's forward reference is dangling. Independent derivation: set μP =
+NTP; both rows give `γ₀ = N^{-1/2}`; rescaling so `γ₀ = 1` at `N₀ = 64` is
+`N → N/N_base`. Confirmed against the agent's. See
+`docs/reference/parameterization-derivation.md`. Pinned by
+`tests/test_models_parameterization.py::test_base_width_equivalence`.
+At `N = 300`, NTP-equivalent `γ₀ ≈ 0.462` (computed, not interpreted).
 """
 
 from __future__ import annotations
@@ -64,6 +60,11 @@ class ScalingConfig:
         return self.N ** -0.5
 
     @property
+    def beta_hid(self) -> float:
+        """Hidden-to-hidden branch scale `N^{-1/2}` (ℓ > 0). Same in NTP and μP."""
+        return self.N ** -0.5
+
+    @property
     def gamma_eff(self) -> float:
         """Output scale appearing as `β_L / γ_eff` in the forward pass."""
         if self.parameterization == "ntp":
@@ -76,9 +77,10 @@ class ScalingConfig:
 
     @property
     def lr(self) -> float:
-        """Per-module learning rate, applied to **both** `W_m` and `u_m` (`00` §4.2).
+        """Per-module learning rate, applied to `W_m`, `u_m`, and `W²_m` (`00` §4.2).
 
-        Changing one without the other changes contribution magnitude, not richness.
+        Changing one without the others changes contribution magnitude, not richness.
+        One η is the unsigned L=3 hypothesis (`docs/16` A21), not a signed finding.
         """
         if self.parameterization == "ntp":
             return self.lr0
@@ -96,5 +98,29 @@ class ScalingConfig:
             "lr_scaling": self.lr_scaling, "lr0": self.lr0,
             "n_base": self.n_base, "beta_0": self.beta_0, "beta_L": self.beta_L,
             "gamma_eff": self.gamma_eff, "output_scale": self.output_scale,
-            "lr": self.lr,
+            "lr": self.lr, "depth": self.depth,
         }
+
+
+def module_param_count(N: int, d: int, n_hidden_layers: int = 1) -> int:
+    """Parameters in one module: first layer N×d, optional hidden N×N, readout N."""
+    if n_hidden_layers < 1:
+        raise ValueError(f"n_hidden_layers must be ≥ 1; got {n_hidden_layers}")
+    count = N * d
+    count += N * N * (n_hidden_layers - 1)
+    count += N
+    return count
+
+
+def width_matching_param_count(N_ref: int, d: int, n_hidden_layers: int) -> int:
+    """Integer width whose parameter count is nearest `module_param_count(N_ref, d, 1)`.
+
+    Matching N across depth would confound depth with capacity (`docs/16` §Amendments A6).
+    """
+    target = module_param_count(N_ref, d, 1)
+    best, best_err = N_ref, abs(module_param_count(N_ref, d, n_hidden_layers) - target)
+    for N in range(1, N_ref * 4 + 1):
+        err = abs(module_param_count(N, d, n_hidden_layers) - target)
+        if err < best_err:
+            best, best_err = N, err
+    return best

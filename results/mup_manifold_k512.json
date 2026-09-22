@@ -1,0 +1,399 @@
+{
+  "generated_by": "scripts/run_mup_manifold_k512.py",
+  "precommit": "results/mup_manifold_k512_precommit.json",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "does_not_reopen_a28": true,
+  "prefix_mup_ratio_512_matches_a29": true,
+  "L2": {
+    "k_present": 32,
+    "n": 32,
+    "rate": 1.0,
+    "pass_count_threshold": 24,
+    "meets_k24": true,
+    "clopper_pearson_95": [
+      0.8911188393205571,
+      1.0
+    ],
+    "failure_modes": {
+      "present": 32
+    },
+    "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+  },
+  "L3": {
+    "k_present": 32,
+    "n": 32,
+    "rate": 1.0,
+    "pass_count_threshold": 24,
+    "meets_k24": true,
+    "clopper_pearson_95": [
+      0.8911188393205571,
+      1.0
+    ],
+    "failure_modes": {
+      "present": 32
+    },
+    "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+  },
+  "a28_l3_cohort_present_at_512_not_a_reading": {
+    "n_cohort": 13,
+    "n_L3_present": 13,
+    "n_L3_mup_does_not_increase": 13
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8084813603516943,
+      "L2_ntp_ratio": 2.5658218915268542,
+      "L3_mup_ratio": 0.5961925600942978,
+      "L3_ntp_ratio": 3.9997937890378674
+    },
+    {
+      "seed": 1,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7473204735751988,
+      "L2_ntp_ratio": 2.535313529336723,
+      "L3_mup_ratio": 0.5403304877025793,
+      "L3_ntp_ratio": 4.1148716996266606
+    },
+    {
+      "seed": 2,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.9559879043957994,
+      "L2_ntp_ratio": 2.3743203799959076,
+      "L3_mup_ratio": 0.5785403743595539,
+      "L3_ntp_ratio": 3.251206666133788
+    },
+    {
+      "seed": 3,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7481947411474585,
+      "L2_ntp_ratio": 2.722897181990145,
+      "L3_mup_ratio": 0.6565430565430685,
+      "L3_ntp_ratio": 5.476269996266992
+    },
+    {
+      "seed": 4,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8510491153952612,
+      "L2_ntp_ratio": 2.5651705067184745,
+      "L3_mup_ratio": 0.6057799518184077,
+      "L3_ntp_ratio": 3.7588356306505073
+    },
+    {
+      "seed": 5,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.6221821457741763,
+      "L2_ntp_ratio": 1.8347074633840725,
+      "L3_mup_ratio": 0.5174634044715541,
+      "L3_ntp_ratio": 3.07051366562198
+    },
+    {
+      "seed": 6,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8046421915212726,
+      "L2_ntp_ratio": 2.5734890224016964,
+      "L3_mup_ratio": 0.6043790598801376,
+      "L3_ntp_ratio": 4.272725085971018
+    },
+    {
+      "seed": 7,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8960534663143339,
+      "L2_ntp_ratio": 2.3688865378174735,
+      "L3_mup_ratio": 0.5381089873417061,
+      "L3_ntp_ratio": 3.302628248619471
+    },
+    {
+      "seed": 8,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8254687200025181,
+      "L2_ntp_ratio": 2.8910529150565925,
+      "L3_mup_ratio": 0.6326049291566431,
+      "L3_ntp_ratio": 5.62096545440449
+    },
+    {
+      "seed": 9,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7255953559593458,
+      "L2_ntp_ratio": 2.1383212735798267,
+      "L3_mup_ratio": 0.6774101140195214,
+      "L3_ntp_ratio": 4.172837440394154
+    },
+    {
+      "seed": 10,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8880825559005557,
+      "L2_ntp_ratio": 2.988722265316472,
+      "L3_mup_ratio": 0.6236477332911303,
+      "L3_ntp_ratio": 5.187213845510535
+    },
+    {
+      "seed": 11,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7382117221523301,
+      "L2_ntp_ratio": 2.5118630988698536,
+      "L3_mup_ratio": 0.6203729923758406,
+      "L3_ntp_ratio": 4.511232290210027
+    },
+    {
+      "seed": 12,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.735769357332001,
+      "L2_ntp_ratio": 2.2978103185149394,
+      "L3_mup_ratio": 0.6009338182549473,
+      "L3_ntp_ratio": 4.1624287670675395
+    },
+    {
+      "seed": 13,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.6489704207231285,
+      "L2_ntp_ratio": 2.188902777911246,
+      "L3_mup_ratio": 0.6903360071901623,
+      "L3_ntp_ratio": 4.875528840699323
+    },
+    {
+      "seed": 14,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.9504706878156601,
+      "L2_ntp_ratio": 3.0904537226482254,
+      "L3_mup_ratio": 0.7198532943547108,
+      "L3_ntp_ratio": 4.681230328458778
+    },
+    {
+      "seed": 15,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8337269466101713,
+      "L2_ntp_ratio": 2.822248219225471,
+      "L3_mup_ratio": 0.5311237623553631,
+      "L3_ntp_ratio": 4.803377904703212
+    },
+    {
+      "seed": 16,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8595818734225592,
+      "L2_ntp_ratio": 2.6533758237692147,
+      "L3_mup_ratio": 0.6709870579273854,
+      "L3_ntp_ratio": 5.3247684624993665
+    },
+    {
+      "seed": 17,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7526850251425782,
+      "L2_ntp_ratio": 2.6914863604803916,
+      "L3_mup_ratio": 0.5509329985632324,
+      "L3_ntp_ratio": 4.789650968008463
+    },
+    {
+      "seed": 18,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7834867348264813,
+      "L2_ntp_ratio": 2.6504792952880813,
+      "L3_mup_ratio": 0.6387841289796822,
+      "L3_ntp_ratio": 5.854298411746898
+    },
+    {
+      "seed": 19,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8819284101840651,
+      "L2_ntp_ratio": 2.8413544014682994,
+      "L3_mup_ratio": 0.5064626038257362,
+      "L3_ntp_ratio": 3.765727825574998
+    },
+    {
+      "seed": 20,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.6824343285915828,
+      "L2_ntp_ratio": 2.2791942353415005,
+      "L3_mup_ratio": 0.5278943468879252,
+      "L3_ntp_ratio": 3.817458412758046
+    },
+    {
+      "seed": 21,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8070921175737864,
+      "L2_ntp_ratio": 2.5019308966520866,
+      "L3_mup_ratio": 0.6468427168650949,
+      "L3_ntp_ratio": 4.211225198142065
+    },
+    {
+      "seed": 22,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7839881150280055,
+      "L2_ntp_ratio": 2.5040997550430233,
+      "L3_mup_ratio": 0.7115994198593838,
+      "L3_ntp_ratio": 5.7747707189566295
+    },
+    {
+      "seed": 23,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.8550164239904037,
+      "L2_ntp_ratio": 3.1920069554246964,
+      "L3_mup_ratio": 0.6319640306383368,
+      "L3_ntp_ratio": 5.7853438362319975
+    },
+    {
+      "seed": 24,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7691605808523684,
+      "L2_ntp_ratio": 2.1085375511790994,
+      "L3_mup_ratio": 0.5843129205724986,
+      "L3_ntp_ratio": 3.2145918095662465
+    },
+    {
+      "seed": 25,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.6819795701863683,
+      "L2_ntp_ratio": 1.935072220360842,
+      "L3_mup_ratio": 0.744823095053315,
+      "L3_ntp_ratio": 5.021007854894167
+    },
+    {
+      "seed": 26,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7018810885516522,
+      "L2_ntp_ratio": 2.426463369481948,
+      "L3_mup_ratio": 0.48275243695042047,
+      "L3_ntp_ratio": 4.462809656881358
+    },
+    {
+      "seed": 27,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.764102769560077,
+      "L2_ntp_ratio": 2.229800726740662,
+      "L3_mup_ratio": 0.5726450486292124,
+      "L3_ntp_ratio": 3.4874114479354574
+    },
+    {
+      "seed": 28,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7051606008165263,
+      "L2_ntp_ratio": 2.3211110646791857,
+      "L3_mup_ratio": 0.601692578104664,
+      "L3_ntp_ratio": 4.891236327795226
+    },
+    {
+      "seed": 29,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.7540537922354954,
+      "L2_ntp_ratio": 2.35891157135775,
+      "L3_mup_ratio": 0.5172085271528256,
+      "L3_ntp_ratio": 3.3652833192311618
+    },
+    {
+      "seed": 30,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.762367831724584,
+      "L2_ntp_ratio": 2.5103871017712795,
+      "L3_mup_ratio": 0.42948909512718875,
+      "L3_ntp_ratio": 3.678886952912863
+    },
+    {
+      "seed": 31,
+      "L2_present": true,
+      "L3_present": true,
+      "L2_mode": "present",
+      "L3_mode": "present",
+      "L2_mup_ratio": 0.6707691283020628,
+      "L2_ntp_ratio": 2.6322772756302655,
+      "L3_mup_ratio": 0.4864709641030791,
+      "L3_ntp_ratio": 4.8333296015867395
+    }
+  ],
+  "applied_reading": "table_supported",
+  "reading": "L=2 k \u2265 24 and L=3 k \u2265 24 at K=512. Empirical support on this instrument at the halt where A29 rescued the \u03bcP-increase cohort. Not Verification 2. Do not lift A6. Does not retune A28 at K=128."
+}

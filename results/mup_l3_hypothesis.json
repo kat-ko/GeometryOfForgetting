@@ -1,0 +1,105 @@
+{
+  "generated_by": "docs/16 A6 diagnostic protocol, 2026-09-04",
+  "written_before_running": true,
+  "written_before_running_applies_to": "Gate 1 algebraic pin and Gate 2 empirical μP checks at L=3",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "agent_must_not_sign_verification_2": true,
+  "question": "Does Graldi Table 1's hidden-type row apply to this plain MLP at L=3, with no 1/√L and one η on W, W2, and u?",
+  "hypothesis": {
+    "no_one_over_sqrt_L": true,
+    "one_eta_on_W_W2_u": true,
+    "beta_hid": "N^{-1/2}",
+    "gamma_and_N_over_64_do_not_move_with_L": true,
+    "sigma2": 1,
+    "I6": "W(0) and W2(0) bitwise identical across γ",
+    "I5": "u(0)=0",
+    "A11_does_not_carry": "quadratic remains the Graldi law under test; γ^{2/L} is a competing stream-arm law, not this diagnostic"
+  },
+  "not_in_hypothesis": [
+    "μP+1/√L",
+    "TP5 per-layer learning rates",
+    "A11 carrying to L=3",
+    "stream training at L=3",
+    "a signed parameterization-derivation.md Verification 2"
+  ],
+  "why_this_hypothesis": "Graldi Table 1 already has a hidden-type row β_ℓ = N^{-1/2} for ℓ>0. This MLP at L=3 is the first time that row is occupied (L=2 has no W2). Graldi's 1/√L discussion is a residual/large-depth correction; this is a plain MLP at L=3, so the hypothesis is Table 1 as written, not μP+1/√L. One η is the Graldi / TP4 presentation. TP5 per-layer LRs are abc-equivalent and are not reimplemented.",
+  "gates": {
+    "0": {
+      "what": "Analytic W2 gradients exist so Gates 1–2 can run. sgd_step requires diagnostic=True at L=3. train_xy / run_stream / run_arm refuse L=3 regardless. This does not lift A6 for the depth slice.",
+      "stream_blocked": true
+    },
+    "1": {
+      "name": "algebraic pin",
+      "setting": "N=64, γ₀=1, n_hidden_layers=2, float64",
+      "requirement": "μP ≡ NTP on the forward pass and the first gradient step, all three tensors W, W2, u",
+      "note": "I5: first step moves only u. Equality of unmoved W and W2 is still required. Fail → stop. Do not proceed to Gate 2.",
+      "test": "tests/test_models_parameterization.py::test_base_width_equivalence_l3"
+    },
+    "2": {
+      "name": "empirical μP checks",
+      "setting": "L=3, toy Gaussian batch, no stream, no manifolds",
+      "mixed_is": "fail",
+      "not": "a licence to train sequential arms",
+      "shared": {
+        "d": 40,
+        "batch": 32,
+        "n_hidden_layers": 2,
+        "n_outputs": 1,
+        "readout_rank": null,
+        "a": 0.0,
+        "seed": 0,
+        "data_seed": 1,
+        "module": "A",
+        "steps_are_diagnostic": true
+      },
+      "check_A": {
+        "name": "hidden preactivation updates same order as width grows",
+        "parameterization": "mup",
+        "gamma_0": 1.0,
+        "lr0": 0.01,
+        "K": 8,
+        "widths": [64, 300],
+        "quantity": "rms(z2(K) − z2(0)) on the training batch, module A, per-entry RMS",
+        "pass": "ratio rms_N300 / rms_N64 in [1/3, 3], both finite and strictly positive",
+        "fail": "ratio outside that interval, non-finite, or either width has zero update (would mean W2 never moved)"
+      },
+      "check_B": {
+        "name": "η* does not slide with width the way NTP would",
+        "gamma_0": 1.0,
+        "K": 16,
+        "lr0_grid": [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0],
+        "widths": [64, 300],
+        "quantity": "argmin_lr0 of pre-step loss after K diagnostic steps; non-finite loss counts as +inf",
+        "pass_mup": "μP argmin lr0 at N=300 is the same grid point as at N=64, or an adjacent point (index distance ≤ 1)",
+        "pass_contrast": "NTP argmin lr0 at N=300 differs from N=64 by at least one grid step (index distance ≥ 1)",
+        "fail": "μP slides by more than one grid step, or NTP does not slide. Mixed is fail."
+      },
+      "check_C": {
+        "name": "‖ΔW‖/‖W‖ still separates across γ",
+        "parameterization": "mup",
+        "gammas": [1.0, 10.0],
+        "lr0": 0.001,
+        "K": 8,
+        "widths": [64, 300],
+        "quantity": "weight_change on W and on W2, module A",
+        "pass": "at both widths, weight_change(γ=10) > weight_change(γ=1) for W and for W2",
+        "fail": "any reversal or tie, or non-finite change"
+      }
+    },
+    "3": {
+      "name": "Verification 2",
+      "owner": "Kati",
+      "agent_must_not_sign": true,
+      "requires": "Gate 1 and Gate 2 both pass",
+      "then": "Only after that signature does stream NotImplementedError come off"
+    }
+  },
+  "after_gates_not_now": [
+    "depth pre-commit",
+    "one-arm",
+    "both LR laws with §0.1-style three-outcome reading",
+    "sequential N=300 and N=150"
+  ]
+}

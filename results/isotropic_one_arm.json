@@ -1,0 +1,44 @@
+{
+  "generated_by": "scripts/run_isotropic.py --one-arm",
+  "precommit": "results/isotropic_precommit.json",
+  "question": "Does the γ=10 S-HL reserved cell reach target_loss on isotropic-Gaussian manifolds at the registered pin?",
+  "spec": {
+    "gamma_0": 10.0,
+    "condition": "S-HL",
+    "a": 0.0,
+    "N": 300,
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "lr_scaling": "quadratic",
+    "arrangement_source": "stream_rng",
+    "manifold_kind": "isotropic_gaussian",
+    "readout": "unconstrained, Q = I_N",
+    "stream_id": 10000,
+    "seed": 0,
+    "population": "reserved arrangements"
+  },
+  "usable": true,
+  "n_tasks": 16,
+  "n_tasks_missed": 0,
+  "all_converged": true,
+  "steps_taken": [44, 36, 32, 30, 28, 28, 35, 26, 35, 35, 33, 36, 30, 28, 30, 30],
+  "mean_steps": 32.25,
+  "max_steps": 44,
+  "wall_seconds": 742.3525588512421,
+  "path": "results/isotropic/gamma-10__a-0__cond-S-HL__stream-10000__seed-0__kind-iso.json",
+  "manipulation_check_at_design_point": {
+    "note": "Independent of this arm's training. make_arrangement at (P,d,M)=(16,150,150).",
+    "spherical_D4_mean_participation_ratio": 3.87,
+    "isotropic_mean_participation_ratio": 74.5
+  },
+  "miss_rule": "lr0 stays 5.0. This arm reached target; the miss clause is not triggered. It remains in force for the 64-arm slice.",
+  "reading": "One-arm reached target on all 16 tasks. n=1 licenses the 64-arm slice, not a composition claim.",
+  "cost_64_serial_hours_from_this_arm": 13.2,
+  "cost_note": "13.2 h serial if every arm is like this one. Rank showed lazy arms can dominate the wall; this grid has no γ=0.03. Do not treat 13 min (64 workers × this wall) as a forecast.",
+  "will_not_do": [
+    "Re-pin lr0 from this arm.",
+    "Read composition from n=1.",
+    "Cross rank.",
+    "Include γ=0.03."
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "generated_by": "scripts/analyse_isotropic.py",
+  "precommit": "results/isotropic_precommit.json",
+  "n_files": 64,
+  "n_usable": 64,
+  "n_arms_missed": 0,
+  "misses": {
+    "10": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "1": {
+      "n": 32,
+      "n_miss": 0
+    }
+  },
+  "miss_interpretation": "A miss is not separable from an LR that is wrong on this generator. Report as not reaching target at the registered pin.",
+  "licensed_gammas": [
+    1.0,
+    10.0
+  ],
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A",
+    "unique_n": 8,
+    "unit": "reserved stream_id, seed=0"
+  },
+  "three_corner": [
+    "S-HL",
+    "S-LH",
+    "S-LL"
+  ],
+  "cells": {
+    "1": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.040476880049460026,
+        "utility_share_sem": 0.007863074178647256,
+        "utility_term_mean": -0.029422602481658802,
+        "utility_term_sem": 0.008255666033991025,
+        "floors_mean": 43.74108533406715,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.09414868217086513,
+        "utility_share_sem": 0.02457804943371254,
+        "utility_term_mean": -0.02980753739072998,
+        "utility_term_sem": 0.006413029457282787,
+        "floors_mean": 34.88673057633726,
+        "n_gated": 8
+      }
+    },
+    "10": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.18962368592142104,
+        "utility_share_sem": 0.010944405312917715,
+        "utility_term_mean": -0.33049209280748804,
+        "utility_term_sem": 0.02373912159269618,
+        "floors_mean": 93.83292229483867,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.2450313641332476,
+        "utility_share_sem": 0.012933574288951621,
+        "utility_term_mean": -0.3139112761257627,
+        "utility_term_sem": 0.02059070886340416,
+        "floors_mean": 78.580631450315,
+        "n_gated": 8
+      }
+    }
+  },
+  "gamma_1_to_10_share_step": 0.149146805871961,
+  "spherical_reserved_rN_share_step": 0.10566264603538666,
+  "wall_seconds_mtime_span": 2429.659106492996,
+  "wall_seconds_serial_sum": 90355.88058161736,
+  "n_workers": 192,
+  "runner_summary_missing": "Parent `run_isotropic.py` was interrupted after all 64 files were written. Wall is the arm-file mtime span, not a runner-printed wall.",
+  "reading": {
+    "key": "gamma_reorganisation_reproduces",
+    "text": "The \u03b3=1\u219210 three-corner utility-share step is comparable to the spherical reserved r=N step (0.106). Data-dimension is not necessary for the reorganisation. Rank reading stands: the driver is optimisation dynamics.",
+    "operationalization": "Three-corner utility share, unique n=8, task 0 lag 12 module A. Step = share(\u03b3=10) \u2212 share(\u03b3=1). Comparator is the spherical reserved r=N step. Reproduces if step \u2265 half the spherical step. Vanishes if |step| < a quarter of the spherical step. Else mixed.",
+    "from_precommit": {
+      "written_before_64_arm_numbers": true,
+      "metric": "three-corner utility share, unique n=8, task 0, lag 12, module A. Step = share(\u03b3=10) \u2212 share(\u03b3=1).",
+      "comparator": "spherical reserved r=N step in results/rank_slice.json",
+      "gamma_reorganisation_reproduces": "step \u2265 half the spherical step",
+      "gamma_reorganisation_vanishes": "|step| < a quarter of the spherical step",
+      "mixed": "otherwise"
+    }
+  }
+}

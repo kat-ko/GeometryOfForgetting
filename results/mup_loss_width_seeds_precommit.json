@@ -1,0 +1,44 @@
+{
+  "generated_by": "docs/16 A25 follow-up: unique n=8 on the frozen contrast, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 and L=3 A24/A25 contrast at K=16, lr0=10, unique n=8 init seeds",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "Does the named-lr0=10 loss-vs-width contrast replicate across unique n=8, at L=2 and at L=3?",
+  "why": "A24 and A25 used seed=0 and one batch. The remaining gap named after A25 was that single seed. This is that replicate. No new knobs. No stream. No signature.",
+  "held_fixed": {
+    "d": 40,
+    "batch": 32,
+    "gamma_0": 1.0,
+    "named_lr0": 10.0,
+    "K": 16,
+    "widths": [64, 300],
+    "module": "A",
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7],
+    "data_seed": "init_seed + 1, so seed 0 keeps data_seed=1 and must match A24"
+  },
+  "identification": {
+    "per_seed": "contrast present: finite losses, μP loss(N=300) ≤ loss(N=64), NTP loss(N=300) > loss(N=64)",
+    "unit": "init seed, with its paired batch",
+    "unique_n": 8
+  },
+  "seed0_must_match_a24": {
+    "L2_mup_64": 0.11435022374369137,
+    "L2_mup_300": 0.0910303162809226,
+    "L2_ntp_300": 0.18436533369870187,
+    "L3_mup_64": 0.031197776942582897,
+    "L3_mup_300": 0.014546847780150602,
+    "L3_ntp_300": 0.05920041008914069
+  },
+  "recorded_not_a_reading": [
+    "per-seed weight_change on W and W2",
+    "mean/min/max ratios across seeds"
+  ],
+  "readings_committed_before_seeing_numbers": {
+    "seed0_mismatch": "Seed 0 does not reproduce A24. Stop. The replicate is not interpretable.",
+    "instrument_blind": "Fewer than 8/8 seeds show the contrast at L=2. The instrument does not replicate. L=3 is recorded and is not a reading. Do not lift A6.",
+    "all_supported": "8/8 at L=2 and 8/8 at L=3. The contrast replicates on unique n=8 at both depths. Not Verification 2. Do not lift A6.",
+    "l3_problem": "8/8 at L=2 and fewer than 8/8 at L=3. An L=3 problem on a replicating L=2 instrument. Stop. Do not invent 1/√L in code. Do not lift A6."
+  }
+}

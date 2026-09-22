@@ -9,9 +9,13 @@ Version:      glue_core @ commit of 2026-08-11
 Derived from: measurements in results/*.json produced by scripts/run_*.py.
               Every number below is measured, none transcribed from a paper.
 Transcribed by: agent (Opus 5), 2026-08-11
-Verified by (human): ____________          # blank until checked
-Status: agent-measured, reproducible from the scripts named per section.
-        Code may not cite this sheet until "Verified by (human)" is filled.
+Verified by (human): Kati, 2026-09-01
+Status: human-signed 2026-09-01. B.5 settings and D.1.1 confirmed against
+        source. Sweeps are per-axis with off-axis values stated (D=4, R=1
+        for the correlation sweep; JSON `settings.D_fixed=4`, `R_fixed=1.0`).
+        Three cells spotted against `results/glue_core_recovery.json`
+        (`n_t=200,policy=all`): D=2 → D_eff 2.25 (2.2455); R=0.8 → R_eff 0.87
+        (0.8687); ρ_C=0 → rho_c_glue 0.04 (0.0379). §5a is present.
 ```
 
 This sheet is the methods paragraph for the paper and the answer to the reviewer
@@ -82,7 +86,7 @@ transcription check on the file since it is exact by construction.
 
 | ground truth `D` | 2 | 4 | 6 | 8 | 10 |
 |---|---|---|---|---|---|
-| `D_eff` | 2.25 | 4.07 | 5.61 | 6.98 | 8.17 |
+| `D_eff` | 2.25 | 4.07 | 5.60 | 6.98 | 8.17 |
 
 **Radius** (`R → R_eff`, at `D = 4`, `ρ_C = 0`):
 

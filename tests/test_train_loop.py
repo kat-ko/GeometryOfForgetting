@@ -31,6 +31,31 @@ def test_flatten_task_shapes_and_targets():
     assert np.all(target[:M] == 1.0) and np.all(target[-M:] == -1.0)
 
 
+def test_flatten_task_multi_output_and_group():
+    _, arr, _, _ = _setup()
+    from src.train.loop import flatten_group
+    y = np.array([1.0, 1, 1, 1, -1, -1, -1, -1])
+    y2 = np.array([-1.0, -1, -1, -1, 1, 1, 1, 1])
+    X, Y = flatten_task(arr.points, np.stack([y, y2], axis=1))
+    assert X.shape == (P * M, D_AMB) and Y.shape == (P * M, 2)
+    Xg, Yg = flatten_group([arr.points, arr.points], np.stack([y, y2], axis=0))
+    assert Xg.shape == (2 * P * M, D_AMB) and Yg.shape == (2 * P * M, 2)
+
+
+def test_worst_of_k_k1_matches_matched_loss_steps():
+    """K=1 worst-of-K is the same halt as matched_loss (pre-step prediction)."""
+    y_steps = []
+    for stop in ("matched_loss", "worst_of_k"):
+        model, arr, streams, _ = _setup()
+        y = dichotomies.sample_balanced(P, streams["stream"])
+        cfg = TrainConfig(steps_per_task=20_000, record_every=100,
+                          target_loss=0.1, stopping=stop)
+        rec = train_task(model, arr.points, y, cfg, streams["data"])
+        y_steps.append(rec.steps_taken)
+        assert rec.converged
+    assert y_steps[0] == y_steps[1]
+
+
 def test_single_task_is_learnable():
     model, arr, streams, tcfg = _setup()
     y = dichotomies.sample_balanced(P, streams["stream"])

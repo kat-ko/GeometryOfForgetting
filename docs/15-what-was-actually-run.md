@@ -112,11 +112,22 @@ f(x)   = Σ_m (β_L / γ_eff) · u_mᵀ h_m(x)
    Phase 0 time-warp: warping trajectories together still leaves a residual of
    11.5 floors (γ=1 vs 10), so it is not "the same path at different speed" —
    but it is also not "the same number of updates".
-2. **MSE to ±1 is not classification risk.** Capacity and accuracy can disagree
-   (they do, in `S-HH`: capacity gains while behavioural forgetting is ~0).
-   Interpreting Δ log α as "how much the network forgot the task" is already a
-   step: the behavioural readout is sign accuracy, and it is recorded, but the
-   paper's currency is capacity.
+2. **MSE and BCE have no shared operating point.** On this architecture, these
+   reserved Hamming streams, and this `lr0`, matched mean readout margin is
+   not matched progress across the two losses. At the BCE loss that puts
+   γ=10's mean in the MSE-stop band (L=0.454, m=0.850), γ=1 sits 0.07
+   below it, against an MSE band 0.027 wide. At every L tried, BCE p05 is
+   −0.47 to −0.60 against MSE-stop p05 ~+0.33: a tail of points remains
+   on the wrong side of `f=0`. p25 is ~0.16 against MSE ~0.71. Capacity is
+   computed from anchor points near the boundary, which is where the two
+   objectives differ most. The unmeasured sentence this replaces was
+   "MSE to ±1 is not classification risk." Numbers:
+   `results/bce_margin_bisect.md`. Do not reopen; do not pin per-γ.
+   Independently of that operating-point fact, capacity and accuracy can
+   still disagree (they do, in `S-HH`: capacity gains while behavioural
+   forgetting is ~0). Interpreting Δ log α as "how much the network forgot
+   the task" is already a step: the behavioural readout is sign accuracy,
+   and it is recorded, but the paper's currency is capacity.
 3. **Full batch, convex-in-`u` at frozen `W`.** The readout subproblem is a
    linear least squares on ReLU features. Non-convexity is only in `W`. Claims
    about SGD noise, minibatch implicit regularisation, or Adam geometry do not
@@ -124,10 +135,30 @@ f(x)   = Σ_m (β_L / γ_eff) · u_mᵀ h_m(x)
 4. **The γ² learning-rate law is a modelling choice, flagged in the spec as
    possibly wrong for γ ≫ 1.** Results at γ₀ = 10 sit in the regime where
    Atanasov says the exponent should be 1 (L=2). We do not know what the
-   channel shares would be under the corrected law.
+   channel shares would be under the corrected law.    Independently of that exponent, **μP and Adam do not compose** — a
+   measured finding with two halves, not a failed gate
+   (`docs/07` §A.9, `results/adam_richness_gate.md`). Inherited `lr0=5`
+   (the GD pin) under Adam at γ=10 gives `lr = 2343.75`. Loss went 0.5 →
+   3×10¹⁰ in three steps, because Adam's first update is
+   `lr · g / (|g| + ε)` and treats the μP-scaled rate as a scale-free
+   step. Re-pinned once to `0.0002` by the Phase 0 procedure
+   (`results/adam_lr0_repin.md`). After that pin, unique n=8, frozen ×
+   s_r=0.5, task 0: step counts separate 20.9× while `‖ΔW‖/‖W‖`
+   separates 3.19× against a one-decade bar. Reading
+   `partial_manipulation`. Under Adam, γ buys speed rather than feature
+   movement. Do not re-pin a second time. Do not launch the 192.
 5. **No claim about other continual-learning methods.** There is no replay
    baseline, no regularisation baseline, no i.i.d. joint-training control (C6
-   was cut). Sequential GD on MSE is the only optimiser in the result set.
+   was cut). Sequential full-batch GD on MSE is the only optimiser in the
+   published result set. A BCE pilot (`docs/21`) is a limitation measurement,
+   not a second-learner slice. An Adam arm (`docs/22`) is an off-design
+   exception to I3, never `results/phase1/`. The richness gate is the
+   finding in (4); the runner refuses the 192 unless the reading is
+   `clears_decade`. Hamming-only at γ=10 (96 arms) read
+   `finding3_fails_to_recover`. The second-learner line is closed:
+   three attempts, three different operating-point conditions, no
+   comparison (`docs/07` §A.9). No fourth learner. No replay, EWC, or
+   architecture variant. Next is the stream axis: order (`docs/23`).
 
 ---
 

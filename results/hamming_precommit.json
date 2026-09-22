@@ -1,0 +1,124 @@
+{
+  "generated_by": "docs/20 §5, after signed 2×3 and stride-2 schedule",
+  "written_before_running": true,
+  "written_before_running_applies_to": "192-arm Hamming first slice",
+  "status": "pre-commit — written after §1–§4 signed, before any Hamming arm",
+  "question": "At P=16, is retained capacity of (A_0, y_0) graded in consecutive Hamming at each input level, and does frozen (rule-only) sit between drift and jump at fixed Hamming?",
+  "why_now": "The existing 2×2 is same-vs-different-task × drift-vs-jump. Consecutive s_r=0.9 is Hamming 0 at P=16. Line 2: a similarity scalar is uninterpretable unless stated at a level, and a property varied without being shown to matter has not been probed. Frozen × s_r<1 is the rule-only condition the setup has described and never measured.",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "Four exact Hamming levels at P=16, crossed with three input levels. Hamming is requested as s_r in {1.0, 0.75, 0.5, 0.25} so h = (P/2)(1−s_r) is even and does not round. Input is frozen (s_f=1, centres copied, points re-realized), drift (s_f=0.9), jump (s_f=0.1). Same stream_id and same s_r pair dichotomies and A_0 across the three input levels; later A_t differ by design.",
+    "hamming_levels": {
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "h_at_P16": [0, 2, 4, 6],
+      "rounding": "none — these four are exact",
+      "s_r_1_kept": "Designed same-task cell, not dropped because 0.9 rounded to it on the old grid."
+    },
+    "input_levels": {
+      "frozen": {"s_f": 1.0, "what": "rule-only at s_r<1; no-change null at s_r=1"},
+      "drift": {"s_f": 0.9, "what": "slow consecutive centre motion; recovers finding 3 vs jump at s_r=1"},
+      "jump": {"s_f": 0.1, "what": "abrupt consecutive centre motion"}
+    },
+    "schedule": {
+      "T": 16,
+      "tracked_stride": 2,
+      "n_evals_two_modules": 106,
+      "lag12_tasks": [0, 2],
+      "lag4_tasks": [0, 2, 4, 6, 8, 10],
+      "why_not_stride_4": "Lag 12 would again be identically task 0. This arm is the template anchored streams inherit. W5b: at matched lag 4, position (×1.7) exceeds the within-task-0 lag effect (×1.34).",
+      "eval_budget_note": "EVAL_BUDGET=40 is a default-spec test on Phase1Spec (stride 4, 38 evals). run_arm does not refuse. Stride 2 is the lock."
+    },
+    "stopping": "matched_loss at target_loss 0.05. Sequential K=1.",
+    "not": "P=32. A Johnson-graph walk at Hamming distances the P=16 grid cannot realize. Treating consecutive s_r as lag-12 s_r. Bitwise-identical clouds at frozen (points are re-realized).",
+    "first_slice": {
+      "gammas": [1.0, 10.0],
+      "input_levels": ["frozen", "drift", "jump"],
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "unique_n": 8,
+      "n_arms": 192,
+      "gamma_0.03_excluded": "Not a control. Composition claims licensed at γ ∈ {1, 10}."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin. Not informed by the reserved set or by this axis.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Not informed by the reserved set.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T": 16,
+      "P": 16,
+      "seed": 0,
+      "tracked_stride": 2
+    },
+    "primary_cell": {
+      "task": 0,
+      "lag": 12,
+      "module": "A",
+      "quantity": "Δ log α (floors) against Hamming, per input level",
+      "unique_n": 8,
+      "unit": "reserved stream_id, seed=0",
+      "reported_not_a_reading": "Lag-4 series across task position {0,2,4,6,8,10}. Δρ_c against Hamming, including frozen."
+    }
+  },
+  "recovery": {
+    "cell": "At s_r=1, drift vs jump on reserved stream_ids, γ=10, unique n=8, module A, task 0 lag 12.",
+    "must": "Keep the sign of finding 3 (gain under drift, loss under jump) or stop. The new streams are not the same object."
+  },
+  "rule_only": {
+    "frozen_s_r_lt_1": "Interference with centres held. Never measured on the existing grid.",
+    "frozen_s_r_1": "Continued training with neither task change nor centre motion. The no-change null."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable and counted. lr0 is not re-pinned.",
+    "lr0_pinned_on": "Registered pin. Not informed by the reserved set."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, s_r=0.5, frozen, first reserved arrangement, a=0, N=300, quadratic, matched_loss, tracked_stride=2",
+    "why": "AGENTS.md §5. Frozen × s_r<1 is the never-run cell.",
+    "report": "results/hamming_one_arm.json",
+    "governs": false,
+    "reached_target": true
+  },
+  "readings_committed_before_seeing_numbers": {
+    "monotone_dose": "At γ=10, unique n=8, at frozen and at drift, mean Δ log α of task 0 lag 12 is monotone in Hamming. Dose-response is established.",
+    "binary_only": "At γ=10, s_r=1 separates from the three changing-task levels, which do not order. The axis is still same-vs-different, now with extra points that do not help.",
+    "nonmonotone": "At γ=10, the Hamming order is not monotone and is not a binary split. Report the order. Do not fit a story afterwards.",
+    "finding3_fails_to_recover": "At s_r=1, drift vs jump does not keep gain vs loss. Stop. The new streams are not the same object.",
+    "frozen_intermediate": "At fixed Hamming, frozen sits between drift and jump on Δ log α. Input change is graded, and the rule-only condition is the endpoint.",
+    "frozen_outside": "Frozen falls outside the drift–jump interval. Copying centres is not the zero of the input axis, and the input manipulation is not a single dimension. Genuinely possible: points are re-realized at frozen centres.",
+    "mixed": "γ=10 and γ=1 disagree on which of monotone_dose / binary_only / nonmonotone applies. Report the split."
+  },
+  "operationalization": {
+    "written_before_192_arm_numbers": true,
+    "primary": "Unique n=8, module A, task 0, lag 12, Δ log α vs Hamming, per input level, γ=10. 95% CI = mean ± 1.96 SEM.",
+    "monotone_dose": "At frozen and at drift, mean Δ log α is monotone in Hamming (s_r 1.0 → 0.75 → 0.5 → 0.25).",
+    "binary_only": "s_r=1 differs from {0.75, 0.5, 0.25}; those three do not order.",
+    "finding3_fails_to_recover": "At s_r=1, drift mean Δ log α is not > 0 or jump is not < 0 (γ=10, unique n=8).",
+    "frozen_intermediate": "At each s_r in {0.75, 0.5, 0.25}, frozen mean Δ log α lies in the closed interval between drift and jump.",
+    "frozen_outside": "At any of those three Hamming levels, frozen mean Δ log α lies strictly outside the drift–jump interval.",
+    "gamma_1": "Reported. Not the primary. Split → mixed."
+  },
+  "results_dir": "results/hamming/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Use old arrangements.",
+    "Inform lr0 or stopping from this axis.",
+    "Include γ=0.03 as a control.",
+    "P=32 on this slice.",
+    "Pool Hamming 0 with 0.75.",
+    "Treat consecutive s_r as lag-12 s_r.",
+    "Inherit tracked_stride=4.",
+    "Expand A8.",
+    "Edit figures from this arm.",
+    "Expand before the one-arm is reported."
+  ]
+}

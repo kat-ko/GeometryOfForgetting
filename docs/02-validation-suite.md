@@ -19,9 +19,8 @@ Source: Chou et al. (ICML 2025) Appendix B.5, Figures 9–12. Their stated setti
 
 ```
 N = 1000 (ambient), P = 2, M = 200
-D_ground from 2 to 10
-R_ground from 0.8 to 2.0
-ρ_c, ρ_a, ψ from 0 to 0.8
+Sweep 1 (dimension & radius; correlations zero): D_ground 2→10, R_ground 0.8→2.0
+Sweep 2 (alignment): D_ground = 4, R_ground = 1 fixed; ρ_c, ρ_a, ψ each 0→0.8
 ```
 
 | Test | Assertion |
@@ -182,9 +181,9 @@ test_base_width_equivalence:
     numerically, to float64 tolerance, on forward pass and first gradient step
 ```
 
-The second test resolves the **UNCERTAIN** base-width normalization constant
-(spec §4.2). It must be derived, not guessed; write the derivation to
-`docs/reference/parameterization-derivation.md` when it passes.
+The second test pins the base-width constant (spec §4.2). Verification 1 is
+signed: A.3 does not state `N/N₀` (dangling caption); independent derivation
+from Table 1 confirms `(N/N_base)` (`parameterization-derivation.md`).
 
 ```
 test_lr_scales_with_gamma:

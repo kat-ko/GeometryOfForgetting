@@ -34,6 +34,10 @@ Omitting this changes the meaning of `R` and breaks validation §1 of
 
 Test manifolds use the same centers and axes but resample `v_k`.
 
+**Isotropic Gaussian variant (D.1.1, not primary):** `M_i = {u_0^i + R · v_k}`.
+Drops intrinsic dimension. Candidate control for the rank axis — dimension
+cannot carry an attribution in manifolds that have none by construction.
+
 ### 1.2 Correlated manifolds
 
 Autoregressive covariance over manifold index:
@@ -76,6 +80,11 @@ than inherited, and prevents confounding with the alignment manipulation.
 ### 2.2 Dichotomy families
 
 A task is a **balanced** dichotomy `y ∈ {±1}^P` with `Σ_i y_i = 0`.
+
+This is a stated deviation from Chou D.1.1, which samples labels uniformly from
+`{±1}`. Unbalanced splits are degenerate and contaminate the similarity axis;
+capacity also depends on label sparsity (Chung et al. 2018). Recorded in
+`docs/reference/protocol-deviations.md`.
 
 | Family | Definition | Count |
 |---|---|---|
@@ -139,7 +148,14 @@ h_m(x) = ReLU( β₀ · W_m x ),          m ∈ {A, B},  W_m ∈ R^{N×d}
 f(x)   = Σ_m (β_L / γ_m) · u_mᵀ ReLU(h_m(x))
 ```
 
-`β₀ = d^{-1/2}`, `β_L = N^{-1/2}`.
+`β₀ = d^{-1/2}`, `β_L = N^{-1/2}`. Two modules, ReLU, full-batch GD on MSE,
+zero-init readout, SGD without momentum or weight decay. This is the same
+model class as Graldi's infinite-width arm (A.4: 2-layer non-linear ReLU
+perceptron, same loss, batching, readout init, optimizer). Two deviations to
+state: they use cosine LR restarted per task, we use constant LR with
+matched-loss stopping; their MLP arm is 30 MNIST samples / 2 tasks / `ρ = 0`,
+so `γ₀* ≈ 0.1` comes from their ResNet experiments and any comparison of `γ*`
+is across architectures. See `parameterization-derivation.md`.
 
 ### 4.2 Scaling table
 
@@ -152,18 +168,32 @@ Source: Graldi et al. (ICML 2025), Table 1.
 | LR schedule `η(t)` | `η₀(t)` | `η₀(t) · γ₀² · N` |
 | Weight variance `σ_ℓ²` | `1` | `1` |
 
-**Critical invariant (I6):** `σ² = 1` in *both* parameterizations. Hidden-layer
-weights at initialization are therefore **identical across γ₀**. This is what
-makes `γ` and `a` orthogonal. Unit-tested in `02-validation-suite.md` §3.
+**Notation.** Graldi's `D` in Table 1 is the **input dimension** (our `d`).
+`D` means intrinsic manifold dimension everywhere else in this project. The
+ℓ=0 branch scale is `d^{-1/2}`.
+
+**Critical invariant (I6):** `σ² = 1` in *both* parameterizations. Confirmed at
+source (Graldi Table 1, signed 2026-09-01). Hidden-layer weights at
+initialization are therefore **identical across γ₀**. This is what makes `γ`
+and `a` orthogonal. Unit-tested in `02-validation-suite.md` §3.
 
 **Per-module application:** `γ_m` sets both the output scale and the learning
 rate `η_m = η₀ · γ_m² · N`, applied to `W_m` **and** `u_m`. Changing one without
 the other changes contribution magnitude, not richness.
 
-**UNCERTAIN — must derive and unit-test.** Graldi et al. normalize μP to be
-equivalent to NTP at base width `N = 64`, but do not write the constant out.
-Derive it, assert `μP(γ₀=1, N=64) ≡ NTP(N=64)` numerically to float64 tolerance,
-and record the derivation in `docs/reference/parameterization-derivation.md`.
+**Base-width constant (Verification 1 signed 2026-09-01).** A.3 does not state
+it; the Table 1 caption's "Further details are in App. A.3" is a dangling
+reference. Independent derivation: set μP = NTP in Table 1; both the output
+scale and the LR give `γ₀ = N^{-1/2}` (the two rows agree). Normalising so
+`γ₀ = 1` is the NTP point at `N₀ = 64` is equivalent to replacing `N` with
+`N/N₀`: `γ_μP = γ₀ (N/N_base)^{1/2}`, `η_μP = η₀ γ₀² (N/N_base)`. Confirmed
+against the agent's; pinned by `test_base_width_equivalence`. See
+`parameterization-derivation.md`.
+
+**NTP-equivalent γ₀ at our width, computed not interpreted.**
+`γ₀^{NTP}(N) = (N₀/N)^{1/2}`. At `N = 300` that is `(64/300)^{1/2} ≈ 0.462`,
+between grid points 0.3 and 1. One line in the paper so a reader can place
+PyTorch SP / NTP on the sweep. No coincidence claim.
 
 ### 4.3 Corrected-LR arm
 
@@ -175,6 +205,12 @@ Implement `lr_scaling ∈ {"quadratic", "corrected"}` as a config field.
 `"corrected"` uses `η_m = η₀ · γ_m^(2/L) · N` for `γ_m > 1`, `γ_m²` otherwise,
 with `L` the depth (here `L = 2`). Required for the robustness arm; the effect
 must survive it.
+
+**Run (2026-09-01).** Unique n=8, old arrangements, 192/192 usable, 0 misses.
+Three-corner utility share at γ=10 is 0.449 (quadratic) vs 0.450 (corrected).
+γ=1 is identical. Pre-committed reading: composition unchanged; primary law
+remains quadratic. Appendix robustness. See `results/corrected_lr.json`.
+At L=2 the rich-regime LR ratio is γ (10× at γ=10), not γ².
 
 ### 4.4 Readout
 
@@ -252,6 +288,11 @@ bisection — a different estimator, used in `02` §2a. Do not conflate.)
 
 **We operate at margin κ = 0.** The legacy estimator's κ parameter must be set to
 0; estimators are not interchangeable at κ ≠ 0.
+
+**We restrict to balanced dichotomies.** That is a departure from D.1.1's uniform
+sampling on `{±1}`, because the dichotomy is the task variable and unbalanced
+splits are degenerate. Capacity depends on label sparsity (Chung et al. 2018).
+See `docs/reference/protocol-deviations.md`.
 
 ### 6.1 Estimator in stacked-matrix (P-space) form
 

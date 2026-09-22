@@ -1,0 +1,54 @@
+{
+  "generated_by": "docs/16 §Amendments A9 / original §7.1",
+  "written_before_running": true,
+  "status": "pre-commit — model and unit specified before the test is run",
+  "question": "Does channel composition of forgetting show a γ × condition interaction on the registered grid?",
+  "unit": {
+    "name": "unique (arrangement, init) draw",
+    "not": "the file",
+    "on_this_grid": "init seed 0-7. stream_id was unread, so 40 files per (γ, condition) cell are 8 unique draws each written five times. Deduplicate with unique_recs: one file per (γ, condition, seed, N).",
+    "n_per_cell": 8
+  },
+  "population": {
+    "source": "results/phase1/ via grid.load(), then unique_recs",
+    "a": 0.0,
+    "N": 300,
+    "gammas": [0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+    "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "module": "A",
+    "task": 0,
+    "lag": 12,
+    "note": "Same cell as Figure 2 (task 0, lag 12). All four corners, including S-HH, because the headline is γ × condition, not three-corner pooled composition."
+  },
+  "outcomes": {
+    "primary": {
+      "name": "signed utility term of Δ log α",
+      "why": "Additive piece of the identity, defined at every γ including where |Δ log α| is below the Figure 2 two-floor gate. Shares of an unresolved change are not a composition of forgetting."
+    },
+    "headline_share": {
+      "name": "per-unit utility share |term| / Σ|term|",
+      "computed_on": "the unique draw, not pooled-then-share",
+      "gate": "include a draw only if |Δ log α| ≥ 2 alpha noise floors (Figure 2 MIN_FLOORS). Restrict the share ANOVA to the largest set of γ at which every (γ, condition) cell keeps n ≥ 6 after the gate; if no such set exists with at least two γ, report the share ANOVA as not licensed and stop.",
+      "why_not_primary": "Shares are undefined-as-forgetting below the gate; gating unbalances the design."
+    }
+  },
+  "model": {
+    "primary": "balanced two-way ANOVA: y ~ C(γ) * C(condition) on the 6 × 4 × 8 unique draws (signed utility term).",
+    "interaction_test": "F-test of the γ × condition interaction. This is the object.",
+    "alpha": 0.05,
+    "robustness": "permutation of condition labels within each (seed, γ), 999 shuffles, two-sided p on the interaction F. Same unique unit.",
+    "share_anova": "same F-test on gated per-unit utility share, on the licensed γ set only."
+  },
+  "readings_committed_before_seeing_numbers": {
+    "interaction_p_below_0.05_on_signed_utility": "Channel composition's γ-gradient differs by condition. The headline is an interaction, not a γ-main-effect pooled over corners.",
+    "interaction_p_at_or_above_0.05_on_signed_utility": "No detectable γ × condition interaction on the utility term at unique n=8. The composition shift with γ is not licensed as corner-specific from this test.",
+    "share_anova_not_licensed": "Report that fact. Do not substitute an ungated share test.",
+    "S_HH": "Included. Opposite-sign Δ log α in the benign corner is part of the condition factor, not a reason to drop the cell."
+  },
+  "will_not_do": [
+    "Treat five stream_id copies as independent.",
+    "Pool the three forgetting corners before testing γ × condition.",
+    "Re-pin anything on the result.",
+    "Use reserved stream ids (this is a re-analysis of the old population)."
+  ]
+}

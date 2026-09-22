@@ -1,0 +1,41 @@
+{
+  "generated_by": "scripts/run_scope.py --one-arm",
+  "precommit": "results/scope_precommit.json",
+  "question": "Does the coarsest cut (K=4) at γ=10 S-HL reach target under worst-of-K at the registered pin?",
+  "spec": {
+    "gamma_0": 10.0,
+    "scope_K": 4,
+    "n_outputs": 4,
+    "condition": "S-HL",
+    "a": 0.0,
+    "N": 300,
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "stopping": "worst_of_k",
+    "lr_scaling": "quadratic",
+    "arrangement_source": "stream_rng",
+    "stream_id": 10000,
+    "seed": 0,
+    "population": "reserved arrangements"
+  },
+  "usable": true,
+  "n_grouped_tasks": 4,
+  "n_tasks_missed": 0,
+  "all_converged": true,
+  "steps_taken": [54, 32, 27, 27],
+  "mean_steps": 35.0,
+  "max_steps": 54,
+  "n_evals": 28,
+  "task0_lags": [4, 8, 12],
+  "wall_seconds": 265.01341438293457,
+  "path": "results/scope/gamma-10__a-0__cond-S-HL__stream-10000__seed-0__K-4.json",
+  "miss_rule": "lr0 stays 5.0. This arm reached target; the miss clause is not triggered. It remains in force for the 192-arm slice.",
+  "reading": "One-arm reached target on all 4 grouped tasks. Lag 12 from own-group baseline exists. n=1 licenses the 192-arm slice, not a composition claim.",
+  "cost_note": "265 s for K=4 (4 grouped tasks). K=1 is 16 sequential tasks and will dominate the wall. No γ=0.03 on this slice. Do not treat 265 s × 192 / 192 workers as a forecast.",
+  "will_not_do": [
+    "Re-pin lr0 from this arm.",
+    "Read composition from n=1.",
+    "Fall back to |S|.",
+    "Use mean-reduced stopping."
+  ]
+}

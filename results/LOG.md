@@ -4019,5 +4019,410 @@ Not pooled with the registered grid. Do not quote N=16 channel shares.
 
 Artifacts: `results/small_n_grid.json` (192 arms), `results/small_n16_precommit.json`.
 
+---
 
+## 2026-09-10 — Hamming × input-change first slice
+
+192 arms, reserved stream_ids 10000–10007, seed=0, P=16, T=16, stride=2,
+γ ∈ {1, 10} × {frozen, drift, jump} × s_r ∈ {1.0, 0.75, 0.5, 0.25}.
+Wall 4071 s (~68 min) at 192 workers. 1 skipped (the one-arm). **192/192
+usable**, 0 misses. Primary cell unique n=8, module A, task 0, lag 12.
+
+Pre-commit: `results/hamming_precommit.json` (written before any arm).
+Readings applied by `scripts/analyse_hamming.py`.
+
+**Finding 3 recovery (s_r=1, γ=10).** Drift **+6.7** floors (8/8 gain), jump
+**−55.1** floors (8/8 loss). Same object as the registered S-HH / S-LH
+isolation. Do not stop.
+
+**Primary reading: `mixed`.** γ=10 Hamming-axis is `nonmonotone`; γ=1 is
+`monotone_dose`. Frozen level at γ=10 is `frozen_outside`.
+
+γ=10 Δ log α floors (n=8, 95% CI = mean ± 1.96 SEM):
+
+| input | s_r=1 | 0.75 | 0.50 | 0.25 |
+|---|---|---|---|---|
+| frozen | +7.1 | −68.2 | −69.1 | −68.9 |
+| drift | +6.7 | −61.3 | −70.3 | −74.6 |
+| jump | −55.1 | −76.9 | −78.0 | −77.6 |
+
+γ=10 drift is monotone in Hamming. Frozen is not: after the drop at
+Hamming>0 the last two means swap (−69.1 vs −68.9). That swap is why
+γ=10 is `nonmonotone` rather than `monotone_dose`. Report the order; do
+not fit a story.
+
+**Artifact checks (AGENTS §8.2).**
+
+- *Misses as a silent non-effect.* 0/192 missed. Not the reading.
+- *Wrong object.* Finding 3 recovery holds on the reserved set. Not this.
+- *Frozen `nonmonotone` is a 0.2-floor wiggle.* Frozen s_r=0.50 vs 0.25
+  CIs overlap completely ([−1.38, −1.18] vs [−1.40, −1.15]). The
+  operationalization uses means, so the named reading stays `mixed`. Do
+  not upgrade it to `monotone_dose` on a CI argument.
+- *`frozen_outside` is the interesting named outcome, not a bug in
+  pairing.* At s_r=0.50 and 0.25, frozen sits *above* both drift and jump
+  (less loss). Pairing of A_0 and dichotomies across input levels at
+  fixed s_r was tested before the slice. Re-realizing points at copied
+  centres is what the code does; bitwise-identical clouds were never the
+  frozen condition. Copying centres is not the zero of the input axis.
+- *Δρ_c and lag-4 position are reported, not readings.* At s_r=1, γ=10,
+  retained Δρ_c on task 0 is unresolved under drift (+0.002, CI includes
+  0) and +0.104 under jump. Do not recycle finding 4's registered-grid
+  +0.055 onto this population.
+
+Not pooled with `results/phase1/`. Do not edit figures from this arm.
+Do not inform lr0.
+
+Artifacts: `results/hamming_slice.json`, `results/hamming_slice.md`,
+`results/hamming_one_arm.json`, `results/hamming_precommit.json`.
+
+---
+
+## 2026-09-10 — Hamming table is a cliff; readings superseded; Δρ_c and lag-4 read
+
+The named readings (`mixed`, `monotone_dose`) failed to discriminate the
+shape they were written for. The table is a cliff at Hamming>0 except
+under drift, where a graded post-cliff component is resolved at both γ
+(13.3 floors at γ=10, CIs non-overlapping; 10.0 at γ=1). Frozen and jump
+post-cliff ranges are 0.7 / 0.7 at γ=10. Frozen and drift cross: drift
+better at s_r=0.75, frozen better at s_r=0.25. `frozen_outside` fired
+because frozen is insensitive to task change, not because copying
+centres is a stronger or weaker input change.
+
+Logged as artifact family **A.8** (`docs/07-writeup.md`): a pre-registered
+statistic satisfied by a shape other than the one it was written for.
+Prior instances: H1a, H2c. Going forward, a monotonicity reading requires
+the post-threshold range to clear the floor.
+
+**Δρ_c (retained task 0, lag 12, γ=10).** Comes apart from capacity.
+Frozen capacity is a cliff; frozen Δρ_c is graded (−0.053 at 0.75 vs
+−0.087 at 0.25, CIs do not overlap). Drift capacity is graded; drift Δρ_c
+is a cliff then unresolved (+0.068 vs +0.079, CIs overlap). Jump Δρ_c is
+already +0.104 at s_r=1. Drift at s_r=1 is +0.002, CI includes 0 — do not
+recycle the registered-grid +0.055 onto this population.
+
+**Lag 4, γ=10, tasks 0/2/4/6/8/10.** |task 0 / task 8| is cell-dependent:
+1.2–1.4× on most forgetting cells (near W5b's ×1.7), **×3.45** on jump at
+s_r=1, **×0.70** (inverted) on drift at s_r=1. Position is a measured
+covariate on this arm.
+
+P=32 is motivated as cliff-resolution (h=2 = 6.25% of labels vs 12.5% at
+P=16). Still needs §2a. Not next. No new arm.
+
+Artifacts: `results/hamming_slice.md` (full tables), `docs/07-writeup.md`
+§A.8, `src/analysis/ledger.py` kind `statistic`.
+
+---
+
+## 2026-09-11 — Finding 4 restated (two populations); next is CE, not order
+
+The Hamming commentary's five corrections are accepted. Two of them were
+already ours: the 68–75 floor figure is frozen/drift only (jump adds 21.8
+on top of a 55-floor loss at Hamming 0), and exposure is not untouched
+(A8 ran; order and spacing are the unset knobs).
+
+**Finding 4.** Input change drives centre convergence and saturates almost
+immediately. Task repetition does not, as a general statement. Registered
+2×2, unique n=8, γ=10: drift vs jump at a repeated task differs by +0.055
+in Δρ_c. Reserved Hamming, same isolation: +0.002 under drift (CI includes
+0, 5+/3−) and +0.104 under jump. Capacity recovered on the reserved set
+(+6.7 vs −55.1). Δρ_c did not. Same isolation, different population,
+different answer on one measure and not the other. Mismatched-population
+family. Ledger entry added. Do not pool.
+
+Notebook `project-overview(2).ipynb` finding 2 and closing paragraph
+rewritten. `docs/20` §1 signed claim names both populations.
+
+**Sequence.** The joint-outcome argument is empty until a second learner
+sits on the *existing* streams. Order and spacing first would produce
+setting results a second learner might relativise. Inverse: a second
+learner on streams that do not exist yet tests nothing. Signed order:
+CE (binary cross-entropy, same architecture, same Hamming streams) →
+order (audit's weaker prediction) → spacing → P=32 with its own §2a.
+
+Not EWC/replay (change the objective). Not Adam on this arm (CE is the
+smaller change; D.1.1 anticipates `{0,1}` BCE; converts `docs/15` MSE
+limitation into a measurement). Stopping slot unsigned: MSE
+`target_loss=0.05` is not a BCE number. No `ce_precommit.json`, no arm,
+until that slot is signed. `docs/21-second-learner-ce.md`.
+
+CIFAR-as-finding refused: a Split-CIFAR arm has unreported similarity
+by construction. Naturalistic arm, if ever, is estimator validation, not
+generalisation.
+
+The field's domain-IL and task-IL are corners of this factorial *and the
+cells between*. That sentence is already true of the experiment. It needs
+the second learner to survive a reviewer.
+
+No figure edits. No L=3. No new training.
+
+Artifacts: `docs/20-restatement-and-next-arm.md`, `docs/21-second-learner-ce.md`,
+`src/analysis/ledger.py`, `notebooks/project-overview(2).ipynb`,
+`results/hamming_slice.md`.
+
+---
+
+## 2026-09-11 — CE stopping: match on margin; lr0 re-pin signed; m* not frozen
+
+Stopping method signed. Numerical pin not frozen. No `ce_precommit.json`.
+
+**Rejected.** BCE=0.05 (arbitrary; ~98% confidence). Fractional reduction
+0.693→0.035 (log vs quadratic tails). Matched steps (destroys the γ
+contrast matched-loss exists for).
+
+**Signed.** Pin BCE by matching the MSE-stop readout margin
+`m = mean(y f)` on the current-task batch. Fallback if that cannot be
+done cheaply, or if one number cannot hit both γ: fractional reduction
+with the mismatch stated and a post-hoc margin comparison. Awkward
+matching is a result, not an obstacle.
+
+**lr0.** If BCE at `lr0=5` fails to reach the pinned target on the pilot
+cells, re-pin once, uniformly, by the Phase 0 procedure (0.2 stranded;
+5 reached every γ; 50 stable), recorded as a design change before any
+slice. Not per cell. Not after seeing which Hamming cells fail.
+
+**m* recovery.** Hamming records do not store `f` or weights. Training-only
+replay, identity-checked against stored `steps_taken`.
+`scripts/measure_mse_stop_margin.py --one-arm`: frozen × s_r=0.5 ×
+stream 10000, γ=10 and γ=1. Both match. Mean m over 16 tasks: **0.8527**
+(γ=10) and **0.8316** (γ=1). Task 0: 0.779 and 0.745. Mean p05 sits far
+lower (~0.33). Homogeneous conversion of 0.05 MSE is 0.684 and is not
+this measurement. n=2, not frozen. Wall 153 s.
+
+Artifact check: replay could have been a different trajectory. It was
+not — `steps_taken` lists agree with `results/hamming/` on both cells.
+Would have been an artifact if we had converted 0.05 → 0.684 and called
+it measured.
+
+Next: BCE pilot aimed at these means; freeze only if one loss can hit
+both γ; then JSON.
+
+Artifacts: `docs/21-second-learner-ce.md`,
+`results/mse_stop_margin_one_arm.json`, `results/mse_stop_margin_one_arm.md`.
+
+---
+
+## 2026-09-11 — Four-stream MSE band; BCE bisect: no shared operating point
+
+Four reserved streams × γ ∈ {1, 10}, frozen × s_r=0.5, ids 10000–10003.
+All eight `steps_taken` match stored Hamming JSON. Wall 252 s.
+
+Band of cell-mean margins: **[0.8308, 0.8582]**, spread 0.0274, grand
+mean 0.844. γ=10: 0.853–0.858. γ=1: 0.831–0.837. p05 ~0.33, p25 ~0.71
+(γ=10) / ~0.66 (γ=1). Homogeneous 0.684 remains ~20% shallower.
+
+BCE one-arm, γ=10, probe L=0.35: mean m=1.31, p05=−0.33, 80 steps, 15 s,
+`lr0=5` reached. Already a different distribution: mean above the band,
+tail on the wrong side of f=0.
+
+Bisect, eight rounds, both γ, against the four-stream band. Reading:
+**`no_shared_operating_point`**. Closest: L=0.454, γ=10 m=0.850 (in band)
+and γ=1 m=0.777 (below). Gap at matched L ~0.07, 2.5× the MSE band.
+p05 negative at every L (−0.47 to −0.60). p25 ~0.16 against MSE ~0.71.
+Not an lr0 miss.
+
+Artifact check: a too-tight band. The band is the measured MSE range,
+including both γ. BCE's between-γ gap is larger than that range, so no
+widening that still matches "MSE arms' own spread" would admit a shared
+L. Per-γ pins were refused in advance because they reintroduce the
+matched-loss confound.
+
+No pin. No `ce_precommit.json`. No slice. The CE arm cannot test whether
+the cliff, the drift gradation, and the crossover are properties of the
+stream. The failure is a measured limitation: these two objectives have
+no shared operating point at this architecture, these streams, and this
+`lr0`. That is a stronger §9 sentence than "MSE to ±1 is not
+classification risk."
+
+Artifacts: `results/mse_stop_margin_four_streams.json`,
+`results/bce_margin_one_arm.json`, `results/bce_margin_bisect.json`,
+`docs/21-second-learner-ce.md`.
+
+---
+
+## 2026-09-11 — CE limitation written; Adam pre-commit on file
+
+Zero compute. The CE table is now the limitation, not a pending arm.
+
+Two facts, written as such. The between-γ gap (~0.07 at matched BCE
+loss against an MSE band of 0.027) is the pin failing, and a statement
+about BCE: under MSE the two richness regimes sit at comparable
+margins at matched loss; under BCE they do not. The negative p05
+(−0.47 to −0.60 against MSE +0.33; −0.49 at the L that matches
+γ=10's mean) is the larger finding. MSE to ±1 pulls the distribution
+together; BCE concentrates on the boundary and leaves a tail of
+misclassified points. Capacity is computed from those anchors. The
+pin was never going to be sufficient.
+
+§9 replacement: `docs/15` limitation 2. Appendix family A.9:
+`docs/07`. Ledger kind `operating_point`. Notebook §9 aligned. CE arm
+closed (`docs/21`).
+
+Not another loss. Hinge/focal share BCE's gradient structure. Next is
+Adam on the existing Hamming streams, same MSE, same `target_loss=0.05`,
+same pin. I3 licensed as an off-design exception, never
+`results/phase1/`. Richness gate: unique n=8, frozen × s_r=0.5, after
+task 0, mean ‖ΔW‖/‖W‖ at γ=10 over γ=1 must clear one decade (Phase 0
+bar) or the reading is `richness_manipulation_collapses` and the arm
+speaks only to the Hamming axis. `lr0=5` inherited; if the one-arm
+misses, re-pin once, uniformly, by the Phase 0 procedure, before any
+slice. Five readings named. No Adam code this step.
+
+Then order, then spacing, then P=32.
+
+Artifacts: `docs/15-what-was-actually-run.md`, `docs/07-writeup.md`
+§A.9, `docs/21-second-learner-ce.md`, `docs/22-second-learner-adam.md`,
+`docs/20-restatement-and-next-arm.md`, `results/adam_precommit.json`,
+`src/analysis/ledger.py`.
+
+---
+
+## 2026-09-11 — Adam opt-in; inherited lr0=5 exploded; re-pin 0.0002; one-arm reached
+
+Adam is an opt-in on `TwoModuleNet.adam_step` / `TrainConfig.optimizer`.
+Default remains SGD. Hamming runner refuses Adam. Never `results/phase1/`.
+
+Inherited `lr0=5` exploded: at γ=10, `lr=2343.75`, loss 0.5 → 3×10¹⁰ in
+three steps. A full one-arm at 5 was killed after 11 min of 20k-step
+grind; no `results/adam/` file was written.
+
+Phase 0 procedure, once, uniformly, one-arm cell, both γ, task 0.
+Decade ladder: `2e-5` strands γ=1 at loss 0.36 (too-small analog of GD
+0.2 at 0.34); `0.0002` reaches both; `0.002` (decade up) still reaches.
+Pin **0.0002**. Not informed by Hamming cells or the richness gate.
+Do not re-pin a second time.
+
+One-arm at the new pin: γ=10 frozen × s_r=0.5 × stream 10000. All 16
+tasks reached 0.05. Steps 24–44 (mean 29.4). Task 0 `‖ΔW‖/‖W‖` ≈ 1.83
+(smoke check; gate is unique n=8). 106 evals, 992 s. n=1 licenses the
+192-arm slice, not a reading. Serial cost from this arm: 52.9 h.
+
+Artifacts: `docs/22-second-learner-adam.md`, `results/adam_precommit.json`,
+`results/adam_lr0_repin.md`, `results/adam_one_arm.json`,
+`results/adam/gamma-10__a-0__input-frozen__s_r-0.5__stream-10000__seed-0__opt-adam.json`.
+
+---
+
+## 2026-09-11 — Adam richness gate: partial_manipulation; 192 held
+
+Hold the slice. Unique n=8, frozen × s_r=0.5, both γ, training-only,
+16 arms, 42 s, 0 missed. Identity with the one-arm bitwise held.
+
+Mean ‖ΔW‖/‖W‖ module A: γ=10 **1.836**, γ=1 **0.576**, ratio **3.19**
+against a one-decade bar. Mean steps 24.0 vs 501.5 (20.9×). γ is buying
+speed, not feature movement.
+
+Reading **`partial_manipulation`** (band [3, 10), named before numbers).
+The 192-arm runner now refuses. Not `clears_decade`. Not an automatic
+`richness_manipulation_collapses` (<3). Decision: a Hamming-only Adam
+arm at one γ (96), or stop.
+
+μP × Adam explosion (lr0=5, loss 0.5 → 3×10¹⁰ in three steps) written
+into `docs/15` limitation 4 and `docs/22`, not only this log.
+
+Artifacts: `results/adam_richness_gate.json`,
+`results/adam_richness_gate.md`, `docs/22-second-learner-adam.md`,
+`docs/15-what-was-actually-run.md`.
+
+---
+
+## 2026-09-11 — Gate filed as a finding; CE+Adam as one appendix family; Hamming-only pre-commit
+
+`partial_manipulation` is the right reading and the runner refusing the
+192 is correct. Filed as a finding, not a failed check: steps separate
+20.9×, weight change 3.19×. Under Adam, γ buys speed rather than feature
+movement. Pair with the `lr0=5` explosion: μP and adaptive optimisers
+do not compose. Written: `docs/07` §A.9 (CE + Adam, one family),
+`docs/15` limitations 2 and 4, ledger `operating_point` (second entry),
+notebook §9.
+
+Hamming-only at γ=10, 96 arms, pre-committed before the new one-arm.
+Cannot speak to γ, finding 1, or the channel reorganisation. Readings
+named before numbers: `hamming_reproduces` / `hamming_fails` / `partial`,
+plus recovery as a stop. γ=10 because every effect is largest there and
+because Adam's `lr` at the pin is 0.094 rather than 0.00094 with 502
+steps. One-arm cell is drift × s_r=0.5 × stream 10000, not the gate
+cell.
+
+Framing, before the 96 report (`docs/20` §9): the joint-outcome claim
+cannot be "a second learner agrees." Two attempts hit the operating-point
+problem. Geometry with a well-specified stream is what the evidence
+currently supports. Both framings remain defensible; do not resolve by
+more compute.
+
+Artifacts: `docs/07-writeup.md` §A.9, `docs/15-what-was-actually-run.md`,
+`docs/20-restatement-and-next-arm.md` §9, `docs/22-second-learner-adam.md`,
+`results/adam_hamming_precommit.json`, `src/analysis/ledger.py`.
+
+---
+
+## 2026-09-11 — Hamming-only one-arm reached (drift × s_r=0.5)
+
+γ=10, drift, s_r=0.5, stream 10000, `lr0=0.0002`. All 16 tasks reached
+0.05. Steps 19–47 (mean 26.25). Task 0 `‖ΔW‖/‖W‖` A =
+1.8291011753468978, bitwise identity with the frozen one-arm and the
+gate (task 0 does not yet see the input walk). 106 evals, 1204 s. n=1
+licenses the 96, not a reading.
+
+Then: `python scripts/run_adam.py --hamming-only`.
+
+---
+
+## 2026-09-11 — Hamming-only 96: finding3_fails_to_recover; stop
+
+96 arms, γ=10 only, usable 96, missed 0, wall 1948 s. Unique n=8,
+module A, task 0, lag 12.
+
+**Primary reading: `finding3_fails_to_recover`.** At s_r=1, drift is
+−0.3 fl (mean −0.0055, CI [−0.045, +0.034], 3+/5−). Jump is −88.4 fl.
+Gain-under-drift did not hold. The Adam streams are not the same
+object. Hamming-axis flags were computed and are not a reading. Do not
+salvage cliff or gradation. Do not interpret γ. Do not launch the 192.
+
+Artifacts: `results/adam_hamming_slice.json`,
+`results/adam_hamming_slice.md`, `docs/22-second-learner-adam.md`,
+`docs/20-restatement-and-next-arm.md`.
+
+---
+
+## 2026-09-11 — Operating-point family has three entries; second-learner line closed; order pre-committed
+
+Correct stop on `finding3_fails_to_recover`. Framing in `docs/20` §9
+stands: geometry with a well-specified stream.
+
+**Hypothesis, not a reading, not tested.** At s_r=1, γ=10 Adam: drift
+−0.3 fl (CI includes 0) vs SGD +6.7; jump −88.4 vs −55.1. The gain
+under drift is gone; the loss under jump is larger. Finding 3 is
+accumulation over hundreds of SGD steps. Adam reaches target in ~24.
+Twenty-four steps is not enough trajectory for accumulated drift to
+register, while a jump is a discrete disruption that registers fully —
+and larger with less compensating movement. If that is right,
+matched-loss stopping and Adam interact: "matched progress" and
+"comparable trajectory" come apart. Do not test.
+
+That is the third operating-point condition. CE failed shared operating
+point. The Adam gate failed manipulation-survives. The Adam slice
+failed primary-contrast-recovers. Written as `docs/07` §A.9. The
+generalisable claim: a comparison of the form "same setting, different
+learner" needs all three; none is guaranteed; three variations each
+failed a different one.
+
+**Second-learner line closed.** No fourth learner. No replay, EWC,
+architecture variant. The stopping rule, the parameterisation, and the
+geometry measurement were co-designed for one optimiser and one loss.
+
+**Order pre-commit on file** (`docs/23`, `results/order_precommit.json`).
+Audit's weaker prediction, matched composition, schedule B. 64 new
+arms, γ=10, frozen+drift, s_r ∈ {0.75, 0.25}, reverse+shuffle; forward
+paired from Hamming. One-arm first, not yet run. Not a substitute
+second learner.
+
+The paper's structure: findings about the stream, measured on one
+learner, with the learner's boundaries mapped by three failed attempts
+to cross them.
+
+Artifacts: `docs/07-writeup.md` §A.9, `docs/15-what-was-actually-run.md`,
+`docs/20-restatement-and-next-arm.md`, `docs/22-second-learner-adam.md`,
+`docs/23-order-arm.md`, `results/order_precommit.json`,
+`src/analysis/ledger.py`.
 

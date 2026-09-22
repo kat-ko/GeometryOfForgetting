@@ -1,0 +1,86 @@
+{
+  "generated_by": "docs/16 §3 / A7, after not-tuned reading headline_reproduces_on_reserved",
+  "written_before_running": true,
+  "written_before_running_applies_to": "192-arm scope granularity first slice",
+  "status": "pre-commit — written after A7 licensed granularity with worst-of-K, before any scope arm",
+  "question": "Does forgetting differ by the granularity of the task cut, at matched underlying dichotomies?",
+  "why_now": "A7 decided the readout: multi-output granularity, worst-of-K stopping. |S| is refused. The not-tuned reserved headline is in hand, so K=1 is a recovery control rather than a first look at the reserved set.",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "Granularity of the cut. A T=16 dichotomy sequence is partitioned as K∈{1,2,4} dichotomies per sequential task (fine / medium / coarse). Same 16 dichotomies and 16 arrangements. Each grouped task is a multi-output batch: every arrangement in the group is labeled with all K dichotomies of the group. Shared readout; outputs added; no task-conditioned head.",
+    "stopping": "worst-of-K: halt when max_k ½ mean_b (f_k − y_k)² ≤ 0.05. For K=1 this is identical to matched_loss (both use the pre-step prediction). Licensed by results/scope_loss_scale.json. Mean-reduced stopping is refused.",
+    "not": "Breadth |S|. Class-count-as-scope; Line 2 records it as unspecified.",
+    "first_slice": {
+      "gammas": [1.0, 10.0],
+      "K": [1, 2, 4],
+      "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+      "unique_n": 8,
+      "n_arms": 192,
+      "gamma_0.03_excluded": "Not a control. Composition claims licensed at γ ∈ {1, 10}."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin. Not informed by the reserved set or by this axis.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Worst-of-K uses this same number per output. Not informed by the reserved set.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T_dichotomies": 16,
+      "seed": 0
+    },
+    "cell": {
+      "task": 0,
+      "lag": 12,
+      "module": "A",
+      "lag_unit": "From the dichotomy's own-group completion (first measured boundary) in dichotomy-index units. For K=1 that is Figure 2's lag 12. For K=4 the group containing 0 ends at dichotomy 3 and lag 12 is boundary 15."
+    }
+  },
+  "comparator": {
+    "K1_recovery": "K=1 must recover the not-tuned reserved three-corner share at γ=10 (0.448). If |share(K=1, γ=10) − 0.448| > 0.02, stop and diagnose; the runner is not the registered path.",
+    "nottuned": "results/nottuned_slice.json"
+  },
+  "misses": {
+    "rule": "An arm that misses target on any grouped task is unusable for composition and is counted. lr0 is not re-pinned.",
+    "interpretation": "A miss at K>1 is not separable from an LR that is wrong on that cut. Report as not reaching target at the registered pin."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, K=4, S-HL, first reserved arrangement, a=0, N=300, quadratic, worst-of-K",
+    "why": "AGENTS.md §5. Coarsest cut at the catastrophic corner.",
+    "report": "results/scope_one_arm.json",
+    "reached_target": true
+  },
+  "readings_committed_before_seeing_numbers": {
+    "forgetting_differs_by_partition": "At γ=10, the paired (K=4 − K=1) three-corner utility-share 95% CI excludes 0. The audit's central claim is demonstrated rather than argued.",
+    "no_difference": "At γ=10, that CI includes 0. Scope is not consequential for this learner in this regime. Report as a substantive negative; it bounds the audit's claim.",
+    "K1_does_not_recover_nottuned": "Stop and diagnose. Do not interpret K>1.",
+    "mixed": "The γ=10 test and the γ=1 regime check disagree. Report the split. Do not pick a reading afterwards."
+  },
+  "operationalization": {
+    "written_before_192_arm_numbers": true,
+    "primary": "Paired Δ = share(K=4) − share(K=1), three-corner, unique n=8, task 0, lag 12, module A, γ=10. 95% CI = mean ± 1.96 SEM.",
+    "forgetting_differs_by_partition": "γ=10 CI excludes 0",
+    "no_difference": "γ=10 CI includes 0",
+    "K1_recovery": "|share(K=1, γ=10) − not-tuned 0.448| ≤ 0.02",
+    "gamma_1": "Reported. Not the primary. If γ=10 differs and γ=1 does not, that is still forgetting_differs_by_partition (rich-regime). If they disagree in the other direction, mixed."
+  },
+  "results_dir": "results/scope/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Fall back to breadth |S|.",
+    "Use mean-reduced stopping.",
+    "Use old arrangements.",
+    "Inform lr0 or stopping from this axis.",
+    "Include γ=0.03 as a control.",
+    "Interpret K>1 if K=1 fails the not-tuned recovery.",
+    "Expand before the one-arm is reported."
+  ]
+}

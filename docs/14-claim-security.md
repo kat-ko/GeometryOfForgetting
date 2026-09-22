@@ -265,7 +265,7 @@ onset evidence.
 genuine-n N=300 width arm; a D-sweep; γ₀=30 at genuine n. Another γ₀=5 arrangement sweep would
 be estimating a variance the paper does not claim.
 
-**Unaffected.** Tier A items 1–8, both prereg refutations (H1d and H6), the six-family error
+**Unaffected.** Tier A items 1–8, both prereg refutations (H1d and H6), the seven-family error
 appendix, and the width/radius/peak bounds in Tier B.
 
 ---

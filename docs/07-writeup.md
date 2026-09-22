@@ -354,24 +354,35 @@ verdict, with the confound identified and documented in §5.2 rather than assert
 
 ## A. Appendix subsection: aggregation artifacts, and guards that failed open
 
-Several of our own numbers were wrong before they were right, and they fall into six families:
+Several of our own numbers were wrong before they were right, and they fall into nine families:
 quantities averaged over the wrong grouping, guards that admitted values they were built to refuse,
 transformations that destroyed the sign of a signed quantity, comparisons between two quantities each
 correctly computed over a different population, a resolution gate applied in the panel that
-displays a quantity but not to the same quantity quoted in prose, and a field stored in a filename
-and never read. We report them because the
-alternative — reporting only the surviving numbers — gives a reader no way to judge how carefully the
+displays a quantity but not to the same quantity quoted in prose, a field stored in a filename
+and never read, a check that confirmed a formula on a case where the discrepancy is invisible,
+a pre-registered statistic satisfied by a shape other than the one it was written for,
+and a comparison of two learners that does not survive the change --- no shared operating
+point, a manipulation that does not transfer, or a primary contrast that does not recover.
+We report them because the
+alternative --- reporting only the surviving numbers --- gives a reader no way to judge how carefully the
 rest were checked. The families need separating rather than listing, because they fail differently
 and are caught differently: the first by re-grouping, the second by testing a guard away from the
 setting that motivated it, the third by nothing downstream at all, the fourth only by asking of each
 number in a comparison what population it was computed over, the fifth only by re-deriving every
-quoted quantity in units of its own floor, and the sixth only by asking whether a filename field is
-an argument to anything.
+quoted quantity in units of its own floor, the sixth only by asking whether a filename field is
+an argument to anything, the seventh only by asking whether the case that confirmed the formula
+is a case where two candidate formulas agree, the eighth only by asking whether the registered
+test can fire on a shape it was not written to detect, and the ninth only by asking whether
+a comparison of the form "same setting, different learner" still has a shared operating
+point, a manipulation that survives the change, and a primary contrast that recovers.
 
 The fifth family changed a claim's direction rather than its magnitude; §A.5 has it. The sixth
-changed the $n$ rather than the files; §A.6 has it. Six families is a property of how carefully the
+changed the $n$ rather than the files; §A.6 has it. The seventh confirmed a formula on a case
+where two references coincide; §A.7 has it. The eighth passed its criterion on a step function
+when it was written to detect a dose; §A.8 has it. The ninth assumed "same learner,
+different $X$" is a free comparison; §A.9 has it. Nine families is a property of how carefully the
 record was kept --- the checks were built as the work went --- not of how unusual the codebase is.
-Otherwise a reader may take six documented errors as six errors rather than as six caught errors.
+Otherwise a reader may take nine documented errors as nine errors rather than as nine caught errors.
 
 ### A.1 Aggregation artifacts
 
@@ -702,6 +713,127 @@ is the licensed stopping rule. Running K=5 after seeing arrangement 2's S-LL wou
 Neither a genuine-n N=300 width arm, a D-sweep, nor γ=30 at genuine n=40 is licensed: the first
 chases a U-shape the paper does not claim across mixed populations; the second is closed by K=3;
 the third would recover a fenced additivity-failure claim unique n already unlicensed.
+
+### A.7 A check confirmed on a case where the discrepancy is invisible
+
+The seventh family is a verification that passed, and that is why it hid. Graldi's CF and CFr
+(Def. A.3/A.4) reference `max_{t∈{i,…,T−1}}(a_{t,i})`, normalise by `1/(T−1)`, and sum to `T−1`.
+The agent's sheet used `⟨a_{i,i} − a_{T,i}⟩_i`. The two references coincide only if accuracy on a
+task is highest immediately after it is learned. The sheet was checked against Graldi's own toy
+example — 100→80 versus 40→30 — and the check passed, because in that example `max_t = a_{i,i}`.
+A formula check on a case where two candidate formulas agree cannot tell them apart.
+
+The distinction is not pedantic here. `S-HH` is a case where a past task's retained capacity
+*improves* during subsequent training. If that appears behaviourally as well as geometrically,
+`max_t ≠ a_{i,i}` and the two formulas diverge exactly in the condition the paper is about.
+Current behavioural CF in that corner is zero to within measurement (−0.0005 to +0.0001); if
+accuracy is already at ceiling the two still coincide on the accuracy metric. The code still
+uses `a_{i,i}` (`protocol-deviations.md` D.2). Switching to the running max would re-rank
+existing arms and is not licensed by correcting the sheet.
+
+The generalisable point is the same shape as §A.2's range test, on a formula rather than a guard:
+**a check that can only fire when two expressions disagree is not a check when it is run on data
+where they agree.** The case that would have distinguished them is the one the paper is about.
+
+### A.8 A pre-registered statistic satisfied by the wrong shape
+
+The eighth family is a test that fires, and that is why it hid. H1a registered the combined
+radius + utility share of Δ log α. Three shares sum to one, so the test reduces to "the
+dimension share falls." H2c registered the argmax of α_generic × α_retained; once both curves
+rise, the product's maximum sits at the grid edge by construction. The Hamming-axis
+`monotone_dose` reading registered an ordering of four consecutive-similarity levels. A cliff
+followed by a flat region is weakly monotone, so the reading cannot distinguish a graded
+response from a threshold — which is the distinction the four-level arm was built to test.
+At γ=1 it fired on frozen, whose post-cliff series is −34.0, −34.0, −34.4. And `mixed`
+fired because γ=10's frozen row wobbles by 0.2 floors between the last two cells, CIs
+overlapping, while γ=1's does not. Both γ show the same cliff-plus-drift-gradation.
+
+The numbers are right. The recovery check passed. What failed is the summary statistic. The
+raw table is the finding: task change is a threshold at zero except under drift, where a
+graded component is resolved. Going forward, a monotonicity reading requires the
+post-threshold range to clear the floor, not just the ordering to hold.
+
+The generalisable point: **a registered test that can be satisfied by a shape other than the
+one it was written for will report that other shape as a success.** H1a, H2c, and
+`monotone_dose` are three instances. The catch is cheap: name the shape the test is allowed
+to fire on, not only the inequality.
+
+### A.9 A comparison of the form "same setting, different learner"
+
+The ninth family is an assumption that hid because it is the default in
+the field. A comparison of the form "same setting, different learner"
+requires three things: a shared operating point, a manipulation that
+survives the change, and a primary contrast that recovers. All three
+are checkable. None is guaranteed. We attempted three learner
+variations. Each failed a different one of the three conditions. None
+of these is "a second learner disagrees about the finding." All three
+are "the comparison could not be set up."
+
+**CE failed the shared-operating-point condition** (`docs/21`,
+`results/bce_margin_bisect.md`). A BCE pilot on the reserved Hamming
+streams was built to convert "MSE to ±1 is not classification risk"
+into a measurement. Under MSE, γ=10 and γ=1 sit 0.027 apart in mean
+readout margin at `target_loss=0.05`. Under BCE, at matched loss they
+differ by ~0.07. When γ=10's mean is in the MSE band (L=0.454,
+m=0.850), γ=1 is at 0.777. Per-γ pins would reintroduce the confound
+matched-loss exists to remove, and were refused in advance. The larger
+finding is the tail: at every BCE loss tried, p05 of current-task
+`y f` is −0.47 to −0.60, against ~+0.33 under MSE. Capacity is computed
+from those boundary anchors. Other classification losses share BCE's
+gradient structure; they are not a next arm.
+
+**The Adam gate failed the manipulation-survives condition**
+(`docs/22`, `results/adam_richness_gate.md`). This is a finding, not a
+failed check. Two halves. Inherited `lr0=5` at γ=10 gives
+`lr = 2343.75`; loss went 0.5 → 3×10¹⁰ in three steps, because Adam's
+first step is scale-free and μP puts γ² into `lr`. After a correct
+re-pin (`lr0=0.0002`), unique n=8, frozen × s_r=0.5, task 0: step
+counts separate 20.9× (24 vs 502) while `‖ΔW‖/‖W‖` separates 3.19×
+against a one-decade bar. Under Adam, γ buys speed rather than feature
+movement. `partial_manipulation` is the right label; the runner
+refusing the 192 unless the reading is `clears_decade` is the correct
+enforcement. μP's richness knob is a statement about
+gradient-descent dynamics. Every result in the lazy/rich literature is
+obtained under SGD. This is a checkable caution nobody states.
+
+**The Adam slice failed the primary-contrast-recovers condition**
+(`results/adam_hamming_slice.md`). Hamming-only at γ=10, 96 usable
+arms. At s_r=1: drift −0.3 floors (mean −0.0055, CI includes 0,
+3+/5−) against SGD +6.7; jump −88.4 against SGD −55.1. The gain under
+drift is gone; the loss under jump is larger. Reading
+`finding3_fails_to_recover`. Stop. Hamming-axis flags are not a
+reading. The Adam streams are not the same object.
+
+A hypothesis, not a reading, and not tested: finding 3 is accumulation
+over hundreds of SGD steps per task; Adam reaches target in ~24. That
+is not enough trajectory for accumulated drift to register, while a
+jump is a discrete disruption that still registers — and registers
+larger with less compensating movement. If that is right,
+matched-loss stopping and Adam interact: "matched progress" and
+"comparable trajectory" come apart when one optimiser arrives in 24
+steps and the other in 500. Log only. Do not test.
+
+The generalisable point: **a comparison of the form "same setting,
+different learner" requires a shared operating point, a manipulation
+that survives the change, and a primary contrast that recovers. None
+is guaranteed.** Papers that compare losses at matched epochs, or
+optimisers at matched loss, are assuming something checkable that
+nobody checks. That is a stronger methodological statement than any
+of the three results alone. All three are obstructions to the
+comparison rather than results of it. All three are measured, not
+argued. The second-learner line is closed. A fourth attempt — different
+architecture, different width, replay, EWC — will hit a version of the
+same problem, because the stopping rule, the parameterisation, and the
+geometry measurement were co-designed for one optimiser and one loss.
+
+Hinge on the published grid: this family does not supersede an MSE
+number. It supersedes unmeasured limitation sentences. The Hamming 2×3
+remains the measurement. Every finding is a property of this learner
+on these streams. The streams are specified more completely than
+anything in the literature, and three attempts to vary the learner ran
+into operating-point obstructions that are themselves measured. That
+is honest, it is unusual, and it is stronger than a CL-theory claim
+resting on one comparison that did not work.
 
 ---
 

@@ -1,0 +1,82 @@
+{
+  "generated_by": "docs/16 §Amendments A10 / A15, after the rank first-slice reading",
+  "written_before_running": true,
+  "written_before_running_applies_to": "64-arm isotropic-Gaussian control",
+  "status": "pre-commit — written after rank reading reorganisation_tracks_gamma_regardless_of_rank, before any isotropic arm",
+  "question": "When manifolds have no intrinsic dimension by construction, does the γ reorganisation of forgetting still appear?",
+  "why_now": "Rank found the γ step survives r=4. A10 queued this control behind that slice: dimension cannot carry an attribution in manifolds that have none. If the γ step still appears, data-dimension is not necessary; the rank reading (dynamics, not dimension) is confirmed on the data side. If it vanishes, input dimension was required for the measured attribution even though readout rank was not.",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manifold": "D.1.1 isotropic Gaussian. M_i = {u_0 + R · v_k}, v_k ~ N(0, I_d/d). No unit-norm (that would be a sphere of dim d−1). No axes; rho_A is undefined and refused. Feature similarity still moves centers. Readout similarity is unchanged.",
+    "readout": "Registered unconstrained path. readout_rank unset, Q = I_N. This is a data control, not a rank sweep. Rank already showed r does not move composition.",
+    "first_slice": {
+      "gammas": [1.0, 10.0],
+      "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+      "unique_n": 8,
+      "n_arms": 64,
+      "gamma_0.03_excluded": "Same rule as the rank slice. Not a control. Composition claims licensed at γ ∈ {1, 10}."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin. Not informed by the reserved set or by this control.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Not informed by the reserved set.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "D_on_spec": 4,
+      "D_on_spec_note": "Phase1Spec default. Unused by isotropic_gaussian. Arrangement.D is 0.",
+      "R": 1.0
+    }
+  },
+  "comparator": {
+    "spherical_reserved_rank_rN": "results/rank_slice.json three-corner utility share at r=N: 0.343 at γ=1, 0.448 at γ=10, step 0.106."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable for composition and is counted. lr0 is not re-pinned.",
+    "interpretation": "A miss is not separable from an LR that is wrong on this generator. Report as not reaching target at the registered pin."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, S-HL, first reserved arrangement, a=0, N=300, quadratic, isotropic Gaussian, unconstrained readout",
+    "why": "AGENTS.md §5. Same cell as the rank one-arm, different data.",
+    "report": "results/isotropic_one_arm.json",
+    "reached_target": true
+  },
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "gamma_reorganisation_reproduces": "The γ=1→10 three-corner utility-share step is comparable to the spherical reserved r=N step (0.106). Data-dimension is not necessary for the reorganisation. Rank reading stands: the driver is optimisation dynamics.",
+    "gamma_reorganisation_vanishes": "The γ step is gone or far smaller than 0.106. Input dimension was required for the measured attribution even though readout rank was not. Report that split. Do not silently keep the rank sentence.",
+    "mixed": "Report the interaction. Do not pick a reading afterwards."
+  },
+  "operationalization": {
+    "written_before_64_arm_numbers": true,
+    "metric": "three-corner utility share, unique n=8, task 0, lag 12, module A. Step = share(γ=10) − share(γ=1).",
+    "comparator": "spherical reserved r=N step in results/rank_slice.json",
+    "gamma_reorganisation_reproduces": "step ≥ half the spherical step",
+    "gamma_reorganisation_vanishes": "|step| < a quarter of the spherical step",
+    "mixed": "otherwise"
+  },
+  "results_dir": "results/isotropic/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Use old arrangements.",
+    "Inform lr0 or stopping from this control.",
+    "Unit-normalize v_k (that builds a (d−1)-sphere).",
+    "Cross rank. Rank is already measured on spherical manifolds.",
+    "Include γ=0.03 as a control or as evidence the effect vanishes at low γ.",
+    "Pool with results/rank/ or results/phase1/.",
+    "Expand before the one-arm is reported."
+  ]
+}

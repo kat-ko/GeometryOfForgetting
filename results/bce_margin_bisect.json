@@ -1,0 +1,163 @@
+{
+  "generated_by": "scripts/pilot_bce_margin.py --bisect",
+  "question": "Does one BCE target place both \u03b3 in the MSE-stop margin band?",
+  "band": {
+    "lo": 0.8307664777099166,
+    "hi": 0.8581808687989712,
+    "grand_mean": 0.844202454442785,
+    "spread": 0.027414391089054524,
+    "n_cells": 8,
+    "source": "results/mse_stop_margin_four_streams.json"
+  },
+  "one_arm_probe": "results/bce_margin_one_arm.json",
+  "one_arm_wall_seconds": 14.606502532958984,
+  "wall_seconds": 1189.82297873497,
+  "reading": "no_shared_operating_point",
+  "pinned_target_loss": null,
+  "history": [
+    {
+      "round": 1,
+      "target_loss": 0.5165735902799726,
+      "gamma_10": {
+        "mean": 0.5978142299794338,
+        "p05": -0.5059038049171316,
+        "p25": 0.03749391309361863,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.5430960180991338,
+        "p05": -0.5757874055419459,
+        "p25": 0.030810419700567655,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 2,
+      "target_loss": 0.4332867951399863,
+      "gamma_10": {
+        "mean": 0.9371078844325605,
+        "p05": -0.4679962230356311,
+        "p25": 0.21602503923967017,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.8647705278154334,
+        "p05": -0.5921999608409173,
+        "p25": 0.19144139291516207,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 3,
+      "target_loss": 0.4749301927099795,
+      "gamma_10": {
+        "mean": 0.7662648533527439,
+        "p05": -0.5049338801745534,
+        "p25": 0.11587217949264286,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.6969534081898314,
+        "p05": -0.598185391361302,
+        "p25": 0.09990838321262355,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 4,
+      "target_loss": 0.45410849392498287,
+      "gamma_10": {
+        "mean": 0.8504125579160441,
+        "p05": -0.48821985169822746,
+        "p25": 0.16320947477064435,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.7773178487949195,
+        "p05": -0.5994661996521723,
+        "p25": 0.14104531829240996,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 5,
+      "target_loss": 0.4436976445324846,
+      "gamma_10": {
+        "mean": 0.8902737135812039,
+        "p05": -0.4770443979017577,
+        "p25": 0.1908626062732005,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.8202729781617948,
+        "p05": -0.598748707772734,
+        "p25": 0.1654385661177943,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 6,
+      "target_loss": 0.44890306922873374,
+      "gamma_10": {
+        "mean": 0.8676124871667421,
+        "p05": -0.48983897930669656,
+        "p25": 0.17396207682268386,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.7994097109865105,
+        "p05": -0.5989661551500761,
+        "p25": 0.15359715631692844,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 7,
+      "target_loss": 0.4463003568806092,
+      "gamma_10": {
+        "mean": 0.8779895354098401,
+        "p05": -0.47849243540640146,
+        "p25": 0.18187357531804282,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.8101244336622815,
+        "p05": -0.5986503498115141,
+        "p25": 0.15883365394720778,
+        "converged": true
+      },
+      "both_in_band": false
+    },
+    {
+      "round": 8,
+      "target_loss": 0.4449990007065469,
+      "gamma_10": {
+        "mean": 0.8881601011613434,
+        "p05": -0.4812808027098633,
+        "p25": 0.18968799070433223,
+        "converged": true
+      },
+      "gamma_1": {
+        "mean": 0.8152069754717022,
+        "p05": -0.5986178662362557,
+        "p25": 0.1620787910154533,
+        "converged": true
+      },
+      "both_in_band": false
+    }
+  ],
+  "will_not_do": [
+    "Pin per-\u03b3 if the shared target fails.",
+    "Write results/ce_precommit.json unless reading is shared_operating_point.",
+    "Re-pin lr0 inside this search.",
+    "Run geometry.",
+    "Treat a distribution mismatch at matched mean as a re-pin."
+  ],
+  "if_no_shared_point": "The CE arm cannot test stream vs learner. The failure is a measured limitation: the two objectives have no shared operating point. Report and stop. Do not run the slice."
+}

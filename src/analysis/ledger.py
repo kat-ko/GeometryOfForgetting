@@ -876,7 +876,7 @@ class Correction:
     was: str
     now: str
     why: str
-    kind: str  # "estimand" | "error" | "guard" | "sign" | "population" | "filename"
+    kind: str  # "estimand" | "error" | "guard" | "sign" | "population" | "filename" | "check" | "statistic" | "operating_point"  # operating_point: shared point missing, or a manipulation that does not survive the change
     status: str = "resolved"
     quoted_at: str = ""
 
@@ -1032,6 +1032,68 @@ CORRECTIONS: tuple[Correction, ...] = (
                "claim is not licensed at unique n",
                "filename", status="**unresolved at unique n=4** (was resolved on 16 files)",
                quoted_at="07-writeup.md §5.4; results/gamma30_unique.json"),
+    Correction("CF / CFr peak reference",
+               "⟨a_{i,i} − a_{T,i}⟩_i  (normalised by 1/T)",
+               "max_{t∈{i,…,T−1}}(a_{t,i}) − a_{T,i},  averaged 1/(T−1) over T−1 tasks",
+               "the sheet was checked against Graldi's toy example, where the two references "
+               "coincide, so the check could not see the discrepancy. S-HH is a case where a "
+               "past task improves during later training; if that appears behaviourally the "
+               "formulas diverge in the paper's condition of interest. Code still uses a_{i,i}",
+               "check", quoted_at="07-writeup.md §A.7; docs/reference/cl-metrics.md"),
+    Correction("Hamming-axis monotone_dose / mixed",
+               "monotone_dose at γ=1; mixed because γ=10 frozen is nonmonotone",
+               "cliff at Hamming>0, graded only under drift; both γ the same shape",
+               "a pre-registered statistic satisfied by a shape other than the one it was "
+               "written for. monotone_dose fires on a step-then-flat series (frozen γ=1: "
+               "−34.0, −34.0, −34.4). mixed fires on a 0.2-floor unresolved wobble. Fourth "
+               "instance after H1a (three shares sum to one) and H2c (product of two rising "
+               "curves). Going forward a monotonicity reading requires the post-threshold "
+               "range to clear the floor",
+               "statistic", quoted_at="07-writeup.md §A.8; results/hamming_slice.md"),
+    Correction("finding 4 Δρ_c under drift at s_r=1, γ=10",
+               "+0.055 (registered 2×2, unique n=8)",
+               "registered +0.055; reserved Hamming +0.002, CI includes 0",
+               "same isolation, different arrangement population, different answer on "
+               "Δρ_c and not on capacity (reserved finding-3 recovery +6.7 vs −55.1). "
+               "Mismatched-population family. Do not pool. Repeating a task does not "
+               "drive resolved convergence on the reserved set",
+               "population", quoted_at="docs/20 §1; notebooks/project-overview(2).ipynb finding 2"),
+    Correction("MSE / BCE shared operating point",
+               "MSE to ±1 is not classification risk (unmeasured)",
+               "no shared operating point: at L=0.454, γ=10 mean m=0.850 vs γ=1 m=0.777; "
+               "at matched mean, BCE p05 −0.49 against MSE +0.33",
+               "matched progress across losses was assumed, not checked. Under MSE the two "
+               "γ sit 0.027 apart in mean margin at target_loss=0.05; under BCE they differ "
+               "by ~0.07 at matched L. BCE p05 is negative at every L tried (−0.47 to −0.60) "
+               "because the gradient vanishes on confident-correct points and concentrates "
+               "on the boundary; MSE to ±1 pulls the distribution together. Capacity is "
+               "computed from those boundary anchors, so the objectives differ where the "
+               "measurement is most sensitive. Do not pin per-γ. Do not reopen. Hinge/focal "
+               "share the same gradient structure; they are not a next arm",
+               "operating_point", quoted_at="docs/15 limitation 2; 07-writeup.md §A.9; "
+                                           "results/bce_margin_bisect.md"),
+    Correction("μP richness under Adam",
+               "γ is a richness knob under any optimiser (unmeasured)",
+               "under Adam, ‖ΔW‖/‖W‖ separates 3.19× against a 10× bar while steps "
+               "separate 20.9×; inherited lr0=5 explodes 0.5→3e10 in three steps",
+               "μP's γ² lives in lr; Adam's first step is lr·g/(|g|+ε) and divides "
+               "gradient magnitude out. The two halves — explosion at the inherited pin, "
+               "partial_manipulation after re-pin — are one statement: μP and adaptive "
+               "optimisers do not compose. File as a finding, not a failed gate. The "
+               "192 is refused. A Hamming-only arm at γ=10 cannot speak to γ. Pair with "
+               "the CE obstruction: same learner, different X is not a free comparison",
+               "operating_point", quoted_at="docs/15 limitation 4; 07-writeup.md §A.9; "
+                                           "results/adam_richness_gate.md"),
+    Correction("Finding 3 under Adam",
+               "same streams, different optimiser, is a free comparison (unmeasured)",
+               "finding3_fails_to_recover: drift −0.3 fl (CI includes 0) vs SGD +6.7; "
+               "jump −88.4 vs −55.1",
+               "the primary contrast did not recover. The Adam streams are not the same "
+               "object. Hypothesis, not a reading, not tested: matched-loss stopping and "
+               "Adam interact — 24 steps is not enough trajectory for accumulation. Do not "
+               "test. Third of three operating-point conditions. Second-learner line closed",
+               "operating_point", quoted_at="docs/15 limitation 5; 07-writeup.md §A.9; "
+                                           "results/adam_hamming_slice.md"),
 )
 
 
@@ -1041,7 +1103,12 @@ def ledger_table() -> Table:
               "family of fault; `kind` is estimand (population changed), error (wrong cell), "
               "guard (failed open), sign (transformation destroyed direction), population (two "
               "correct values compared across different populations), filename (a field stored "
-              "in a path and never read, so n was wrong while the files were correct)",
+              "in a path and never read, so n was wrong while the files were correct), check "
+              "(a formula confirmed on a case where two candidate expressions agree), statistic "
+              "(a pre-registered test satisfied by a shape other than the one it was written for), "
+              "operating_point (a learner comparison that does not survive the change: "
+              "no shared operating point, a manipulation that does not transfer, or a "
+              "primary contrast that does not recover)",
               "src/analysis/ledger.py::CORRECTIONS", n=len(CORRECTIONS),
               grouping="not a corner pool")
     t.rows = [Row(c.quantity, f"{c.was} → **{c.now}**", "", c.kind,

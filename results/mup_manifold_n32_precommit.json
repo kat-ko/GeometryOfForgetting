@@ -1,0 +1,45 @@
+{
+  "generated_by": "docs/16 A27 follow-up: manifold instrument, n=32, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "one-task spherical manifolds, lr0=5, K=128, seeds 0..31, L=2 and L=3 loss-vs-width contrast",
+  "status": "unsigned diagnostic contract — not Verification 2, not a retune of A26/A27",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "On a one-task manifold batch at the registered lr0, n=32, does μP loss not increase with width while NTP loss does, at L=2 and at L=3?",
+  "why": "The Gaussian K=16 lr0=10 contrast is a coin flip at L=2 (16/32). A different instrument is required. This is one arrangement, one balanced dichotomy, flatten_task, not a stream. A26/A27 stand.",
+  "held_fixed": {
+    "P": 16,
+    "M": 40,
+    "d": 60,
+    "D": 4,
+    "R": 1.0,
+    "manifold_kind": "spherical",
+    "rho_C": 0.0,
+    "rho_A": 0.0,
+    "lr0": 5.0,
+    "lr0_provenance": "Registered stream pin. Not the A24 named lr0=10.",
+    "K": 128,
+    "K_why": "Different from A24's K=16. Fixed steps, not matched-loss (train_xy refuses L=3).",
+    "gamma_0": 1.0,
+    "widths": [64, 300],
+    "module": "A",
+    "seeds": "range(32)",
+    "batch": "full P×M = 640",
+    "not_the_stream_design_point": "M=40 d=60, not M=150 d=150. One task, not T=16."
+  },
+  "identification": {
+    "per_seed": "after K steps at lr0=5, finite losses, μP loss(N=300) ≤ loss(N=64), NTP loss(N=300) > loss(N=64)",
+    "pass_count": "k ≥ 24 at a depth (24/32 = 0.75, written before this run)",
+    "failure_mode": "present | mup_increased | ntp_did_not_increase | both | nonfinite"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "instrument_blind": "L=2 k < 24. Manifolds+lr0=5+K=128 still cannot see μP vs NTP at the signed depth. L=3 is recorded and is not a reading. Do not lift A6.",
+    "table_supported": "L=2 k ≥ 24 and L=3 k ≥ 24. Empirical support on this instrument at n=32. Not Verification 2. Do not lift A6.",
+    "l3_problem": "L=2 k ≥ 24 and L=3 k < 24. An L=3 problem on an instrument that works at L=2. Stop. Do not invent 1/√L in code. Do not lift A6."
+  },
+  "recorded_not_a_reading": [
+    "Clopper-Pearson 95% CI",
+    "failure-mode counts",
+    "weight_change and whether loss ≤ 0.05 at halt"
+  ]
+}

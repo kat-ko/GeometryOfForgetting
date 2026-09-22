@@ -1,0 +1,213 @@
+{
+  "generated_by": "scripts/analyse_nottuned.py",
+  "precommit": "results/nottuned_precommit.json",
+  "n_files": 192,
+  "n_usable": 192,
+  "n_arms_missed": 0,
+  "misses": {
+    "0.03": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "0.1": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "0.3": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "10": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "1": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "3": {
+      "n": 32,
+      "n_miss": 0
+    }
+  },
+  "miss_interpretation": "A miss is not separable from an LR that is wrong on this population. Report as not reaching target at the registered pin.",
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A",
+    "unique_n": 8,
+    "unit": "reserved stream_id, seed=0"
+  },
+  "three_corner": [
+    "S-HL",
+    "S-LH",
+    "S-LL"
+  ],
+  "cells": {
+    "0.03": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.19398290574365093,
+        "utility_share_sem": 0.02506570191637741,
+        "utility_term_mean": 9.96707321033082e-05,
+        "utility_term_sem": 0.00024288707257653572,
+        "floors_mean": 0.2695920656510676,
+        "n_gated": 0
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.1717983906098311,
+        "utility_share_sem": 0.018167414755398396,
+        "utility_term_mean": 0.0004968512354622361,
+        "utility_term_sem": 0.00020958462662906934,
+        "floors_mean": 0.43438653519907766,
+        "n_gated": 0
+      }
+    },
+    "0.1": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.18946389929363622,
+        "utility_share_sem": 0.025557161206234687,
+        "utility_term_mean": -0.00302732512556126,
+        "utility_term_sem": 0.0008264586219579945,
+        "floors_mean": 2.1922477166175023,
+        "n_gated": 5
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.19226442597121912,
+        "utility_share_sem": 0.02180550301470026,
+        "utility_term_mean": 0.0025378439054286554,
+        "utility_term_sem": 0.0009631245279996905,
+        "floors_mean": 2.9217486660864904,
+        "n_gated": 8
+      }
+    },
+    "0.3": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.1984949493622467,
+        "utility_share_sem": 0.01850192408441259,
+        "utility_term_mean": -0.03766536095693479,
+        "utility_term_sem": 0.002889159170046696,
+        "floors_mean": 10.000756507839998,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.2463152954737851,
+        "utility_share_sem": 0.014870852464864722,
+        "utility_term_mean": -0.009773063286185674,
+        "utility_term_sem": 0.002170068821833022,
+        "floors_mean": 10.049788474464037,
+        "n_gated": 8
+      }
+    },
+    "1": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.34268852725335586,
+        "utility_share_sem": 0.015022482557964718,
+        "utility_term_mean": -0.17203810315870843,
+        "utility_term_sem": 0.007806261014102314,
+        "floors_mean": 26.56398457785568,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.38607040995197506,
+        "utility_share_sem": 0.008859565536844345,
+        "utility_term_mean": -0.09645383034223376,
+        "utility_term_sem": 0.0064742762028575365,
+        "floors_mean": 23.109346292337577,
+        "n_gated": 8
+      }
+    },
+    "3": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.41277297762792464,
+        "utility_share_sem": 0.008210824446811702,
+        "utility_term_mean": -0.3539844772604024,
+        "utility_term_sem": 0.009089060958855708,
+        "floors_mean": 45.50210383798697,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.4262079800771432,
+        "utility_share_sem": 0.0066987844245293025,
+        "utility_term_mean": -0.23989064226457793,
+        "utility_term_sem": 0.007623585223112788,
+        "floors_mean": 37.004993201192356,
+        "n_gated": 8
+      }
+    },
+    "10": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.4483511732887425,
+        "utility_share_sem": 0.006962970151070756,
+        "utility_term_mean": -0.5820739257913563,
+        "utility_term_sem": 0.011114093725455756,
+        "floors_mean": 69.2420346594457,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.43398341951374275,
+        "utility_share_sem": 0.010438639888340762,
+        "utility_term_mean": -0.4212748786107267,
+        "utility_term_sem": 0.008833399485225735,
+        "floors_mean": 53.61545368766599,
+        "n_gated": 8
+      }
+    }
+  },
+  "gamma_1_to_10_share_step": 0.10566264603538666,
+  "old_arrangements_quadratic": {
+    "share_gamma_1": 0.3323953680233665,
+    "share_gamma_10": 0.4491856714055256,
+    "step": 0.11679030338215912,
+    "source": "results/corrected_lr.json"
+  },
+  "signed_utility_interaction": {
+    "F_interaction": 215.73302400574696,
+    "p_interaction": 2.858246908950626e-101,
+    "df_interaction": 15,
+    "df_error": 168,
+    "p_interaction_permutation": 0.001,
+    "n_perm": 999,
+    "n_perm_exceeded": 0,
+    "reading": "Channel composition's \u03b3-gradient differs by condition. The headline is an interaction, not a \u03b3-main-effect pooled over corners."
+  },
+  "utility_share_gated": {
+    "licensed_gammas": [
+      0.3,
+      1.0,
+      3.0,
+      10.0
+    ],
+    "licensed": true,
+    "p_interaction": 5.009589076627634e-11
+  },
+  "wall_seconds_mtime_span": 5778.840763568878,
+  "wall_seconds_serial_sum": 562248.1135518551,
+  "reading": {
+    "key": "headline_reproduces_on_reserved",
+    "text": "The \u03b3=1\u219210 three-corner utility-share step is comparable to the old-arrangement step (0.117), and the signed-utility \u03b3 \u00d7 condition interaction remains p < 0.05. The headline was not tuned into existence on the old set.",
+    "composition_reproduces": true,
+    "composition_vanishes": false,
+    "interaction_reproduces": true,
+    "operationalization": {
+      "written_before_192_arm_numbers": true,
+      "composition_reproduces": "three-corner share step \u03b3=1\u219210 \u2265 half the old-arrangement quadratic step in results/corrected_lr.json",
+      "composition_vanishes": "|step| < a quarter of that old step",
+      "interaction_reproduces": "signed-utility interaction p < 0.05 (parametric; permutation reported, not the cut)",
+      "headline_reproduces_on_reserved": "composition reproduces AND interaction reproduces",
+      "headline_does_not_reproduce": "composition vanishes OR interaction p \u2265 0.05",
+      "mixed": "otherwise (including a reduced-but-not-vanished step with a significant interaction)"
+    }
+  }
+}

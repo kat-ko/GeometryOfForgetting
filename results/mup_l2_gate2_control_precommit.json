@@ -1,0 +1,87 @@
+{
+  "generated_by": "docs/16 A21 follow-up: L=2 clone of Gate 2, 2026-09-04",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 control of the Gate 2 protocol that mixed-failed at L=3",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding, not a retune of the L=3 file",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "Can the Gate 2 protocol detect signed μP versus NTP at L=2, where Verification 1 already holds?",
+  "why": "L=3 Gate 2 mixed-failed: NTP argmin did not slide, both parameterizations pinned at lr0=1.0. That does not say whether Table 1 is wrong at L=3 or whether this (K, lr0 grid, toy batch) cannot see μP vs NTP on any network. L=2 is the control. Same protocol, ordinary sgd_step, n_hidden_layers=1. Do not retune the L=3 contract. Do not lift A6.",
+  "clone_of": {
+    "hypothesis": "results/mup_l3_hypothesis.json",
+    "diagnostics": "results/mup_l3_diagnostics.json",
+    "held_fixed": ["d", "batch", "seed", "data_seed", "module", "K", "lr0", "lr0_grid", "widths", "gammas", "pass intervals"],
+    "only_change": "n_hidden_layers=1; last hidden preactivation is z1 not z2; no W2; sgd_step without diagnostic=True"
+  },
+  "gates": {
+    "1": {
+      "name": "algebraic pin, already signed at L=2",
+      "setting": "N=64, γ₀=1, n_hidden_layers=1, float64",
+      "requirement": "μP ≡ NTP on the forward pass and the first gradient step, tensors W and u",
+      "test": "tests/test_models_parameterization.py::test_base_width_equivalence",
+      "note": "Re-asserted here so a control fail cannot be blamed on a broken L=2 pin."
+    },
+    "2": {
+      "name": "empirical μP checks, L=2 clone",
+      "setting": "L=2, toy Gaussian batch, no stream, no manifolds",
+      "mixed_is": "fail of this protocol at L=2 (not a licence at L=3)",
+      "shared": {
+        "d": 40,
+        "batch": 32,
+        "n_hidden_layers": 1,
+        "n_outputs": 1,
+        "readout_rank": null,
+        "a": 0.0,
+        "seed": 0,
+        "data_seed": 1,
+        "module": "A",
+        "steps_are_diagnostic": false
+      },
+      "check_A": {
+        "name": "hidden preactivation updates same order as width grows",
+        "parameterization": "mup",
+        "gamma_0": 1.0,
+        "lr0": 0.01,
+        "K": 8,
+        "widths": [64, 300],
+        "quantity": "rms(z1(K) − z1(0)) on the training batch, module A, per-entry RMS. L=2 analog of L=3 z2.",
+        "pass": "ratio rms_N300 / rms_N64 in [1/3, 3], both finite and strictly positive",
+        "fail": "ratio outside that interval, non-finite, or either width has zero update"
+      },
+      "check_B": {
+        "name": "η* does not slide with width the way NTP would",
+        "gamma_0": 1.0,
+        "K": 16,
+        "lr0_grid": [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0],
+        "widths": [64, 300],
+        "quantity": "argmin_lr0 of pre-step loss after K steps; non-finite loss counts as +inf",
+        "pass_mup": "μP argmin lr0 at N=300 is the same grid point as at N=64, or an adjacent point (index distance ≤ 1)",
+        "pass_contrast": "NTP argmin lr0 at N=300 differs from N=64 by at least one grid step (index distance ≥ 1)",
+        "fail": "μP slides by more than one grid step, or NTP does not slide. Mixed is fail."
+      },
+      "check_C": {
+        "name": "‖ΔW‖/‖W‖ still separates across γ",
+        "parameterization": "mup",
+        "gammas": [1.0, 10.0],
+        "lr0": 0.001,
+        "K": 8,
+        "widths": [64, 300],
+        "quantity": "weight_change on W, module A. No W2 at L=2.",
+        "pass": "at both widths, weight_change(γ=10) > weight_change(γ=1) for W",
+        "fail": "any reversal or tie, or non-finite change"
+      }
+    }
+  },
+  "primary": "check_B",
+  "readings_committed_before_seeing_numbers": {
+    "protocol_cannot_certify": "Check B fails the same way as L=3: NTP argmin does not slide, or both argmins sit at the grid edge. This protocol cannot certify μP. The L=3 fail is not about depth. Next measurement is an operating point where L=2 μP vs NTP actually separates. That search is L=2 only. Do not retune L=3. Do not lift A6.",
+    "protocol_is_strong_enough": "Check B passes at L=2: μP argmin stable (distance ≤ 1) and NTP slides (distance ≥ 1). The protocol can see signed μP. Combined with the L=3 mixed fail on the same protocol, that is an L=3 problem. Stop. Do not invent a deeper table to make L=3 pass. Do not lift A6.",
+    "gate1_fail": "L=2 algebraic pin fails on this batch. Stop. The control is not interpretable."
+  },
+  "not_a_reading": [
+    "A or C in isolation",
+    "absolute rms or ‖ΔW‖/‖W‖ as a finding (recorded as empirical floors for a later contract)",
+    "Verification 2",
+    "stream training at L=3"
+  ]
+}

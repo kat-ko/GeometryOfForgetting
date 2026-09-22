@@ -1,0 +1,58 @@
+{
+  "generated_by": "docs/16 A28 stress-test: μP 1/√L at K=128, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "A28 manifold instrument, K=128, μP LR multiplied by √(L_ref/L) with L_ref=2, seeds 0..31",
+  "status": "unsigned diagnostic contract — does not retune A28, not Verification 2, not a licence to adopt 1/√L",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "not_adopted_into_parameterization_py": true,
+  "question": "At the A28 halt (K=128), does multiplying μP η by √(2/L) make L=3 meet k≥24, which Table 1 missed (19/32)?",
+  "why": "A28 is halt-dependent: L=3 fails k≥24 at K=128 and passes at K=512. A29: always_worse through 128, rescued by more steps at the same Table 1 η. 1/√L is the inequivalent competitor that could mean A28 was a missing depth factor rather than slower dynamics. This is a stress-test of that story, not a model-selection step after A30.",
+  "implementation": {
+    "where": "diagnostic script only. Do not add 1/√L to ScalingConfig or stream training.",
+    "ntp": "unchanged (lr0=5)",
+    "mup_eta": "η_Table1 × √(L_ref / L), L_ref=2, L = n_hidden_layers+1",
+    "L2_mup_factor": 1.0,
+    "L3_mup_factor": 0.816496580927726,
+    "L3_mup_lr0": 4.08248290463863,
+    "why_L_ref_2": "Absolute 1/√L would also move L=2 and destroy the A28 control. Relative to the signed depth, only L=3 changes. Uniform in width: this is a depth-dependent lr0, not an N-dependent Table 1 change.",
+    "gamma_and_beta": "unchanged (Table 1)",
+    "breaks_N64_mup_eq_ntp_at_L3": "on purpose: at L=3, μP η < NTP η even at N=64"
+  },
+  "held_fixed": {
+    "P": 16,
+    "M": 40,
+    "d": 60,
+    "D": 4,
+    "R": 1.0,
+    "manifold_kind": "spherical",
+    "lr0": 5.0,
+    "K": 128,
+    "gamma_0": 1.0,
+    "widths": [64, 300],
+    "module": "A",
+    "seeds": "range(32)",
+    "not_a_stream": true
+  },
+  "identification": {
+    "per_seed": "after K=128, finite losses, μP loss(N=300) ≤ loss(N=64), NTP loss(N=300) > loss(N=64)",
+    "pass_count": "L=3 k ≥ 24 (same bar as A28)"
+  },
+  "prefix": {
+    "L2_mup_losses": "must match results/mup_manifold_n32.json L2_mup_loss per seed",
+    "L2_ntp_ratio": "must match A28 L2_ntp_ratio per seed",
+    "L3_ntp_ratio": "must match A28 L3_ntp_ratio per seed",
+    "on_mismatch": "stop"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "prefix_mismatch": "L=2 or L=3 NTP does not match A28. Stop.",
+    "does_not_rescue": "L=3 k < 24 under √(2/L). A missing 1/√L factor does not explain A28 at this halt. Supports slower-not-wrong-law. Do not adopt 1/√L. Do not retune A28. Do not sign Verification 2. Do not lift A6.",
+    "rescues_k24": "L=3 k ≥ 24 under √(2/L). A28's L=3 miss may have been a missing depth factor. Does not retune A28. Does not adopt 1/√L as the law (that would be model selection after seeing A30). Do not sign Verification 2. Do not lift A6. Human decision."
+  },
+  "recorded_not_a_reading": [
+    "Clopper-Pearson 95% CI",
+    "failure-mode counts",
+    "how many of the 13 A28 L=3 μP-increase seeds are present",
+    "L=2 k (must be 25/32 if prefix holds)"
+  ]
+}

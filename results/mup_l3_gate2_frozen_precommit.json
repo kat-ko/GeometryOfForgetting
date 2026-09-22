@@ -1,0 +1,85 @@
+{
+  "generated_by": "scripts/run_mup_l2_operating_point.py, after L=2 search, before L=3",
+  "written_before_running": true,
+  "written_before_running_applies_to": "one-shot L=3 check B at the L=2-frozen operating point",
+  "status": "unsigned diagnostic contract \u2014 not Verification 2",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "parent_precommit": "results/mup_l2_operating_point_precommit.json",
+  "frozen_from_l2": {
+    "K": 16,
+    "n_tail": 2,
+    "lr0_grid": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0,
+      10.0
+    ],
+    "l2_check_B": {
+      "mup_index_distance": 1,
+      "ntp_index_distance": 1,
+      "argmins": {
+        "mup": {
+          "64": {
+            "lr0": 10.0,
+            "loss": 0.11435022374369137,
+            "index": 8
+          },
+          "300": {
+            "lr0": 3.0,
+            "loss": 0.08850123357433745,
+            "index": 7
+          }
+        },
+        "ntp": {
+          "64": {
+            "lr0": 10.0,
+            "loss": 0.11435022374369137,
+            "index": 8
+          },
+          "300": {
+            "lr0": 3.0,
+            "loss": 0.09957544072363267,
+            "index": 7
+          }
+        }
+      }
+    }
+  },
+  "identification": "check B at this (K, lr0_grid), L=3, diagnostic SGD, no stream",
+  "pass_B": "same inequalities as the L=2 search",
+  "overall_pass": "check B only. A and C at the frozen K with the original A/C lr0 (0.01 and 0.001) are recorded, not a licence.",
+  "shared": {
+    "d": 40,
+    "batch": 32,
+    "seed": 0,
+    "data_seed": 1,
+    "module": "A",
+    "widths": [
+      64,
+      300
+    ],
+    "n_hidden_layers": 2,
+    "K": 16,
+    "lr0_grid": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0,
+      10.0
+    ]
+  },
+  "readings_committed_before_seeing_l3_numbers": {
+    "l3_b_passes": "The frozen L=2 operating point also passes check B at L=3. This is not Verification 2. Stream training stays blocked until Kati signs. Do not start sequential depth arms.",
+    "l3_b_fails": "Check B passes at L=2 at the frozen point and fails at L=3 on that same point. That is an L=3 problem. Stop. Do not invent 1/\u221aL or per-layer LRs to make it pass. Do not lift A6."
+  }
+}

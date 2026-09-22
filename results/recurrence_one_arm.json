@@ -1,0 +1,43 @@
+{
+  "generated_by": "scripts/run_recurrence.py --one-arm",
+  "precommit": "results/recurrence_precommit.json",
+  "question": "Does the γ=10 S-HL re-presentation at k=12 reach target_loss at the registered pin?",
+  "spec": {
+    "gamma_0": 10.0,
+    "recurrence_mode": "represent",
+    "recurrence_k": 12,
+    "condition": "S-HL",
+    "a": 0.0,
+    "N": 300,
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "stopping": "matched_loss",
+    "lr_scaling": "quadratic",
+    "arrangement_source": "stream_rng",
+    "stream_id": 10000,
+    "seed": 0,
+    "population": "reserved arrangements"
+  },
+  "usable": true,
+  "n_tasks": 16,
+  "n_tasks_missed": 0,
+  "all_converged": true,
+  "steps_taken": [42, 32, 28, 24, 21, 18, 21, 19, 20, 20, 18, 17, 17, 18, 19, 23],
+  "steps_at_0": 42,
+  "steps_at_k": 17,
+  "S_r_0_k": 1.0,
+  "mean_steps": 22.3125,
+  "max_steps": 42,
+  "wall_seconds": 534.8242084980011,
+  "path": "results/recurrence/gamma-10__a-0__cond-S-HL__stream-10000__seed-0__recur-represent__k-12.json",
+  "miss_rule": "lr0 stays 5.0. This arm reached target; the miss clause is not triggered. It remains in force for the 64-arm slice.",
+  "reading": "One-arm reached target on all 16 tasks, including the re-presentation. S_r(y_0, y_12)=1. n=1 licenses the 64-arm slice, not a savings claim. Prefix steps 0..11 match the not-tuned reserved S-HL arm on this stream; that is the pairing check, not a result.",
+  "cost_64_serial_hours_from_this_arm": 9.5,
+  "cost_note": "535 s for T=16 sequential. 64 × 535 s ≈ 9.5 h serial. No γ=0.03 on this slice. Do not treat 535 s × 64 / 192 workers as a forecast.",
+  "will_not_do": [
+    "Re-pin lr0 from this arm.",
+    "Read savings from n=1.",
+    "Treat steps(12)=17 versus steps(0)=42 as the identification.",
+    "Run S-HH or S-LH."
+  ]
+}

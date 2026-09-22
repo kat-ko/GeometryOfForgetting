@@ -78,3 +78,67 @@ def test_redraw_centers_s_f_one_keeps_centers():
     arr = make_arrangement(P=4, d=20, D=2, R=1.0, M=10, rng=rng)
     arr2 = redraw_centers_correlated(arr, 1.0, rng)
     assert np.allclose(arr2.centers, arr.centers)
+
+
+def _participation_ratio(points: np.ndarray) -> float:
+    """PR of one manifold's centered cloud. ``points`` is (M, d)."""
+    x = points - points.mean(axis=0)
+    ev = np.linalg.eigvalsh(x @ x.T)
+    ev = np.maximum(ev, 0.0)
+    s = float(ev.sum())
+    if s <= 0:
+        return 0.0
+    return float(s * s / np.square(ev).sum())
+
+
+def test_isotropic_gaussian_has_no_low_rank_subspace():
+    """D.1.1 variant: no D=4 spike. Spherical D=3 sits near 3."""
+    sph = make_arrangement(P=4, d=40, D=3, R=1.0, M=80, rng=np.random.default_rng(5))
+    iso = make_arrangement(
+        P=4, d=40, D=3, R=1.0, M=80, rng=np.random.default_rng(6),
+        kind="isotropic_gaussian",
+    )
+    assert sph.kind == "spherical" and sph.D == 3
+    assert iso.kind == "isotropic_gaussian" and iso.D == 0
+    assert iso.axes.shape[1] == 0
+    pr_sph = np.mean([_participation_ratio(sph.points[i]) for i in range(sph.P)])
+    pr_iso = np.mean([_participation_ratio(iso.points[i]) for i in range(iso.P)])
+    assert pr_sph < 6
+    assert pr_iso > 15
+
+
+def test_isotropic_redraw_keeps_kind_and_s_f_one_keeps_centers():
+    rng = np.random.default_rng(7)
+    arr = make_arrangement(
+        P=4, d=20, D=2, R=1.0, M=10, rng=rng, kind="isotropic_gaussian")
+    arr2 = redraw_centers_correlated(arr, 1.0, rng)
+    assert arr2.kind == "isotropic_gaussian"
+    assert arr2.D == 0
+    assert np.allclose(arr2.centers, arr.centers)
+    arr3 = redraw_centers_correlated(arr, 0.0, np.random.default_rng(8))
+    assert not np.allclose(arr3.centers, arr.centers)
+    assert arr3.kind == "isotropic_gaussian"
+
+
+def test_isotropic_refuses_rho_A():
+    rng = np.random.default_rng(9)
+    try:
+        make_arrangement(
+            P=4, d=20, D=2, R=1.0, M=10, rng=rng,
+            rho_A=0.3, kind="isotropic_gaussian",
+        )
+    except ValueError as e:
+        assert "rho_A" in str(e)
+    else:
+        raise AssertionError("isotropic Gaussian must refuse rho_A ≠ 0")
+
+
+def test_isotropic_is_not_unit_normalized():
+    """Unit-norm would put the cloud on a (d−1)-sphere."""
+    arr = make_arrangement(
+        P=4, d=40, D=2, R=1.0, M=80, rng=np.random.default_rng(10),
+        kind="isotropic_gaussian",
+    )
+    radii = np.linalg.norm(arr.points - arr.centers[:, None, :], axis=-1)
+    assert float(np.std(radii)) > 0.08
+

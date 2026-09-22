@@ -1,0 +1,87 @@
+{
+  "generated_by": "docs/16 §Amendments A3 / A11, after isotropic reading gamma_reorganisation_reproduces",
+  "written_before_running": true,
+  "written_before_running_applies_to": "192-arm not-tuned reserved duplicate",
+  "status": "pre-commit — written before any not-tuned arm",
+  "question": "Does the registered-grid headline — γ × 4-corner channel composition under quadratic — reproduce on the reserved arrangements that never informed lr0, the rank grid, or stopping?",
+  "why_now": "A3: every new axis uses the reserved set, plus a duplicate of the headline under the primary law as the not-tuned report. Rank r=N at γ=10 recovered share 0.448; that is one cell under nested Q, not this duplicate. Primary law is quadratic (A11).",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed. Those chose the LR law and produced the headline this duplicates."
+  },
+  "design": {
+    "manifold": "Registered D.1.1 spherical. Not isotropic. Not rank-projected.",
+    "readout": "Registered unconstrained path. readout_rank unset, Q = I_N. Rank r=N used a nested full-rank orthogonal Q; this duplicate is the registered path.",
+    "grid": {
+      "gammas": [0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+      "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+      "unique_n": 8,
+      "n_arms": 192,
+      "gamma_0.03": "On the registered headline grid, so it is run. Composition claims that need a resolved Δlog α are licensed at γ where every three-corner cell is gated (|Δlog α| ≥ 2 floors). Do not later report that the effect vanishes at low γ from an ungated share. The locked composition object is the γ=1→10 three-corner utility-share step. The locked interaction object is signed utility on the full 6×4."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin. Not informed by the reserved set or by this duplicate.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Not informed by the reserved set.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "seed": 0
+    }
+  },
+  "comparator": {
+    "old_arrangements_quadratic": "results/corrected_lr.json three-corner utility share under quadratic: 0.332 at γ=1, 0.449 at γ=10, step 0.117. Same cell (task 0, lag 12, module A).",
+    "old_interaction": "results/interaction_gamma_condition.json signed-utility γ × condition F(15,168)=119.9, p≈2.3e-81. Unique n=8 old arrangements. Headline is an interaction.",
+    "not": "Rank r=N nested Q, isotropic Gaussian, or results/phase1/ files."
+  },
+  "objects": {
+    "composition_step": "Three-corner utility share, unique n=8 (mean of S-HL/S-LH/S-LL per reserved stream_id, then mean over 8). Step = share(γ=10) − share(γ=1).",
+    "interaction": "Balanced two-way ANOVA y ~ C(γ)*C(condition) on the signed utility term, 6×4×8, unit = reserved stream_id. F-test of the interaction. Permutation of condition within (stream_id, γ), 999 shuffles."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable for composition and is counted. lr0 is not re-pinned.",
+    "interpretation": "A miss is not separable from an LR that is wrong on this population. Report as not reaching target at the registered pin."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, S-HL, first reserved arrangement, a=0, N=300, quadratic, spherical, unconstrained readout",
+    "why": "AGENTS.md §5. Reach-target check. Not a wall forecast: γ=0.03 lazy arms dominated the rank slice.",
+    "report": "results/nottuned_one_arm.json",
+    "reached_target": true
+  },
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "headline_reproduces_on_reserved": "The γ=1→10 three-corner utility-share step is comparable to the old-arrangement step (0.117), and the signed-utility γ × condition interaction remains p < 0.05. The headline was not tuned into existence on the old set.",
+    "headline_does_not_reproduce": "The step is gone or far smaller than 0.117, or the interaction is not significant. The reserved set does not carry the headline. Report that. Do not keep the old-population sentence as if it were not-tuned.",
+    "mixed": "One of the two objects holds and the other does not. Report the split. Do not pick a reading afterwards."
+  },
+  "operationalization": {
+    "written_before_192_arm_numbers": true,
+    "composition_reproduces": "three-corner share step γ=1→10 ≥ half the old-arrangement quadratic step in results/corrected_lr.json",
+    "composition_vanishes": "|step| < a quarter of that old step",
+    "interaction_reproduces": "signed-utility interaction p < 0.05 (parametric; permutation reported, not the cut)",
+    "headline_reproduces_on_reserved": "composition reproduces AND interaction reproduces",
+    "headline_does_not_reproduce": "composition vanishes OR interaction p ≥ 0.05",
+    "mixed": "otherwise (including a reduced-but-not-vanished step with a significant interaction)"
+  },
+  "results_dir": "results/nottuned/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Use old arrangements.",
+    "Inform lr0, the rank grid, or stopping from this duplicate.",
+    "Reuse rank r=N files (nested Q is not Q = I).",
+    "Reuse isotropic files.",
+    "Treat γ=0.03 as a control or as evidence the effect vanishes at low γ.",
+    "Pool with results/phase1/ or results/rank/.",
+    "Expand before the one-arm is reported."
+  ]
+}

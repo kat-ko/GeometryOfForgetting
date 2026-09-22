@@ -1,0 +1,160 @@
+{
+  "generated_by": "docs/22, after CE limitation written",
+  "written_before_running": true,
+  "written_before_running_applies_to": "192-arm Adam Hamming first slice",
+  "status": "pre-commit — written after docs/22 signed, before any Adam code or arm",
+  "question": "On the existing Hamming 2×3, do the cliff, the drift gradation, and the frozen–drift crossover reproduce under Adam at the same MSE pin, and does Adam preserve the γ richness manipulation?",
+  "why_now": "CE found no shared operating point across losses. Adam holds the objective and the pin and varies the update. That answers the reviewer objection that actually gets raised (plain full-batch GD). I3 is licensed as an off-design exception because Adam's per-parameter normalisation undoes μP LR scaling; the richness gate is the check, not an assumption.",
+  "i3_exception": {
+    "licensed": true,
+    "scope": "this off-design arm only",
+    "never": "results/phase1/",
+    "why": "Adam's per-parameter normalisation partially undoes μP learning-rate scaling. γ must be shown to still separate, not assumed."
+  },
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "Same Hamming 2×3 as the GD-MSE slice. Four exact Hamming levels at P=16, crossed with three input levels. Optimizer is Adam; loss, targets, streams, architecture, and target_loss=0.05 are held.",
+    "optimizer": {
+      "name": "adam",
+      "batch": "full",
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-8,
+      "weight_decay": 0.0,
+      "not": "a search; library defaults. No momentum SGD. No RMSProp."
+    },
+    "loss": "mse",
+    "stopping": "matched_loss at target_loss 0.05. Sequential K=1. The registered pin transfers because the objective is unchanged.",
+    "hamming_levels": {
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "h_at_P16": [0, 2, 4, 6],
+      "rounding": "none — these four are exact"
+    },
+    "input_levels": {
+      "frozen": {"s_f": 1.0, "what": "rule-only at s_r<1; no-change null at s_r=1"},
+      "drift": {"s_f": 0.9, "what": "slow consecutive centre motion; recovers finding 3 vs jump at s_r=1"},
+      "jump": {"s_f": 0.1, "what": "abrupt consecutive centre motion"}
+    },
+    "schedule": {
+      "T": 16,
+      "tracked_stride": 2,
+      "n_evals_two_modules": 106,
+      "lag12_tasks": [0, 2],
+      "lag4_tasks": [0, 2, 4, 6, 8, 10]
+    },
+    "not": "P=32. Another classification loss. Per-γ pins. Reopening CE. EWC/replay. Treating consecutive s_r as lag-12 s_r.",
+    "first_slice": {
+      "gammas": [1.0, 10.0],
+      "input_levels": ["frozen", "drift", "jump"],
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "unique_n": 8,
+      "n_arms": 192,
+      "gamma_0.03_excluded": "Not a control. Composition claims licensed at γ ∈ {1, 10}, and only if the richness gate passes."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 0.0002,
+      "lr0_inherited": 5.0,
+      "lr0_provenance": "Re-pinned once, uniformly, by the Phase 0 procedure after inherited lr0=5 exploded on the one-arm cell (γ=10 loss 0.5→3e10 in three steps). Decade ladder on frozen × s_r=0.5 × stream 10000, task 0, both γ: 2e-5 strands γ=1 at loss 0.36 (the too-small analog of GD's 0.2); 0.0002 reaches both γ; 0.002 (decade up) still reaches. Pin is 0.0002. Not informed by Hamming cells, reserved-set geometry, or the richness gate. Recorded before any slice. Details: results/adam_lr0_repin.md.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Transfers because the objective is MSE.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T": 16,
+      "P": 16,
+      "seed": 0,
+      "tracked_stride": 2
+    },
+    "primary_cell": {
+      "task": 0,
+      "lag": 12,
+      "module": "A",
+      "quantity": "Δ log α (floors) against Hamming, per input level",
+      "unique_n": 8,
+      "unit": "reserved stream_id, seed=0",
+      "reported_not_a_reading": "Lag-4 series across task position {0,2,4,6,8,10}. Δρ_c against Hamming, including frozen."
+    }
+  },
+  "richness_gate": {
+    "quantity": "||ΔW||_F / ||W(0)||_F as stored in weight_change",
+    "population": "unique n=8, frozen × s_r=0.5, after task 0, both γ",
+    "bar": "mean(γ=10) / mean(γ=1) ≥ 10 (one decade; Phase 0 bar)",
+    "phase0_gd_reference": "2.53 decades at matched loss, against this 1-decade bar",
+    "if_fails": "richness_manipulation_collapses. Arm speaks only to the Hamming axis within each γ. Do not interpret γ-dependent claims. Do not pool γ.",
+    "when": "before the 192-arm slice. Training-only, task 0, unique n=8 of frozen × s_r=0.5. Geometry is not required.",
+    "one_arm_is": "smoke check; does not govern",
+    "bands_named_before_16_arm_numbers": {
+      "clears_decade": "ratio ≥ 10: launch the 192",
+      "partial_manipulation": "3 ≤ ratio < 10: stop for a decision; do not launch 192",
+      "richness_manipulation_collapses": "ratio < 3: fail clearly; Hamming-only at one γ is a later decision"
+    }
+  },
+  "recovery": {
+    "cell": "At s_r=1, drift vs jump on reserved stream_ids, γ=10, unique n=8, module A, task 0 lag 12.",
+    "must": "Keep the sign of finding 3 (gain under drift, loss under jump) or stop. The new streams are not the same object. Skipped if richness_manipulation_collapses, because that reading is a γ=10 claim."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable and counted.",
+    "lr0_inherited": 5.0,
+    "inherited_missed": true,
+    "lr0_now": 0.0002,
+    "if_one_arm_misses": "Applied: inherited lr0=5 exploded. Re-pinned once, uniformly, to 0.0002 by the Phase 0 procedure. Recorded in results/adam_lr0_repin.md before any slice.",
+    "if_still_misses": "lr0_miss. Stop. Do not run the slice. Do not re-pin a second time."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, s_r=0.5, frozen, first reserved arrangement, a=0, N=300, quadratic, matched_loss, target_loss=0.05, lr0=0.0002 (re-pinned), tracked_stride=2, Adam, MSE",
+    "why": "Same cell as the Hamming one-arm. AGENTS.md §5.",
+    "report": "results/adam_one_arm.json",
+    "governs": false,
+    "reached_target": true
+  },
+  "readings_committed_before_seeing_numbers": {
+    "stream_property": "At γ=10, unique n=8, cliff (h=0 vs h≥2 under frozen and jump), drift post-cliff gradation (0.75 vs 0.25 CIs non-overlapping), and frozen–drift crossover all reproduce the GD-MSE pattern.",
+    "learner_property": "At least one of cliff / drift gradation / crossover fails. Report which. Do not salvage a stream claim from the survivors after seeing numbers.",
+    "finding3_fails_to_recover": "At s_r=1, drift vs jump does not keep gain vs loss on Δ log α. Stop. The Adam streams are not the same object.",
+    "mixed": "γ=10 and γ=1 disagree on stream_property vs learner_property. Not available if richness_manipulation_collapses.",
+    "richness_manipulation_collapses": "γ=10 / γ=1 of mean ||ΔW||/||W|| after task 0, frozen × s_r=0.5, unique n=8, does not clear one decade. Arm speaks only to the Hamming axis within each γ. Do not interpret γ-dependent claims. Do not pool γ."
+  },
+  "operationalization": {
+    "written_before_192_arm_numbers": true,
+    "primary": "Unique n=8, module A, task 0, lag 12, Δ log α vs Hamming, per input level, γ=10. 95% CI = mean ± 1.96 SEM. Interpreted only if the richness gate passes.",
+    "stream_property": "Cliff, drift gradation, and crossover all reproduce (same signs and the same resolved-vs-overlapping-CI pattern as GD-MSE).",
+    "learner_property": "At least one of those three fails.",
+    "finding3_fails_to_recover": "At s_r=1, drift mean Δ log α is not > 0 or jump is not < 0 (γ=10, unique n=8).",
+    "mixed": "γ=10 and γ=1 disagree on stream_property vs learner_property.",
+    "richness_manipulation_collapses": "mean weight_change A at γ=10 divided by mean at γ=1, frozen × s_r=0.5, after task 0, unique n=8, is < 3.",
+    "partial_manipulation": "that ratio is in [3, 10). Stop for a decision. Do not launch 192.",
+    "clears_decade": "that ratio is ≥ 10. Launch the 192.",
+    "gamma_1": "Reported. Not the primary. Split → mixed, unless the richness gate has already scoped the arm to within-γ Hamming only."
+  },
+  "results_dir": "results/adam/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Another classification loss.",
+    "Per-γ pins.",
+    "Reopen the CE arm.",
+    "EWC or replay.",
+    "Write into results/phase1/.",
+    "Use old arrangements.",
+    "Inform lr0 or stopping from this axis, except the signed one-time Phase 0 re-pin if the inherited lr0 misses.",
+    "Include γ=0.03 as a control.",
+    "P=32 on this slice.",
+    "Pool Hamming 0 with 0.75.",
+    "Treat consecutive s_r as lag-12 s_r.",
+    "Inherit tracked_stride=4.",
+    "Expand A8.",
+    "Edit figures from this arm.",
+    "Expand before the one-arm is reported.",
+    "Launch the 192 before the richness gate.",
+    "Launch the 192 unless the gate reading is clears_decade.",
+    "Interpret γ-dependent claims if the richness gate fails."
+  ]
+}

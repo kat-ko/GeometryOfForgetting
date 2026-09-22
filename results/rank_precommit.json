@@ -1,0 +1,95 @@
+{
+  "generated_by": "docs/16 §Amendments A5 / A12 / A14, after §0.1 reading",
+  "written_before_running": true,
+  "written_before_running_applies_to": "288-arm first slice",
+  "one_arm_preceded_this_commit": true,
+  "status": "pre-commit for the 288-arm first slice. The one-arm (γ=10, r=4, S-HL, first reserved arrangement) ran before this file was committed and is not governed by this commit.",
+  "question": "Does channel reorganisation of forgetting reproduce under rank control at fixed γ, or does it track γ regardless of rank?",
+  "blocked_on": "This commit. 288-arm slice waits on the commit, not on further one-arm work.",
+  "primary_law": "quadratic",
+  "primary_law_source": "results/corrected_lr.json reading.key = composition_unchanged_at_gamma_gt_1",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed. Those chose the LR law. Rank never sees them."
+  },
+  "design": {
+    "projection": "Frozen low-rank linear map Q ∈ ℝ^{r×N} on the readout path only. h ∈ ℝ^N is unchanged; GLUE ambient dimension is N. Hidden-width reduction is a different experiment.",
+    "Q_nested": "One N×N orthonormal basis is drawn per (seed, module) from projection_rng(seed) = np.random.default_rng([20260901, seed]). Q_r is the first r rows of that basis. r=4 is a column subset of r=16 is a column subset of r=N. Rank is not redrawn. At r=N, Q is that full-rank orthogonal map, not I_N: the function class is the unconstrained readout (Q invertible); it is not bitwise the registered no-projection path.",
+    "Q_frozen": true,
+    "projection_rng": "Independent of γ, of r, and of the shape stream. paired_init spawn(4) is not extended. At fixed r the only thing γ changes is the update dynamics. Nested r is the only thing that changes Q's row count, not its draw.",
+    "I6": {
+      "W0_across_gamma": "bitwise identical at fixed r (existing I6).",
+      "W0_across_rank": "bitwise identical at fixed γ. Rank must not consume the shape stream. This checks W, not Q.",
+      "Q_across_gamma": "bitwise identical at fixed r. Otherwise rank and richness are coupled at initialization.",
+      "Q_nested_across_rank": "Q_r equals Q_N[:r, :]. Without this, the r sweep contrasts identity against a fresh random projection at every r."
+    },
+    "first_slice": {
+      "gammas": [0.03, 1.0, 10.0],
+      "ranks": [4, 16, 300],
+      "rank_300_is": "N, the nested full-rank orthogonal readout. Negative control: rank = N must recover the unconstrained function class. Not bitwise identity with Q = I_N.",
+      "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+      "unique_n": 8,
+      "n_arms": 288,
+      "gamma_0.03": "Excluded from composition claims. Not a control. The lazy arm is below the resolution gate (~0.2 floors); a null there is required by the design and cannot fail, so it carries no evidential weight. Do not later report that the effect vanishes at low γ. Composition claims on this slice are licensed at γ ∈ {1, 10} only."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin on r = N / L = 2 / old arrangements. Not informed by the reserved set, not informed by the one-arm.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Not informed by the reserved set.",
+      "rank_grid_provenance": "docs/16 A5 first slice {4, 16, N}, written before reserved arms. Not informed by the reserved set or the one-arm.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2
+    }
+  },
+  "misses": {
+    "rule": "If a rank cannot reach target at the lr0 pinned on r = N, that rank is reported as not reaching target. lr0 is not re-pinned after seeing a miss, unless re-pinning is decided in advance for all ranks uniformly.",
+    "lr0_pinned_on": "r = N, registered 5.0 / 0.05. Not re-pinned per rank.",
+    "interpretation": "A miss at r < N is not separable from an LR that is wrong at that rank. Report as not reaching target at the lr0 pinned on r = N. Not a claim that rank r cannot represent the tasks, and not a rank-capacity result.",
+    "usable": "An arm that misses target_loss on any task is unusable for composition and is counted in the miss rate, not dropped silently. r=4 will plausibly miss; that is an outcome, and it is an LR-at-that-rank outcome as much as a rank outcome."
+  },
+  "one_arm": {
+    "spec": "γ=10, r=4, S-HL, first reserved arrangement, a=0, N=300, quadratic",
+    "ran_before_this_commit": true,
+    "governs": false,
+    "note": "Used an un-nested, r-dependent projection draw and I_N at r = N. The 288-arm slice uses the nested basis in this file. Do not pool the one-arm with the slice.",
+    "report": "results/rank_one_arm.json"
+  },
+  "cost": {
+    "one_arm_wall_seconds": 495,
+    "one_arm_mean_steps": 24.4,
+    "one_arm_is_lower_bound": true,
+    "serial_hours_if_all_arms_like_one_arm": 39.6,
+    "serial_hours_budget": "60-100. Arms that hit the 20k step cap cost roughly 3× the one-arm wall. 39.6 h assumes every arm behaves like an arm that missed nothing at mean 24.4 steps. State parallelism or budget the upper end before launch."
+  },
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "reorganisation_reproduces_under_rank_at_fixed_gamma": "Dimensionality is doing the work. Attribution is licensed as a claim about representational dimension.",
+    "reorganisation_tracks_gamma_regardless_of_rank": "The driver is optimisation dynamics. The paper says so. The dimension channel is co-varying rather than causal.",
+    "mixed": "Report the interaction. Do not pick a reading afterwards.",
+    "null_at_gamma_0.03": "Not a result and not a control. Do not report that the effect vanishes at low γ. Composition claims are licensed at γ ∈ {1, 10} of this slice.",
+    "rank_equals_N_does_not_recover_unconstrained_function_class": "Stop and diagnose. The nested full-rank Q is not invertible, or the reserved-set duplicate is broken.",
+    "high_miss_rate_at_low_rank": "That rank is reported as not reaching target at the lr0 pinned on r = N. Not a reason to re-pin lr0 after the fact. lr0 stays 5.0. Not interpretable as a rank-capacity claim."
+  },
+  "results_dir": "results/rank/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Use old arrangements for rank.",
+    "Inform lr0, the rank grid, or stopping from reserved-set pilots or from the one-arm.",
+    "Reduce hidden width and call it rank.",
+    "Re-pin lr0 after seeing a miss.",
+    "Read a null at γ=0.03 as evidence that rank does not matter, or as the effect vanishing at low γ.",
+    "Draw Q from the shape stream, from a γ-dependent RNG, or independently at each r.",
+    "Treat I_N as the r = N arm of this slice. r = N is the nested full-rank orthogonal map.",
+    "Pool the one-arm (un-nested draw) with the 288-arm slice."
+  ]
+}

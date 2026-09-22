@@ -230,8 +230,10 @@ Phase 0 compares.
   σ² = 1 hidden init regardless of γ (unit test: bitwise identical W across γ);
   zero-init readout (unit test: f(x;θ₀) = 0 exactly);
   `lr_scaling: quadratic | corrected` (corrected: γ^(2/L) for γ > 1, L = 2).
-  `test_base_width_equivalence` at N₀ = 64: **derive** the constant, write
-  `docs/reference/parameterization-derivation.md`, do not guess.
+  `test_base_width_equivalence` at N₀ = 64: derivation in
+  `docs/reference/parameterization-derivation.md` (Verification 1 signed
+  2026-09-01: A.3 does not state the constant; independent derivation from
+  Table 1 confirms `(N/N_base)`).
 - `alignment_init.py` — Grassmann geodesic per `00` §5 (principal-angle
   parameterization, NOT lerp+orthonormalize; rcond-logged pseudo-inverse in
   (YᵀU)⁻¹; norm/rank preservation unit tests). Paired-init discipline: one W̃

@@ -32,7 +32,7 @@ results without producing an error.
 | I6 | **Hidden-layer weights at init must be identical across γ** | This is the orthogonality proof for the (a, γ) factorial design. There is a unit test. Do not "fix" it |
 | I7 | **No gradient clipping** | Clips rich units preferentially, compressing the manipulation |
 | I8 | **Single shared readout; no task-conditioned head** | A task head absorbs the credit-allocation effect we are measuring |
-| I9 | **Dichotomies must be balanced** | Unbalanced dichotomies are degenerate and contaminate similarity geometry |
+| I9 | **Dichotomies must be balanced** | Unbalanced dichotomies are degenerate and contaminate similarity geometry. Stated deviation from Chou D.1.1 (uniform `{±1}`); `docs/reference/protocol-deviations.md` |
 | I10 | **P, M, and N must match across modules** in any comparison | Capacity is a ratio to ambient dimension; unequal widths give incomparable numbers |
 
 If a task seems to require breaking one of these, stop and ask.
@@ -119,9 +119,10 @@ in variable names.
 Do not paper over these. If code depends on one, mark it `# UNCERTAIN:` with a
 pointer to the relevant section of `docs/00-math-spec.md`.
 
-- The base-width normalization constant relating μP to NTP (§4.2 of the math
-  spec) is stated in the source paper but not written out; it must be **derived
-  and unit-tested**, not guessed.
+- **Resolved (2026-09-01, Verification 1 signed):** the base-width constant
+  relating μP to NTP (§4.2). A.3 does not state it (dangling caption).
+  Independent derivation from Table 1 confirms `(N/N_base)`. Sequential L=3
+  training still waits on a separate μP-at-L=3 derivation.
 - **Resolved (2026-08-10):** the capacity decomposition is the **exact** identity
   `α = Ψ_eff·(1 + R_eff⁻²)/D_eff` (ICLR 2026 §B.3), not an approximation. The old
   two-factor `(1+R⁻²)/D` was the ICML approximation; `Ψ_eff` is the missing third

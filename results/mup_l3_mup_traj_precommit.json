@@ -1,0 +1,44 @@
+{
+  "generated_by": "docs/16 A28 follow-up: μP width-failure trajectories, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "μP loss(N=300)/loss(N=64) along K on the A28 manifold task, n=32",
+  "status": "unsigned diagnostic contract — does not retune A28, not Verification 2",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "When L=3 μP loss rises with width at K=128, is N=300 worse at every snapshot, or did it overshoot, and does K=512 rescue it?",
+  "why": "A28 l3_problem: all misses are μP loss(N=300) > loss(N=64). NTP rose with width on 32/32. This measures the μP path, not another Gaussian replicate and not a stream.",
+  "held_fixed": {
+    "instrument": "A28: P=16 M=40 d=60 D=4 R=1 spherical, lr0=5, seeds 0..31",
+    "parameterization": "mup only",
+    "widths": [64, 300],
+    "K_sequence": [16, 32, 64, 128, 256, 512],
+    "module": "A"
+  },
+  "prefix": {
+    "K128_mup_losses": "must match results/mup_manifold_n32.json L2/L3 μP loss at N=64 and N=300 per seed",
+    "on_mismatch": "stop"
+  },
+  "classification": {
+    "ratio": "loss_N300 / loss_N64 at a snapshot, μP",
+    "always_worse": "ratio > 1 at every finite snapshot with K ≤ 128",
+    "cross_to_worse": "ratio ≤ 1 at some K < 128 and ratio > 1 at K=128",
+    "always_better": "ratio ≤ 1 at every finite snapshot with K ≤ 128",
+    "cross_to_better": "ratio > 1 at some K < 128 and ratio ≤ 1 at K=128",
+    "rescued_at_512": "ratio > 1 at K=128 and ratio ≤ 1 at K=512",
+    "still_worse_at_512": "ratio > 1 at K=128 and ratio > 1 at K=512",
+    "cohort": "seeds with ratio > 1 at L=3, K=128 (A28 μP-increase set, n=13 if prefix holds)",
+    "majority": "≥ 7 of that cohort"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "prefix_mismatch": "K=128 μP losses do not match A28. Stop.",
+    "always_worse_majority": "≥7 of the L=3 K=128 μP-increase seeds have ratio > 1 at every snapshot ≤ 128. N=300 is behind throughout, not an overshoot at the A28 halt. Do not lift A6.",
+    "overshoot_majority": "≥7 of that cohort are cross_to_worse. N=300 was ahead (or tied) earlier and worse at 128. Do not lift A6.",
+    "mixed_shape": "Neither always_worse nor cross_to_worse has ≥7. Do not lift A6."
+  },
+  "k512_recorded": {
+    "not_the_primary_shape_reading": true,
+    "rescues_majority": "≥7 of the cohort have ratio ≤ 1 at K=512",
+    "does_not_rescue_majority": "≥7 still have ratio > 1 at K=512",
+    "mixed_rescue": "neither ≥7"
+  }
+}

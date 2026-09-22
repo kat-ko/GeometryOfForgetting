@@ -1,0 +1,39 @@
+{
+  "generated_by": "docs/16 A23 follow-up: loss-vs-width contrast on the frozen grid, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 and L=3 loss tables at the A23 frozen (K, grid), identification at named lr0=10",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "At the frozen (K=16, grid through 10), does loss at named lr0=10 fail to increase with width under μP and increase with width under NTP, at L=2 and at L=3?",
+  "why": "A23 applied l3_b_fails on argmin location. That identification did not isolate parameterization: at L=2 μP and NTP chose the same argmins. An unused L=3 number at lr0=10 showed μP loss falling with width and NTP rising. This contract tests that contrast, named in advance, on both depths, no search, no new knobs.",
+  "held_fixed": {
+    "d": 40,
+    "batch": 32,
+    "seed": 0,
+    "data_seed": 1,
+    "gamma_0": 1.0,
+    "widths": [64, 300],
+    "K": 16,
+    "lr0_grid": [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+    "named_lr0": 10.0,
+    "named_lr0_why": "Interior for L=2 at N=300 on the A23 freeze (argmin was 3). Grid-edge for L=3 argmins in A23. Named before this run, not chosen from it."
+  },
+  "identification": {
+    "quantity": "pre-step MSE after K steps at named_lr0, independently trained at each (depth, parameterization, N)",
+    "contrast_present": "both losses finite, μP: loss(N=300) ≤ loss(N=64), NTP: loss(N=300) > loss(N=64)",
+    "contrast_absent": "any non-finite loss, or μP increases with width, or NTP does not increase with width",
+    "not": "argmin location. Check A. Check C. A23's check B."
+  },
+  "no_search": true,
+  "depths": {
+    "L2": "n_hidden_layers=1, ordinary sgd_step",
+    "L3": "n_hidden_layers=2, diagnostic=True. Stream still refused."
+  },
+  "full_grid": "Recorded. Not the identification.",
+  "readings_committed_before_seeing_numbers": {
+    "instrument_blind": "L=2 contrast absent. This toy protocol still cannot see μP vs NTP on a real contrast. Stop the diagnostic. Gate 1 remains the only pin. L=3 numbers are recorded and are not a reading.",
+    "table_supported": "L=2 contrast present and L=3 contrast present. Empirical support for Table 1 at L=3 on this contrast. Not Verification 2. Do not lift A6. Do not start sequential depth arms.",
+    "l3_problem": "L=2 contrast present and L=3 contrast absent. An L=3 problem on an instrument that works at L=2. Stop. Do not invent 1/√L or per-layer LRs in code. Do not lift A6."
+  }
+}

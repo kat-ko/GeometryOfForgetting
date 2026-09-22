@@ -1,0 +1,211 @@
+{
+  "generated_by": "scripts/check_mup_l3_validation.py",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "verification_2": "unsigned",
+  "a6_stream_training": "blocked",
+  "gate1_unit_tests": {
+    "pass": true,
+    "returncode": 0,
+    "summary": "5 passed in 0.27s"
+  },
+  "applied_readings": {
+    "A21_original_gate2": "Gate 2 failed (mixed: not a partial licence). Stop. Do not sign Verification 2. Do not lift stream training.",
+    "A22_l2_control": "protocol_cannot_certify",
+    "A23_operating_point": "l3_b_fails",
+    "A24_loss_width_seed0": "table_supported",
+    "A25_dw_floor_seed0": "table_supported_at_floor",
+    "A26_unique_n8": "instrument_blind",
+    "n32_rate": "recorded_rate",
+    "A28_manifold_n32": "l3_problem",
+    "A29_mup_traj": "always_worse_majority",
+    "A30_manifold_k512": "table_supported",
+    "A31_n150": "table_supported",
+    "A32_gamma10": "table_supported",
+    "A33_sqrtL": "does_not_rescue"
+  },
+  "counts": {
+    "A26_L2": "6/8",
+    "A26_L3": "4/8",
+    "n32_L2": {
+      "k_present": 16,
+      "n": 32,
+      "rate": 0.5,
+      "clopper_pearson_95": [
+        0.318874964234164,
+        0.681125035765836
+      ],
+      "failure_modes": {
+        "present": 16,
+        "mup_increased": 10,
+        "ntp_did_not_increase": 6
+      }
+    },
+    "n32_L3": {
+      "k_present": 21,
+      "n": 32,
+      "rate": 0.65625,
+      "clopper_pearson_95": [
+        0.468068963719731,
+        0.8142809082834375
+      ],
+      "failure_modes": {
+        "present": 21,
+        "mup_increased": 5,
+        "both": 1,
+        "ntp_did_not_increase": 5
+      }
+    },
+    "manifold_n32_L2": {
+      "k_present": 25,
+      "n": 32,
+      "rate": 0.78125,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.6002717362878924,
+        0.9072284677154653
+      ],
+      "failure_modes": {
+        "mup_increased": 7,
+        "present": 25
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 0
+    },
+    "manifold_n32_L3": {
+      "k_present": 19,
+      "n": 32,
+      "rate": 0.59375,
+      "pass_count_threshold": 24,
+      "meets_k24": false,
+      "clopper_pearson_95": [
+        0.40644924657647485,
+        0.7630158994481753
+      ],
+      "failure_modes": {
+        "mup_increased": 13,
+        "present": 19
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 0
+    },
+    "manifold_k512_L2": {
+      "k_present": 32,
+      "n": 32,
+      "rate": 1.0,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.8911188393205571,
+        1.0
+      ],
+      "failure_modes": {
+        "present": 32
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+    },
+    "manifold_k512_L3": {
+      "k_present": 32,
+      "n": 32,
+      "rate": 1.0,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.8911188393205571,
+        1.0
+      ],
+      "failure_modes": {
+        "present": 32
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+    },
+    "manifold_n150_L2": {
+      "k_present": 30,
+      "n": 32,
+      "rate": 0.9375,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.7919305701049926,
+        0.9923392636535437
+      ],
+      "failure_modes": {
+        "present": 30,
+        "mup_not_monotone": 2
+      },
+      "n_endpoint_present_not_a_reading": 32,
+      "n_mup_all_widths_loss_le_0.05_not_a_reading": 32
+    },
+    "manifold_n150_L3": {
+      "k_present": 31,
+      "n": 32,
+      "rate": 0.96875,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.8378290058184796,
+        0.999209131402025
+      ],
+      "failure_modes": {
+        "present": 31,
+        "mup_not_monotone": 1
+      },
+      "n_endpoint_present_not_a_reading": 32,
+      "n_mup_all_widths_loss_le_0.05_not_a_reading": 32
+    },
+    "manifold_gamma10_L2": {
+      "k_present": 32,
+      "n": 32,
+      "rate": 1.0,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.8911188393205571,
+        1.0
+      ],
+      "failure_modes": {
+        "present": 32
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+    },
+    "manifold_gamma10_L3": {
+      "k_present": 32,
+      "n": 32,
+      "rate": 1.0,
+      "pass_count_threshold": 24,
+      "meets_k24": true,
+      "clopper_pearson_95": [
+        0.8911188393205571,
+        1.0
+      ],
+      "failure_modes": {
+        "present": 32
+      },
+      "n_mup_both_widths_loss_le_0.05_not_a_reading": 32
+    }
+  },
+  "what_holds": [
+    "Gate 1 algebraic pin at N=64, \u03b3\u2080=1, L=2 and L=3",
+    "L=3 analytic W2 grads match finite differences",
+    "Stream / run_arm still refuse L=3",
+    "A30 k\u226524 at L=2 and L=3 on the manifold instrument at K=512",
+    "A31 three-width interpolation k\u226524 at L=2 and L=3 at K=512, \u03b3\u2080=1",
+    "A32 k\u226524 at L=2 and L=3 at \u03b3\u2080=10 on the same instrument"
+  ],
+  "what_does_not_hold": [
+    "Original Gate 2 check B (argmin \u03b7*) at L=3 and at L=2 on the short grid",
+    "A26 8/8 replicate of the named-lr0=10 loss-vs-width contrast",
+    "A28 k\u226524 at L=3 on the manifold instrument at K=128 (L=2 met k\u226524)"
+  ],
+  "seed0_only_and_closed": [
+    "A24 table_supported and A25 table_supported_at_floor \u2014 seed 0"
+  ],
+  "continuation_constraints": [
+    "A26 instrument_blind stands. n=32 does not retune it to a licence.",
+    "A28 l3_problem at K=128 stands. A30 at K=512 does not retune it.",
+    "A31 and A32 do not sign Verification 2 and do not lift A6.",
+    "Do not sign Verification 2 on seed-0 contrasts.",
+    "Gate 3 still requires Kati to write parameterization-derivation.md.",
+    "Do not lift A6. Do not start sequential depth arms.",
+    "Do not invent 1/\u221aL from these numbers."
+  ]
+}

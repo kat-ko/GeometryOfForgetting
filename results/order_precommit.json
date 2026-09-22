@@ -1,0 +1,136 @@
+{
+  "generated_by": "docs/23, after second-learner line closed",
+  "written_before_running": true,
+  "written_before_running_applies_to": "64-arm order first slice",
+  "status": "pre-commit — written after docs/23 signed, before any order code or arm",
+  "question": "After matching the measured task's position, does consecutive-Hamming dose beyond the cliff further separate schedules?",
+  "why_now": "Second-learner line closed (docs/07 §A.9). Order and spacing are single-learner stream axes. The original prediction (order should not matter) was too strong because order moves position. The audit's weaker prediction is the testable version.",
+  "weaker_prediction": "After matching the measured task's position, consecutive-Hamming dose beyond the cliff should not further separate schedules.",
+  "framing": "geometry with a well-specified stream. Not a substitute second learner.",
+  "second_learner_line": "closed",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "Same bag of 16 (arrangement, dichotomy) pairs as the Hamming 2×3 cell. Presentation order is forward (existing Hamming slice), reverse, or shuffle. Pairs stay glued. Matched composition.",
+    "schedules": {
+      "forward": "Generated order. Read from results/hamming/. Not rerun.",
+      "reverse": "Presentation indices 15..0. Consecutive Hamming preserved on a constant-Hamming walk. Position manipulation.",
+      "shuffle": "One permutation per stream_id from order_rng(stream_id), rejected if identity or reverse. Consecutive Hamming realized, not designed."
+    },
+    "optimizer": "sgd",
+    "loss": "mse",
+    "stopping": "matched_loss at target_loss 0.05. Sequential K=1. Registered pin. Not re-pinned.",
+    "hamming_levels": {
+      "s_r": [0.75, 0.25],
+      "h_at_P16": [2, 6],
+      "why": "Beyond the cliff. s_r=1 is finding-3 recovery on forward, already measured, not a dose cell here."
+    },
+    "input_levels": {
+      "frozen": {"s_f": 1.0, "what": "cliff, no post-cliff dose under SGD"},
+      "drift": {"s_f": 0.9, "what": "cliff plus resolved post-cliff dose under SGD"}
+    },
+    "schedule_B": {
+      "T": 16,
+      "tracked_stride": 2,
+      "why": "Position stays a covariate. Lag 4 exists for presentation indices {0,2,4,6,8,10}."
+    },
+    "first_slice": {
+      "gammas": [10.0],
+      "schedules_trained": ["reverse", "shuffle"],
+      "schedules_paired_from_hamming": ["forward"],
+      "input_levels": ["frozen", "drift"],
+      "s_r": [0.75, 0.25],
+      "unique_n": 8,
+      "n_arms_new": 64,
+      "jump_excluded": "Jump has no post-cliff dose. Not this slice.",
+      "gamma_1_excluded": "Single-learner stream axis. Primary at γ=10."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered GD pin. Hamming one-arm reached. Not informed by this axis.",
+      "target_loss": 0.05,
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T": 16,
+      "P": 16,
+      "seed": 0,
+      "tracked_stride": 2
+    },
+    "primary_cell": {
+      "task": "the dichotomy trained at presentation index 8",
+      "lag": 4,
+      "presentation_index": 8,
+      "module": "A",
+      "quantity": "Δ log α (floors), schedule range across {forward, reverse, shuffle}",
+      "unique_n": 8,
+      "unit": "reserved stream_id, seed=0",
+      "why_not_task0_lag12": "Reverse puts original task 0 last. Position matching is the point of the weaker prediction.",
+      "reported_not_a_reading": "Lag-4 series across presentation index. Δρ_c."
+    }
+  },
+  "pairing": {
+    "forward_source": "results/hamming/",
+    "key": ["stream_id", "input_level", "readout_similarity", "gamma_0"],
+    "if_missing_or_mismatch": "forward_identity_fails. Stop."
+  },
+  "recovery": {
+    "inherited": "Hamming slice finding 3 at s_r=1, forward, drift vs jump. Do not rerun. Not a reading of this arm."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable and counted.",
+    "if_one_arm_misses": "Stop. Do not re-pin lr0. The GD pin already reached on Hamming."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, reverse, drift, s_r=0.75, first reserved arrangement, a=0, N=300, quadratic, matched_loss, target_loss=0.05, lr0=5, tracked_stride=2, SGD, MSE",
+    "why": "A cell this slice trains. Not a forward Hamming cell. AGENTS.md §5.",
+    "report": "results/order_one_arm.json",
+    "governs": false
+  },
+  "readings_committed_before_seeing_numbers": {
+    "weaker_prediction_holds": "On frozen and on drift, schedule range at s_r=0.25 minus schedule range at s_r=0.75 does not clear two floors (lag 4, presentation index 8, 1-decimal). Consecutive-Hamming dose beyond the cliff does not further separate schedules.",
+    "weaker_prediction_fails": "That difference clears two floors on frozen and on drift. Name the magnitudes.",
+    "partial": "One input holds, the other fails. Report the split. No post-hoc story.",
+    "forward_identity_fails": "A forward cell used as the third schedule does not match the Hamming slice. Stop. The pairing is broken."
+  },
+  "operationalization": {
+    "written_before_64_arm_numbers": true,
+    "primary": "Unique n=8, module A, lag 4, presentation index 8, Δ log α, γ=10. 95% CI = mean ± 1.96 SEM.",
+    "schedule_range": "max − min of 1-decimal floors across {forward, reverse, shuffle} at that cell.",
+    "weaker_prediction_holds": "For frozen and for drift: range(0.25) − range(0.75) < 2 floors.",
+    "weaker_prediction_fails": "For frozen and for drift: range(0.25) − range(0.75) ≥ 2 floors.",
+    "partial": "Exactly one of frozen, drift satisfies holds.",
+    "forward_identity_fails": "Any paired forward record disagrees with results/hamming/ on spec or on the primary-cell Δ log α of the eight stream_ids.",
+    "a8": "A monotonicity claim on schedule range requires the difference to clear two floors, not just the ordering to hold."
+  },
+  "results_dir": "results/order/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "A fourth learner.",
+    "Adam.",
+    "Another classification loss.",
+    "Replay or EWC.",
+    "Architecture or width variant.",
+    "Jump on this slice.",
+    "γ=1 on this slice.",
+    "Include s_r=1 as a dose cell.",
+    "Rerun forward Hamming cells.",
+    "Re-pin lr0.",
+    "Inform lr0 or stopping from this axis.",
+    "Inherit tracked_stride=4.",
+    "P=32 on this slice.",
+    "L=3.",
+    "Write into results/phase1/.",
+    "Edit figures from this arm.",
+    "Test the Adam accumulation hypothesis.",
+    "Salvage a stream claim from a partial split after seeing numbers.",
+    "Treat a result as learner-generality."
+  ]
+}

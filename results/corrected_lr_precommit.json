@@ -1,0 +1,58 @@
+{
+  "generated_by": "docs/16 §Amendments A1–A4 / original §0.1",
+  "written_before_running": true,
+  "status": "pre-commit — written after the unique-n=8 interaction report, before any corrected-LR arm",
+  "question": "Does channel composition of forgetting change under Atanasov’s γ^(2/L) law versus the quadratic law used on the registered grid?",
+  "population": {
+    "name": "old arrangements",
+    "source": "results/reserved_arrangements.json populations.old",
+    "arrangement_source": "legacy_seed",
+    "init_seeds": [0, 1, 2, 3, 4, 5, 6, 7],
+    "stream_id_stored": 0,
+    "stream_id_read": false,
+    "not": "the reserved stream_rng ids 10000–10007. Those never inform this comparison."
+  },
+  "grid": {
+    "gammas": [0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+    "conditions": ["S-HH", "S-HL", "S-LH", "S-LL"],
+    "unique_n": 8,
+    "n_arms": 192,
+    "a": 0.0,
+    "N": 300,
+    "copy_inflation": false
+  },
+  "design_held_fixed": {
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "steps_per_task": 20000,
+    "lr_scaling": "corrected",
+    "depth_L": 2,
+    "cut": "gamma_0 > 1. Corrected scaling is identical to quadratic at γ ≤ 1."
+  },
+  "negative_control": {
+    "gamma": 1.0,
+    "rule": "At γ = 1 the two laws are identical. Any composition change there is not the LR law and must be diagnosed, not absorbed."
+  },
+  "misses": {
+    "rule": "lr0 is not re-pinned after seeing a miss. Record misses as an outcome. If a large fraction miss, that is a finding about the corrected law's practicality at this loss target, reported as such.",
+    "usable": "An arm that misses target_loss on any task is unusable for composition (forgetting confounded with under-training) and is counted in the miss rate, not dropped silently."
+  },
+  "comparison": {
+    "baseline": "registered-grid unique n=8, quadratic law, same old arrangements (legacy_seed 0–7)",
+    "cell": "task 0, lag 12, module A, per unique (arrangement, init) = seed",
+    "cut_for_composition_change": "γ > 1"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "composition_unchanged_at_gamma_gt_1": "The quadratic law was harmless here. Existing results stand. This becomes an appendix robustness arm. Primary law remains quadratic.",
+    "composition_changes_at_gamma_gt_1_only": "Consistent with Atanasov’s stated regime. The paper reports both laws and states which is primary. Primary law is corrected for subsequent axes.",
+    "composition_changes_at_gamma_eq_1": "Not the LR law. Stop and diagnose.",
+    "composition_changes_throughout_including_lazy": "The γ sweep is partly an LR sweep. Finding about the parameterisation. Report as such. Do not pick a primary law by convenience.",
+    "high_miss_rate_at_rich_gamma": "A finding about the corrected law’s practicality at target_loss=0.05, not a reason to re-pin lr0 after the fact."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, S-HL, seed=0, a=0, N=300, corrected, legacy_seed",
+    "why": "The miss-rate concern is largest here (100× smaller rich LR). AGENTS.md §5: measure one arm before launching a run projected over ~30 min."
+  },
+  "results_dir": "results/corrected_lr/",
+  "not_in_phase1": true
+}

@@ -1,0 +1,101 @@
+{
+  "generated_by": "docs/16 §4 / A8, after scope reading forgetting_differs_by_partition",
+  "written_before_running": true,
+  "written_before_running_applies_to": "64-arm recurrence first slice",
+  "status": "pre-commit — written after A8 specified the position control, before any recurrence arm",
+  "question": "Is re-learning an earlier dichotomy faster than learning a matched novel dichotomy at the same stream index?",
+  "why_now": "§4 is the behavioural test of the surplus reading. Scope has closed. Depth arms wait on the human μP-at-L=3 derivation. Recurrence is not blocked. Line 2: this is exposure (the schedule returns to a region), not change (a process repeating).",
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "At stream index k, either re-present task 0's dichotomy (mode represent) or replace that slot with a novel balanced dichotomy matched on s_r to the predecessor at k−1 (mode control). Prefix 0..k−1 and all arrangements are identical between the pair. A8: isolates seen-before from position and from similarity to what precedes it.",
+    "k": 12,
+    "k_why": "Lag-12 is the licensed forgetting cell. Intervening tasks are 1..11. Tasks 13..15 remain, so capacity can be read across the re-encounter rather than only at the end.",
+    "corners_refused": {
+      "conditions": ["S-HH", "S-LH"],
+      "reason": "Registered consecutive s_r=0.9 at P=16 rounds to Hamming 0 (hamming_for_readout_similarity). Every dichotomy in the stream is y_0 up to sign, so s_r(y_0, y_{k−1})=1 and a novel control does not exist. Checked on all 8 reserved stream_ids. Not a later reading. The surplus corner cannot be given the A8 test at this P."
+    },
+    "stopping": "matched_loss at target_loss 0.05. Sequential K=1. Not worst-of-K (that was the scope axis).",
+    "not": "Replay of inputs. A task-conditioned head. Inserting a 17th task. Matching feature similarity at k. Treating Hamming-0 high-readout streams as recurrence.",
+    "first_slice": {
+      "gammas": [1.0, 10.0],
+      "modes": ["represent", "control"],
+      "conditions": ["S-HL", "S-LL"],
+      "unique_n": 8,
+      "n_arms": 64,
+      "gamma_0.03_excluded": "Not a control. Composition claims licensed at γ ∈ {1, 10}."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 5.0,
+      "lr0_provenance": "Registered pin. Not informed by the reserved set or by this axis.",
+      "target_loss": 0.05,
+      "target_loss_provenance": "Registered pin. Not informed by the reserved set.",
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T": 16,
+      "seed": 0
+    },
+    "primary_cell": {
+      "index": 12,
+      "quantity": "steps_taken to target_loss",
+      "unique_n": 8,
+      "unit": "reserved stream_id, seed=0"
+    }
+  },
+  "comparator": {
+    "identification": "Paired Δ = steps(represent, k) − steps(control, k) at the same (γ, condition, stream_id). The control is a novel dichotomy at k with s_r(y_k, y_{k−1}) = s_r(y_0, y_{k−1}).",
+    "not_the_primary": "steps(represent, k) versus steps(represent, 0) confounds recurrence with position. Reported. Not a reading.",
+    "geometry": "Retained α on task 0 across boundaries 8, 12, 15 is reported. Not a reading."
+  },
+  "objects": {
+    "three_corner_delta": "Not used. S-LH is refused with S-HH.",
+    "low_readout_delta": "For each reserved stream_id, mean Δ over S-HL and S-LL. Then mean and SEM over unique n=8."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable for the Δ and is counted. lr0 is not re-pinned.",
+    "interpretation": "A miss at the re-presentation is not separable from an LR that is wrong on that cut. Report as not reaching target at the registered pin."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, mode=represent, k=12, S-HL, first reserved arrangement, a=0, N=300, quadratic, matched_loss",
+    "why": "AGENTS.md §5. Re-presentation at the catastrophic corner.",
+    "report": "results/recurrence_one_arm.json",
+    "governs": false,
+    "reached_target": true
+  },
+  "readings_committed_before_seeing_numbers": {
+    "savings": "At γ=10, the S-HL/S-LL paired Δ 95% CI excludes 0 and the mean is negative (re-presentation takes fewer steps than the matched novel). The surplus reading has a behavioural measure independent of the geometry, on the corners where A8 is defined.",
+    "no_difference": "At γ=10, that CI includes 0. The surplus reading is not supported behaviourally. The paper says the geometric and behavioural pictures diverge.",
+    "reverse": "At γ=10, the CI excludes 0 and the mean is positive (re-presentation is slower than the matched novel). Report that. It is not savings.",
+    "mixed": "The γ=10 test and the γ=1 regime check disagree on which of savings / no_difference / reverse applies. Report the split. Do not pick a reading afterwards.",
+    "prefix_mismatch": "Paired represent and control arms differ in steps_taken on tasks 0..k−1, or in S_r on the prefix. Stop and diagnose. The streams were not paired."
+  },
+  "operationalization": {
+    "written_before_64_arm_numbers": true,
+    "primary": "Paired Δ = steps(represent, k=12) − steps(control, k=12), S-HL and S-LL, unique n=8, γ=10. 95% CI = mean ± 1.96 SEM.",
+    "savings": "γ=10 CI excludes 0 and mean Δ < 0",
+    "no_difference": "γ=10 CI includes 0",
+    "reverse": "γ=10 CI excludes 0 and mean Δ > 0",
+    "gamma_1": "Reported. Not the primary. If γ=10 is savings and γ=1 is no_difference, that is still savings (rich-regime). If they disagree in sign, mixed.",
+    "prefix": "For every pair, steps_taken[0:k] equal and S_r[:k,:k] equal. Else prefix_mismatch."
+  },
+  "results_dir": "results/recurrence/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Use old arrangements.",
+    "Inform lr0 or stopping from this axis.",
+    "Include γ=0.03 as a control.",
+    "Pool S-HH or S-LH into the Δ. Consecutive s_r=0.9 rounds to Hamming 0 at P=16.",
+    "Treat steps(k) versus steps(0) as the identification.",
+    "Use worst-of-K or grouped outputs.",
+    "Interpret the slice if the prefix check fails.",
+    "Expand before the one-arm is reported."
+  ]
+}

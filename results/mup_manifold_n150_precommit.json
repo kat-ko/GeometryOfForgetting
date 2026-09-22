@@ -1,0 +1,45 @@
+{
+  "generated_by": "docs/16 A30 follow-up: third width N=150 interpolation, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "A30 manifold instrument at K=512, widths 64, 150, 300, seeds 0..31, L=2 and L=3",
+  "status": "unsigned diagnostic contract — does not retune A30, not Verification 2",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "On the A30 instrument, is loss monotone in width at N=150 between 64 and 300: μP non-increasing, NTP increasing, at L=2 and at L=3?",
+  "why": "A30 is a two-point contrast. If N=150 breaks the chain, 64 vs 300 was luck. This is interpolation, not a new halt and not a new γ.",
+  "held_fixed": {
+    "P": 16,
+    "M": 40,
+    "d": 60,
+    "D": 4,
+    "R": 1.0,
+    "manifold_kind": "spherical",
+    "lr0": 5.0,
+    "K": 512,
+    "gamma_0": 1.0,
+    "widths": [64, 150, 300],
+    "module": "A",
+    "seeds": "range(32)",
+    "not_a_stream": true
+  },
+  "identification": {
+    "per_seed": "all three widths finite; μP loss(64) ≥ loss(150) ≥ loss(300); NTP loss(64) < loss(150) < loss(300)",
+    "pass_count": "k ≥ 24 at a depth (same bar as A28/A30)"
+  },
+  "prefix": {
+    "endpoint_ratios": "N=64 vs N=300 μP and NTP ratios at both depths must match results/mup_manifold_k512.json per seed",
+    "on_mismatch": "stop"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "prefix_mismatch": "Endpoint ratios do not match A30. Stop.",
+    "instrument_blind": "L=2 k < 24. N=150 does not interpolate at the signed depth. L=3 is recorded and is not a reading. Do not lift A6.",
+    "table_supported": "L=2 k ≥ 24 and L=3 k ≥ 24. Three-point width law holds on this instrument at K=512, γ₀=1. Not Verification 2. Do not lift A6. Does not retune A30.",
+    "l3_problem": "L=2 k ≥ 24 and L=3 k < 24. Interpolation fails at L=3. Stop. Do not invent 1/√L in code. Do not lift A6."
+  },
+  "recorded_not_a_reading": [
+    "Clopper-Pearson 95% CI",
+    "failure-mode counts",
+    "whether the A30 two-point endpoint contrast still holds",
+    "whether μP loss ≤ 0.05 at all three widths"
+  ]
+}

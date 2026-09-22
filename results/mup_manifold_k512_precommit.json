@@ -1,0 +1,45 @@
+{
+  "generated_by": "docs/16 A29 follow-up: A28 instrument at K=512, n=32, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "one-task spherical manifolds, lr0=5, K=512, seeds 0..31, L=2 and L=3 loss-vs-width contrast",
+  "status": "unsigned diagnostic contract — does not retune A28 K=128, not Verification 2",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "At K=512 on the A28 manifold instrument, n=32, does μP loss not increase with width while NTP loss does, at L=2 and at L=3?",
+  "why": "A29: all 13 L=3 K=128 μP-increase seeds were always_worse through 128 and rescued at 512 on μP ratio alone. This is the full contrast (μP and NTP) at that halt, with the same k≥24 rule as A28.",
+  "held_fixed": {
+    "P": 16,
+    "M": 40,
+    "d": 60,
+    "D": 4,
+    "R": 1.0,
+    "manifold_kind": "spherical",
+    "lr0": 5.0,
+    "K": 512,
+    "gamma_0": 1.0,
+    "widths": [64, 300],
+    "module": "A",
+    "seeds": "range(32)",
+    "not_a_stream": true
+  },
+  "identification": {
+    "per_seed": "after K=512 at lr0=5, finite losses, μP loss(N=300) ≤ loss(N=64), NTP loss(N=300) > loss(N=64)",
+    "pass_count": "k ≥ 24 at a depth (same bar as A28)"
+  },
+  "prefix": {
+    "mup_ratio_at_512": "must match results/mup_l3_mup_traj.json L2/L3 ratio_by_K[512] per seed",
+    "on_mismatch": "stop"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "prefix_mismatch": "K=512 μP ratios do not match A29. Stop.",
+    "instrument_blind": "L=2 k < 24 at K=512. Longer halt does not make the instrument work at L=2. L=3 is recorded and is not a reading. Do not lift A6.",
+    "table_supported": "L=2 k ≥ 24 and L=3 k ≥ 24 at K=512. Empirical support on this instrument at the halt where A29 rescued the μP-increase cohort. Not Verification 2. Do not lift A6. Does not retune A28 at K=128.",
+    "l3_problem": "L=2 k ≥ 24 and L=3 k < 24 at K=512. An L=3 problem remains at the longer halt. Stop. Do not invent 1/√L in code. Do not lift A6."
+  },
+  "recorded_not_a_reading": [
+    "Clopper-Pearson 95% CI",
+    "failure-mode counts",
+    "how many of the 13 A28 L=3 μP-increase seeds are present at K=512",
+    "whether loss ≤ 0.05 at both μP widths"
+  ]
+}

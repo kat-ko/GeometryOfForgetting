@@ -1,0 +1,241 @@
+{
+  "generated_by": "scripts/run_init_alpha_depth.py",
+  "question": "is capacity at init already lower at L=3 than L=2, and is that depth or width?",
+  "training": false,
+  "muP_derivation_used": false,
+  "licenses_learning_regime": false,
+  "width_rule": "report both: parameter-count matched (L3 N=150) and width matched (L3 N=300). The previous L2 N=300 vs L3 N=150 comparison confounds the two.",
+  "L2_N300": {
+    "n_hidden_layers": 1,
+    "N": 300,
+    "depth_L": 2,
+    "params_per_module": 45300
+  },
+  "L3_N150_param_matched": {
+    "n_hidden_layers": 2,
+    "N": 150,
+    "depth_L": 3,
+    "params_per_module": 45150
+  },
+  "L3_N300_width_matched": {
+    "n_hidden_layers": 2,
+    "N": 300,
+    "depth_L": 3,
+    "params_per_module": 135300
+  },
+  "P": 16,
+  "d": 150,
+  "M": 150,
+  "n_t": 200,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "param_matched_L3_vs_L2": {
+    "mean_a": 0.3049160241396809,
+    "mean_b": 0.23366735167692715,
+    "delta_mean": -0.0712486724627537,
+    "sem_a": 0.0018459544877277565,
+    "sem_b": 0.002544723429125399,
+    "n_b_lower": 8,
+    "sign_test_p_one_sided": 0.00390625,
+    "direction_only": true
+  },
+  "width_matched_L3_vs_L2": {
+    "mean_a": 0.3049160241396809,
+    "mean_b": 0.24637277349143524,
+    "delta_mean": -0.0585432506482456,
+    "sem_a": 0.0018459544877277565,
+    "sem_b": 0.0022186676617556877,
+    "n_b_lower": 8,
+    "sign_test_p_one_sided": 0.00390625,
+    "direction_only": true
+  },
+  "width_at_fixed_L3_N300_vs_N150": {
+    "mean_a": 0.23366735167692715,
+    "mean_b": 0.24637277349143524,
+    "delta_mean": 0.012705421814508094,
+    "sem_a": 0.002544723429125399,
+    "sem_b": 0.0022186676617556877,
+    "n_b_lower": 0,
+    "sign_test_p_one_sided": null,
+    "direction_only": true
+  },
+  "reading": "Forward-pass \u03b1 is an initialisation statistic. It licenses no claim about the learning regime the network ends up in. 8/8 is a sign test for direction, not magnitude. Param-matched (N=150) and width-matched (N=300) L=3 are reported separately so a drop cannot be attributed to both axes at once.",
+  "per_seed": [
+    {
+      "seed": 0,
+      "L2_N300": {
+        "alpha": 0.3105948503450552,
+        "D_eff": 4.479629043743569,
+        "R_eff": 0.8690044899373671,
+        "Psi_eff": 0.5986341003356297
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.24160672398453556,
+        "D_eff": 3.269064462767815,
+        "R_eff": 0.8832120824652478,
+        "Psi_eff": 0.3461202344180523
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.24847057056207073,
+        "D_eff": 4.869309070648399,
+        "R_eff": 0.848534712631444,
+        "Psi_eff": 0.5064659600311625
+      }
+    },
+    {
+      "seed": 1,
+      "L2_N300": {
+        "alpha": 0.3018407547406934,
+        "D_eff": 4.582846249471089,
+        "R_eff": 0.8700826776902962,
+        "Psi_eff": 0.5960073371887772
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.23955416264364998,
+        "D_eff": 3.268730533157359,
+        "R_eff": 0.9036554490479826,
+        "Psi_eff": 0.351990472156748
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.24444182661515576,
+        "D_eff": 5.04595955625769,
+        "R_eff": 0.8731970161009329,
+        "Psi_eff": 0.5336067219886554
+      }
+    },
+    {
+      "seed": 2,
+      "L2_N300": {
+        "alpha": 0.30995718939538036,
+        "D_eff": 4.577061878381479,
+        "R_eff": 0.8751656226759225,
+        "Psi_eff": 0.6153174545317651
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.23942285142119343,
+        "D_eff": 3.1889534074325154,
+        "R_eff": 0.8932381155212734,
+        "Psi_eff": 0.33883552249873033
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.2518891535665202,
+        "D_eff": 4.873869803217406,
+        "R_eff": 0.8542617576177547,
+        "Psi_eff": 0.5179390781179259
+      }
+    },
+    {
+      "seed": 3,
+      "L2_N300": {
+        "alpha": 0.3020317108539286,
+        "D_eff": 4.585024887985869,
+        "R_eff": 0.8672327429803629,
+        "Psi_eff": 0.5944406636659347
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.2360676229232072,
+        "D_eff": 3.1669597925671154,
+        "R_eff": 0.8637380112021718,
+        "Psi_eff": 0.319439059717556
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.24822710025283118,
+        "D_eff": 4.962237181153634,
+        "R_eff": 0.8544971976681645,
+        "Psi_eff": 0.5198288276098142
+      }
+    },
+    {
+      "seed": 4,
+      "L2_N300": {
+        "alpha": 0.30369466468408357,
+        "D_eff": 4.545040987436245,
+        "R_eff": 0.876372627326178,
+        "Psi_eff": 0.5996021690216847
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.22340007730075223,
+        "D_eff": 3.0783468772852687,
+        "R_eff": 0.8852137517321966,
+        "Psi_eff": 0.30213350630987834
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.24815297013221463,
+        "D_eff": 4.866821104099177,
+        "R_eff": 0.8565127385580937,
+        "Psi_eff": 0.5110696484512143
+      }
+    },
+    {
+      "seed": 5,
+      "L2_N300": {
+        "alpha": 0.2996857142469127,
+        "D_eff": 4.541300151429233,
+        "R_eff": 0.876476549310296,
+        "Psi_eff": 0.5912793703344806
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.2227889076806435,
+        "D_eff": 3.1224362196193955,
+        "R_eff": 0.8842483797332936,
+        "Psi_eff": 0.3052484928958223
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.23298471721555428,
+        "D_eff": 4.899764420556321,
+        "R_eff": 0.866247269298845,
+        "Psi_eff": 0.48938761447193047
+      }
+    },
+    {
+      "seed": 6,
+      "L2_N300": {
+        "alpha": 0.2992384004257961,
+        "D_eff": 4.629641010228767,
+        "R_eff": 0.8902850012211065,
+        "Psi_eff": 0.6125443999046546
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.23226125523072727,
+        "D_eff": 3.199342399522759,
+        "R_eff": 0.8994980237419984,
+        "Psi_eff": 0.33233504257583907
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.2437728353124787,
+        "D_eff": 4.991656048912992,
+        "R_eff": 0.8638264060479398,
+        "Psi_eff": 0.5199839140278633
+      }
+    },
+    {
+      "seed": 7,
+      "L2_N300": {
+        "alpha": 0.31228490842559686,
+        "D_eff": 4.5796584560379845,
+        "R_eff": 0.8788242621256581,
+        "Psi_eff": 0.6232224138131691
+      },
+      "L3_N150_param_matched": {
+        "alpha": 0.234237212230708,
+        "D_eff": 3.0955671647267065,
+        "R_eff": 0.8842579374070976,
+        "Psi_eff": 0.31817626461802223
+      },
+      "L3_N300_width_matched": {
+        "alpha": 0.2530430142746565,
+        "D_eff": 4.812699726090838,
+        "R_eff": 0.8510306851950494,
+        "Psi_eff": 0.5115316498415753
+      }
+    }
+  ]
+}

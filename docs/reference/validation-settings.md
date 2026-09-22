@@ -6,9 +6,11 @@ Source: Chou, Le, Wang & Chung, "Feature Learning beyond the Lazy-Rich
         and Appendix D.1.1.
 Version: arXiv:2503.18114v2
 Transcribed by: agent (Opus 4.8), 2026-07-31
-Verified by (human): ____________          # blank until checked
-Status: agent-verified against arXiv text; NOT human-verified.
-        Code may not cite this sheet until "Verified by (human)" is filled.
+Verified by (human): Kati, 2026-09-01
+Status: human-signed 2026-09-01 against Chou App. B.5. Settings match:
+        N=1000, P=2, M=200; D 2→10 and R 0.8→2 with correlations zero; then
+        D=4, R=1 while ρ_c, ρ_a, ψ sweep 0→0.8. Secondary effect (large ρ_c
+        → effective radius increases) confirmed in Chou's text.
 ```
 
 Used by `docs/02-validation-suite.md` §1 (ground-truth recovery).
@@ -30,8 +32,8 @@ Ambient / manifold sizes (both sweeps):
 - `R_ground`: 0.8 → 2.0
 
 **Sweep 2 — alignment recovery:**
-- **`D_ground` fixed at 4, `R_ground` fixed at 1** *(← explicit in B.5; the current
-  `02-validation-suite.md` §1 omits these fixed values — add them)*
+- **`D_ground` fixed at 4, `R_ground` fixed at 1** *(explicit in B.5; now also
+  in `02-validation-suite.md` §1)*
 - `ρ_c_ground`, `ρ_a_ground`, `ψ_ground`: each swept 0 → 0.8
 
 ---

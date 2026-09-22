@@ -6,9 +6,9 @@ Source: Chou, Le, Wang & Chung, "Feature Learning beyond the Lazy-Rich
         ("Synthetic data generation").
 Version: arXiv:2503.18114v2
 Transcribed by: agent (Opus 4.8), 2026-07-31
-Verified by (human): ____________          # blank until checked
-Status: agent-verified against arXiv text; NOT human-verified.
-        Code may not cite this sheet until "Verified by (human)" is filled.
+Verified by (human): Kati, 2026-09-01
+Status: human-signed 2026-09-01 against Chou App. D.1.1, including the
+        pre-R unit-norm sentence. Labels are a stated deviation (see below).
 ```
 
 Implemented in `docs/00-math-spec.md` §1. This sheet is the source-of-record
@@ -38,9 +38,18 @@ full text, D.1.1 — earlier truncation resolved.)*
 
 **Test manifolds:** same centers and axes, **resample the noise `v_k`**.
 
-**Isotropic Gaussian manifolds (variant):** some experiments drop the intrinsic
-dimension `D` and define manifolds directly (no `Σ_j s_j^k u_j^i` term). Not our
-primary generator; recorded for completeness.
+**Isotropic Gaussian manifolds (variant):** D.1.1 describes a second generator
+that drops intrinsic dimension entirely, `M_i = {u₀ + R·v_k}`. Not our primary
+generator. Candidate control for the rank axis: dimension cannot carry an
+attribution in manifolds that have none by construction.
+
+**Labels (stated deviation).** D.1.1 samples the `P` labels uniformly from
+`{±1}`, not balanced. We restrict to balanced dichotomies. Recorded in
+`protocol-deviations.md`; do not treat the code as matching this paragraph.
+
+**Cross-entropy (not used).** D.1.1: "When learning with binary cross entropy,
+the labels are reassigned as `{0,1}`." A non-MSE arm would not be departing from
+the framework. We train with MSE; this is noted for the full paper, not acted on.
 
 ---
 

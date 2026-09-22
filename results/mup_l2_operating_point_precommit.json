@@ -1,0 +1,45 @@
+{
+  "generated_by": "docs/16 A22 follow-up: L=2 operating-point search, then one L=3 apply",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 search for a Gate-2-B operating point, and the subsequent one-shot L=3 apply at the frozen point",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "What is the smallest (K, lr0-grid tail) at L=2 where check B passes, and does that frozen point pass check B at L=3?",
+  "why": "A22 applied protocol_cannot_certify: the original Gate 2 grid cannot see μP vs NTP at L=2. Search for an operating point on the signed L=2 system, freeze the first point that works, apply once at L=3. Do not retune L=3 independently. Do not lift A6.",
+  "held_fixed": {
+    "d": 40,
+    "batch": 32,
+    "seed": 0,
+    "data_seed": 1,
+    "module": "A",
+    "gamma_0": 1.0,
+    "widths": [64, 300],
+    "G0": [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0],
+    "pass_mup": "index distance ≤ 1",
+    "pass_ntp": "index distance ≥ 1",
+    "nonfinite_loss": "+inf"
+  },
+  "search": {
+    "depth": "L=2 only, n_hidden_layers=1, ordinary sgd_step",
+    "high_tail_H": [3.0, 10.0, 30.0, 100.0, 300.0, 1000.0],
+    "K_sequence": [16, 32, 64, 128, 256, 512],
+    "order": "Lexicographic: K outer (smallest first), then tail length n = number of H points included (smallest first). At K=16 skip n=0 (already failed in the A22 control). Prefix argmin uses independently trained per-lr0 losses, so a longer grid reuses shorter-grid runs.",
+    "skip": {"K": 16, "n_tail": 0, "reason": "results/mup_l2_gate2_control.json, applied reading protocol_cannot_certify"},
+    "pass_B": "μP index distance ≤ 1 AND NTP index distance ≥ 1 on that prefix",
+    "freeze": "the first (K, G0+H[:n]) that passes B. Write it to results/mup_l3_gate2_frozen_precommit.json before any L=3 number.",
+    "search_failed": "no pair in this sequence passes. Do not run L=3. Do not extend the sequence after seeing numbers. Do not invent 1/√L."
+  },
+  "l3_apply": {
+    "when": "only if the search froze a point",
+    "identification": "check B at the frozen (K, lr0_grid), n_hidden_layers=2, diagnostic=True",
+    "pass_B": "same inequalities as the L=2 search",
+    "overall_pass": "check B only. A and C at the frozen K with the original A/C lr0 (0.01 and 0.001) are recorded, not a licence.",
+    "not": "Verification 2. A6 lifted. A retune of results/mup_l3_hypothesis.json."
+  },
+  "readings_committed_before_seeing_numbers": {
+    "search_failed": "No (K, tail) in the committed sequence makes L=2 check B pass. Stop. Do not apply L=3. Do not extend H or K after the fact. Do not lift A6.",
+    "l3_b_passes": "The frozen L=2 operating point also passes check B at L=3. This is not Verification 2. Stream training stays blocked until Kati signs. Do not start sequential depth arms.",
+    "l3_b_fails": "Check B passes at L=2 at the frozen point and fails at L=3 on that same point. That is an L=3 problem. Stop. Do not invent 1/√L or per-layer LRs to make it pass. Do not lift A6."
+  }
+}

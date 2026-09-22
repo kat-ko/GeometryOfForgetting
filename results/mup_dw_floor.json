@@ -1,0 +1,146 @@
+{
+  "generated_by": "scripts/run_mup_dw_floor.py",
+  "precommit": "results/mup_dw_floor_precommit.json",
+  "frozen_file": "results/mup_dw_floor_frozen.json",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "l2_trajectories": {
+    "mup_N64": [
+      {
+        "K": 16,
+        "loss": 0.11435022374369137,
+        "weight_change_W": 0.5633829797908863,
+        "rms_delta_z": 0.8026779075540504
+      }
+    ],
+    "mup_N300": [
+      {
+        "K": 16,
+        "loss": 0.0910303162809226,
+        "weight_change_W": 0.5190323621053008,
+        "rms_delta_z": 0.7599047476981728
+      }
+    ],
+    "ntp_N64": [
+      {
+        "K": 16,
+        "loss": 0.11435022374369137,
+        "weight_change_W": 0.5633829797908863,
+        "rms_delta_z": 0.8026779075540504
+      }
+    ],
+    "ntp_N300": [
+      {
+        "K": 16,
+        "loss": 0.18436533369870187,
+        "weight_change_W": 0.5031752628022527,
+        "rms_delta_z": 0.7373876924907486
+      }
+    ]
+  },
+  "frozen_K": 16,
+  "l2_mup_N64_at_freeze": {
+    "K": 16,
+    "loss": 0.11435022374369137,
+    "weight_change_W": 0.5633829797908863,
+    "rms_delta_z": 0.8026779075540504
+  },
+  "l3_mup_N64_meets_floor_at_frozen_K_not_a_reading": true,
+  "L2": {
+    "loss": {
+      "mup": {
+        "64": 0.11435022374369137,
+        "300": 0.0910303162809226
+      },
+      "ntp": {
+        "64": 0.11435022374369137,
+        "300": 0.18436533369870187
+      }
+    },
+    "ratio_N300_over_N64": {
+      "mup": 0.7960659218731497,
+      "ntp": 1.6122866021840485
+    },
+    "mup_does_not_increase": true,
+    "ntp_increases": true,
+    "present": true,
+    "cells": {
+      "mup": {
+        "64": {
+          "loss": 0.11435022374369137,
+          "weight_change_W": 0.5633829797908863,
+          "rms_delta_z": 0.8026779075540504
+        },
+        "300": {
+          "loss": 0.0910303162809226,
+          "weight_change_W": 0.5190323621053008,
+          "rms_delta_z": 0.7599047476981728
+        }
+      },
+      "ntp": {
+        "64": {
+          "loss": 0.11435022374369137,
+          "weight_change_W": 0.5633829797908863,
+          "rms_delta_z": 0.8026779075540504
+        },
+        "300": {
+          "loss": 0.18436533369870187,
+          "weight_change_W": 0.5031752628022527,
+          "rms_delta_z": 0.7373876924907486
+        }
+      }
+    }
+  },
+  "L3": {
+    "loss": {
+      "mup": {
+        "64": 0.031197776942582897,
+        "300": 0.014546847780150602
+      },
+      "ntp": {
+        "64": 0.031197776942582897,
+        "300": 0.05920041008914069
+      }
+    },
+    "ratio_N300_over_N64": {
+      "mup": 0.46627834434879617,
+      "ntp": 1.8975842476883682
+    },
+    "mup_does_not_increase": true,
+    "ntp_increases": true,
+    "present": true,
+    "cells": {
+      "mup": {
+        "64": {
+          "loss": 0.031197776942582897,
+          "weight_change_W": 0.0441615725401372,
+          "rms_delta_z": 0.1448990642356916,
+          "weight_change_W2": 0.03807601074511229
+        },
+        "300": {
+          "loss": 0.014546847780150602,
+          "weight_change_W": 0.04158935252829762,
+          "rms_delta_z": 0.15355248424127207,
+          "weight_change_W2": 0.01885249396255418
+        }
+      },
+      "ntp": {
+        "64": {
+          "loss": 0.031197776942582897,
+          "weight_change_W": 0.0441615725401372,
+          "rms_delta_z": 0.1448990642356916,
+          "weight_change_W2": 0.03807601074511229
+        },
+        "300": {
+          "loss": 0.05920041008914069,
+          "weight_change_W": 0.0182051464854536,
+          "rms_delta_z": 0.09728973420732241,
+          "weight_change_W2": 0.01133477361262684
+        }
+      }
+    }
+  },
+  "l3_ran": true,
+  "applied_reading": "table_supported_at_floor",
+  "reading": "Floor met. Contrast present at L=2 and L=3 at that K. Empirical support for Table 1 at L=3 after hidden weights have moved at L=2. Not Verification 2. Do not lift A6."
+}

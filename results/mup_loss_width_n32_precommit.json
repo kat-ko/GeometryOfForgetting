@@ -1,0 +1,36 @@
+{
+  "generated_by": "docs/16 A26 follow-up: n=32 rate on the frozen contrast, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "seeds 0..31, same K=16 lr0=10 protocol as A24–A26",
+  "status": "unsigned rate measurement — does not retune A26, not Verification 2",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "does_not_reopen": "results/mup_loss_width_seeds_precommit.json applied instrument_blind at unique n=8",
+  "question": "At unique n=32, what is the rate of the named-lr0=10 loss-vs-width contrast at L=2 and at L=3, and which clause fails when it fails?",
+  "why": "A26 was 6/8 at L=2. That reading stands. This expands the seed set for a rate and for failure-mode counts. It is not a new 32/32 licence.",
+  "held_fixed": {
+    "d": 40,
+    "batch": 32,
+    "gamma_0": 1.0,
+    "named_lr0": 10.0,
+    "K": 16,
+    "widths": [64, 300],
+    "module": "A",
+    "seeds": "range(32)",
+    "data_seed": "init_seed + 1"
+  },
+  "identification": {
+    "per_seed": "contrast present: finite losses, μP loss(N=300) ≤ loss(N=64), NTP loss(N=300) > loss(N=64)",
+    "failure_mode": "mup_increased | ntp_did_not_increase | both | nonfinite | present",
+    "rate": "k/32 at each depth, with Clopper-Pearson 95% CI",
+    "not": "a replacement for A26's 8/8 rule. Not Verification 2."
+  },
+  "prefix": {
+    "seeds_0_7": "must match results/mup_loss_width_seeds.json present flags and losses at N=64/300",
+    "on_mismatch": "stop. The rate is not interpretable."
+  },
+  "readings_committed_before_seeing_numbers": {
+    "prefix_mismatch": "Seeds 0–7 do not match A26. Stop.",
+    "recorded_rate": "Prefix matched. Report k/32, CIs, and failure-mode counts at L=2 and L=3. This does not change A26. Do not lift A6. Not Verification 2."
+  }
+}

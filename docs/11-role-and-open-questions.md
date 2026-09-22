@@ -30,7 +30,7 @@ is the part the paper depends on absolutely.
 - Every number, with its source artifact, its n, its selection rule, and its
   resolution status against the relevant floor.
 - Every correction: the superseded value, the replacement, and the mechanism that
-  produced the error. The four artifact families in the appendix are yours.
+  produced the error. The artifact families in the appendix are yours.
 - Every figure: generated from a committed script, stamped with the result-set
   hash and arm count, regenerable, manifest-verified.
 - The verification apparatus: tests, scope audit, inventory, prose-pinning,

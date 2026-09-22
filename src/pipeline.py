@@ -31,10 +31,15 @@ import numpy as np
 
 from src.analysis.attribution import GeometryPoint, attribute
 from src.glue.core import Ensemble, glue_measures, pairwise_measures
-from src.manifolds.streams import Stream, StreamConfig, make_stream
+from src.manifolds.streams import (
+    Stream, StreamConfig, apply_recurrence, make_stream, recurrence_control_rng,
+)
 from src.models import MODULES, ScalingConfig, TwoModuleNet, paired_init
+from src.models.network import projection_rng
 from src.models.alignment import aligned_init, center_subspace
-from src.train.loop import TrainConfig, flatten_task, manifold_accuracy, train_task
+from src.train.loop import (
+    TrainConfig, flatten_group, flatten_task, manifold_accuracy, train_task, train_xy,
+)
 
 from src import provenance
 
@@ -74,6 +79,7 @@ class Phase1Spec:
 
     tracked_stride: int = 4
     module_list: tuple[str, ...] = MODULES
+    n_hidden_layers: int = 1
 
     @property
     def key(self) -> str:
@@ -83,7 +89,9 @@ class Phase1Spec:
     @property
     def train_config(self) -> TrainConfig:
         return TrainConfig(steps_per_task=self.steps_per_task, stopping="matched_loss",
-                           target_loss=self.target_loss, record_every=self.record_every)
+                           target_loss=self.target_loss, record_every=self.record_every,
+                           loss=getattr(self, "loss", "mse"),
+                           optimizer=getattr(self, "optimizer", "sgd"))
 
 
 def schedule(T: int, stride: int = 4) -> dict[int, list[int]]:
@@ -118,9 +126,20 @@ def stream_rng(stream_id: int) -> np.random.Generator:
 
 
 def build_stream(spec: Phase1Spec, rng: np.random.Generator | None = None) -> Stream:
-    cfg = StreamConfig(stream_id=spec.stream_id, condition=spec.condition, T=spec.T,
-                       P=spec.P, d=spec.d, M=spec.M, D=spec.D, R=spec.R)
-    return make_stream(cfg, stream_rng(spec.stream_id) if rng is None else rng)
+    cfg = StreamConfig(
+        stream_id=spec.stream_id, condition=spec.condition, T=spec.T,
+        P=spec.P, d=spec.d, M=spec.M, D=spec.D, R=spec.R,
+        manifold_kind=getattr(spec, "manifold_kind", "spherical"),
+        feature_similarity=getattr(spec, "feature_similarity", None),
+        readout_similarity=getattr(spec, "readout_similarity", None),
+    )
+    stream = make_stream(cfg, stream_rng(spec.stream_id) if rng is None else rng)
+    mode = getattr(spec, "recurrence_mode", None)
+    if not mode:
+        return stream
+    k = int(getattr(spec, "recurrence_k"))
+    crng = recurrence_control_rng(spec.stream_id, k)
+    return apply_recurrence(stream, k=k, mode=mode, rng=crng)
 
 
 def build_model(spec: Phase1Spec, stream: Stream) -> TwoModuleNet:
@@ -130,14 +149,21 @@ def build_model(spec: Phase1Spec, stream: Stream) -> TwoModuleNet:
     bitwise identical) and hence the γ and `a` axes orthogonal at initialization.
     """
     streams = paired_init(spec.seed)
-    cfg = {m: ScalingConfig(N=spec.N, d=spec.d, gamma_0=spec.gamma_0, lr0=spec.lr0)
+    lr_scaling = getattr(spec, "lr_scaling", "quadratic")
+    readout_rank = getattr(spec, "readout_rank", None)
+    cfg = {m: ScalingConfig(N=spec.N, d=spec.d, gamma_0=spec.gamma_0, lr0=spec.lr0,
+                            lr_scaling=lr_scaling)
            for m in spec.module_list}
     W_init = None
     if spec.a > 0:
         base = streams["shape"].standard_normal((spec.N, spec.d))
         U_C, _ = center_subspace(stream.arrangements[0].centers, D=spec.D)
         W_init = {m: aligned_init(base, U_C, spec.a) for m in spec.module_list}
-    return TwoModuleNet.init(cfg, streams["shape"], W_init=W_init)
+    proj = None if readout_rank is None else projection_rng(spec.seed)
+    return TwoModuleNet.init(cfg, streams["shape"], W_init=W_init,
+                             readout_rank=readout_rank, projection_rng=proj,
+                             n_outputs=int(getattr(spec, "n_outputs", 1)),
+                             n_hidden_layers=int(getattr(spec, "n_hidden_layers", 1)))
 
 
 @dataclass
@@ -191,12 +217,28 @@ def run_arm(spec: Phase1Spec, *, verbose: bool = False) -> dict:
     `target_loss`: retained capacity for a task the network never learned confounds
     forgetting with under-training, and such runs must be reported, not averaged in.
     """
+    if int(getattr(spec, "n_hidden_layers", 1)) != 1:
+        raise NotImplementedError(
+            "L=3 training is blocked on the human μP derivation "
+            "(docs/16 §Amendments A6). Forward pass and init-α are allowed.")
     t_start = time.time()
     streams = paired_init(spec.seed)
     rng_train = streams["data"]      # minibatch order only; unused at full batch
-    stream = build_stream(spec)      # arrangement/dichotomies keyed by stream_id, not seed
+    if getattr(spec, "arrangement_source", "stream_id") == "legacy_seed":
+        # Registered-grid population: arrangement keyed by init seed, not stream_id.
+        stream = build_stream(spec, streams["stream"])
+    else:
+        stream = build_stream(spec)      # arrangement/dichotomies keyed by stream_id
     model = build_model(spec, stream)
-    sched = schedule(spec.T, spec.tracked_stride)
+    K = int(getattr(spec, "scope_K", 1))
+    if K < 1 or spec.T % K != 0:
+        raise ValueError(f"T={spec.T} is not divisible by scope_K={K}")
+    if K == 1:
+        sched = schedule(spec.T, spec.tracked_stride)
+    else:
+        tracked = list(range(0, spec.T, max(1, spec.tracked_stride)))
+        group_ends = list(range(K - 1, spec.T, K))
+        sched = {b: [j for j in tracked if j <= b] for b in group_ends}
 
     # One measurement seed per (module, task-or-generic), reused at every boundary.
     meas_base = int(np.random.default_rng([spec.seed, 20260811]).integers(2**32))
@@ -208,34 +250,46 @@ def run_arm(spec: Phase1Spec, *, verbose: bool = False) -> dict:
     tasks, geometry = [], []
     acc = np.full((spec.T, spec.T), np.nan)
     checks = []
-    for t in range(spec.T):
-        pts, y = stream.arrangements[t].points, stream.dichotomies[t]
-        tasks.append(train_task(model, pts, y, spec.train_config, rng_train, task_index=t))
-
-        for j in range(t + 1):
-            acc[t, j] = manifold_accuracy(
-                model, stream.arrangements[j].points, stream.dichotomies[j])
-        X, _ = flatten_task(pts, y)
+    n_groups = spec.T // K
+    for g in range(n_groups):
+        start, stop = g * K, (g + 1) * K
+        last = stop - 1
+        arrs = [stream.arrangements[i].points for i in range(start, stop)]
+        ys = stream.dichotomies[start:stop]
+        if K == 1:
+            tasks.append(train_task(
+                model, arrs[0], ys[0], spec.train_config, rng_train, task_index=last))
+            pts, y_chk = arrs[0], ys[0]
+        else:
+            Xg, tg = flatten_group(arrs, ys)
+            tasks.append(train_xy(
+                model, Xg, tg, spec.train_config, rng_train, task_index=g))
+            pts, y_chk = arrs[-1], ys[-1]
+        for j in range(last + 1):
+            acc[last, j] = manifold_accuracy(
+                model, stream.arrangements[j].points, stream.dichotomies[j],
+                output_index=j % K)
+        X, _ = flatten_task(pts, y_chk)
         checks.append({
-            "boundary": t,
+            "boundary": last,
             "weight_change": {m: model.weight_change(m) for m in spec.module_list},
             "output_variance_share": _output_variance_share(model, X, spec.module_list),
             "probe_decodability": probe_decodability(
-                model, stream.arrangements[t].points, stream.probe, spec.module_list),
+                model, stream.arrangements[last].points, stream.probe, spec.module_list),
         })
 
-        if t in sched:
+        if last in sched:
             for m in spec.module_list:
-                for j in sched[t]:
+                for j in sched[last]:
                     geometry.append(_measure(
                         model, stream.arrangements[j].points, stream.dichotomies[j],
-                        spec, m, t, j, seed_for(m, j)))
+                        spec, m, last, j, seed_for(m, j)))
                 if spec.measure_generic:
                     geometry.append(_measure(
-                        model, stream.arrangements[t].points, None,
-                        spec, m, t, None, seed_for(m, None)))
+                        model, stream.arrangements[last].points, None,
+                        spec, m, last, None, seed_for(m, None)))
             if verbose:
-                print(f"  [{spec.key}] boundary {t}: {len(geometry)} evals so far",
+                print(f"  [{spec.key}] boundary {last}: {len(geometry)} evals so far",
                       flush=True)
 
     usable = all(tk.converged for tk in tasks)
@@ -354,7 +408,12 @@ def probe_decodability(
 
 def _output_variance_share(model, X, modules) -> dict[str, float]:
     """`00` §11 gradient-starvation detector: which module drives the output."""
-    contrib = {m: float(np.var(model.hidden(X, m) @ model.u[m])) for m in modules}
+    contrib = {}
+    for m in modules:
+        u = model.u[m]
+        h = model._projected(X, m) if getattr(model, "n_outputs", 1) == 1 else model.hidden(X, m)
+        v = h @ u if u.ndim == 1 else h @ u.T
+        contrib[m] = float(np.var(v))
     total = sum(contrib.values())
     return {m: (v / total if total > 0 else float("nan")) for m, v in contrib.items()}
 
@@ -362,11 +421,12 @@ def _output_variance_share(model, X, modules) -> dict[str, float]:
 def forgetting_metrics(acc: np.ndarray) -> dict:
     """`CF` and `CFr` (`docs/reference/cl-metrics.md`) from the accuracy matrix.
 
-    `acc[i, j]` is accuracy on task `j` after training task `i`, so `acc[j, j]` is
-    task `j` at its peak and the final row is the end state. `CFr` normalizes by
-    `acc[j, j]`, which is what makes it comparable across tasks of different
-    attained accuracy — and the two metrics can rank arms differently, so both are
-    reported.
+    `acc[i, j]` is accuracy on task `j` after training task `i`. Peak is
+    `acc[j, j]`, not Graldi's `max_{t ∈ {j,...,T−1}} a_{t,j}` (Def. A.3).
+    Equivalent when accuracy on `j` never recovers after learning. Recorded in
+    `protocol-deviations.md` D.2. `CFr` normalizes by that peak, which is what
+    makes it comparable across tasks of different attained accuracy — and the
+    two metrics can rank arms differently, so both are reported.
     """
     T = acc.shape[0]
     per_task = {}
@@ -390,16 +450,24 @@ def forgetting_metrics(acc: np.ndarray) -> dict:
 def attribute_run(geometry: list[GeometryRecord], spec: Phase1Spec) -> list[dict]:
     """Attribute each tracked task's retained-capacity change to the three factors.
 
-    Baseline is the task's own boundary. `lag` is boundaries elapsed, which is the
-    x-axis of Figure 2's forgetting curves.
+    Baseline is the task's first measured boundary (its own learning boundary).
+    On the registered K=1 path that boundary equals the task index. `lag` is
+    boundaries elapsed from that baseline.
     """
     by_key = {(g.module, g.task, g.boundary): g for g in geometry if g.task is not None}
+    earliest: dict[tuple[str, int], GeometryRecord] = {}
+    for g in geometry:
+        if g.task is None:
+            continue
+        key = (g.module, g.task)
+        if key not in earliest or g.boundary < earliest[key].boundary:
+            earliest[key] = g
     out = []
     for (module, task, boundary), rec in sorted(by_key.items()):
-        base = by_key.get((module, task, task))
-        if base is None or boundary == task:
+        base = earliest.get((module, task))
+        if base is None or rec.boundary == base.boundary:
             continue
         a = attribute(base.point(), rec.point(), strict=False, gamma=spec.gamma_0)
-        out.append({"module": module, "task": task, "boundary": boundary,
-                    "lag": boundary - task, **a.to_dict()})
+        out.append({"module": module, "task": task, "boundary": rec.boundary,
+                    "lag": rec.boundary - base.boundary, **a.to_dict()})
     return out

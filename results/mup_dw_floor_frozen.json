@@ -1,0 +1,15 @@
+{
+  "generated_by": "scripts/run_mup_dw_floor.py, after L=2 floor search, before L=3 contrast",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 and L=3 A24 contrast at frozen K",
+  "governs_stream_arms": false,
+  "frozen_K": 16,
+  "floor": 0.001,
+  "l2_mup_N64_at_freeze": {
+    "K": 16,
+    "loss": 0.11435022374369137,
+    "weight_change_W": 0.5633829797908863,
+    "rms_delta_z": 0.8026779075540504
+  },
+  "named_lr0": 10.0
+}

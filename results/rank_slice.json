@@ -1,0 +1,207 @@
+{
+  "generated_by": "scripts/analyse_rank.py",
+  "precommit": "results/rank_precommit.json",
+  "n_files": 288,
+  "n_usable": 280,
+  "n_arms_missed": 8,
+  "misses": {
+    "0.03:16": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "0.03:300": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "0.03:4": {
+      "n": 32,
+      "n_miss": 8
+    },
+    "10:16": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "10:300": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "10:4": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "1:16": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "1:300": {
+      "n": 32,
+      "n_miss": 0
+    },
+    "1:4": {
+      "n": 32,
+      "n_miss": 0
+    }
+  },
+  "miss_interpretation": "A miss at r < N is not separable from an LR that is wrong at that rank. Report as not reaching target at the lr0 pinned on r = N. Not a claim that rank r cannot represent the tasks, and not a rank-capacity result.",
+  "gamma_0.03": "Excluded from composition claims. Not a control. The lazy arm is below the resolution gate (~0.2 floors); a null there is required by the design and cannot fail, so it carries no evidential weight. Do not later report that the effect vanishes at low \u03b3. Composition claims on this slice are licensed at \u03b3 \u2208 {1, 10} only.",
+  "licensed_gammas": [
+    1.0,
+    10.0
+  ],
+  "cell": {
+    "task": 0,
+    "lag": 12,
+    "module": "A",
+    "unique_n": 8,
+    "unit": "reserved stream_id, seed=0"
+  },
+  "three_corner": [
+    "S-HL",
+    "S-LH",
+    "S-LL"
+  ],
+  "cells": {
+    "1:4": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.33920894901733567,
+        "utility_share_sem": 0.017800929568669254,
+        "utility_term_mean": -0.18834760050447868,
+        "utility_term_sem": 0.01578483522979829,
+        "floors_mean": 27.58835661405289,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.3819384690530008,
+        "utility_share_sem": 0.0149284625807424,
+        "utility_term_mean": -0.1121312200584104,
+        "utility_term_sem": 0.010497213514051012,
+        "floors_mean": 23.640664796138353,
+        "n_gated": 8
+      }
+    },
+    "1:16": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.34365952080387074,
+        "utility_share_sem": 0.020533322303485906,
+        "utility_term_mean": -0.18306379582509333,
+        "utility_term_sem": 0.013139439734725101,
+        "floors_mean": 27.153418249210013,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.38392238127824097,
+        "utility_share_sem": 0.015115296531753844,
+        "utility_term_mean": -0.10869055962037766,
+        "utility_term_sem": 0.010092833859015677,
+        "floors_mean": 23.408588663892033,
+        "n_gated": 8
+      }
+    },
+    "1:300": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.34268852725335586,
+        "utility_share_sem": 0.01502248255796476,
+        "utility_term_mean": -0.1720381031587084,
+        "utility_term_sem": 0.007806261014102327,
+        "floors_mean": 26.563984577855685,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.386070409951975,
+        "utility_share_sem": 0.008859565536844369,
+        "utility_term_mean": -0.09645383034223376,
+        "utility_term_sem": 0.006474276202857555,
+        "floors_mean": 23.10934629233758,
+        "n_gated": 8
+      }
+    },
+    "10:4": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.4490943206292337,
+        "utility_share_sem": 0.006446203155531425,
+        "utility_term_mean": -0.5824470207291484,
+        "utility_term_sem": 0.021121863560921984,
+        "floors_mean": 68.62530405263566,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.4398284517305233,
+        "utility_share_sem": 0.00898240187125998,
+        "utility_term_mean": -0.4190523810608908,
+        "utility_term_sem": 0.016811484771274837,
+        "floors_mean": 53.43648113997784,
+        "n_gated": 8
+      }
+    },
+    "10:16": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.4454641110240457,
+        "utility_share_sem": 0.005936763410277285,
+        "utility_term_mean": -0.5815541063367045,
+        "utility_term_sem": 0.0161997499201499,
+        "floors_mean": 69.06494598806447,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.42850659840560035,
+        "utility_share_sem": 0.013179865176814997,
+        "utility_term_mean": -0.4211958551269988,
+        "utility_term_sem": 0.013017052576644384,
+        "floors_mean": 53.551825600518,
+        "n_gated": 8
+      }
+    },
+    "10:300": {
+      "three_corner": {
+        "n": 8,
+        "utility_share_mean": 0.4483511732887425,
+        "utility_share_sem": 0.006962970151070711,
+        "utility_term_mean": -0.5820739257913563,
+        "utility_term_sem": 0.011114093725455725,
+        "floors_mean": 69.2420346594457,
+        "n_gated": 8
+      },
+      "all_four": {
+        "n": 8,
+        "utility_share_mean": 0.43398341951374253,
+        "utility_share_sem": 0.010438639888340623,
+        "utility_term_mean": -0.4212748786107267,
+        "utility_term_sem": 0.008833399485225697,
+        "floors_mean": 53.61545368766599,
+        "n_gated": 8
+      }
+    }
+  },
+  "gamma_1_to_10_share_step_at_rN": 0.10566264603538666,
+  "rank_deltas_three_corner": {
+    "1:r4_minus_rN": {
+      "d_utility_share": -0.0034795782360201866,
+      "d_utility_term": -0.01630949734577028,
+      "share_4": 0.33920894901733567,
+      "share_N": 0.34268852725335586
+    },
+    "10:r4_minus_rN": {
+      "d_utility_share": 0.0007431473404911904,
+      "d_utility_term": -0.00037309493779214,
+      "share_4": 0.4490943206292337,
+      "share_N": 0.4483511732887425
+    }
+  },
+  "reading": {
+    "key": "reorganisation_tracks_gamma_regardless_of_rank",
+    "text": "The driver is optimisation dynamics. The paper says so. The dimension channel is co-varying rather than causal.",
+    "operationalization": "Three-corner utility share, unique n=8, task 0 lag 12 module A. Rank effect = |share(r=4) \u2212 share(r=N)|. \u03b3-step = |share(\u03b3=10, r=N) \u2212 share(\u03b3=1, r=N)|. Tracks \u03b3 if rank effect < half the \u03b3-step at both licensed \u03b3. Dimensionality if the rank effect at \u03b3=10 is at least the \u03b3-step. Else mixed."
+  },
+  "wall_seconds_slice": 16614.381955385208,
+  "n_workers": 192
+}

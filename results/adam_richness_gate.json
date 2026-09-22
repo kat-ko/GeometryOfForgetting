@@ -1,0 +1,267 @@
+{
+  "generated_by": "scripts/run_adam.py --richness-gate",
+  "precommit": "results/adam_precommit.json",
+  "question": "At unique n=8, frozen \u00d7 s_r=0.5, after task 0, does mean \u2016\u0394W\u2016/\u2016W\u2016 at \u03b3=10 over \u03b3=1 clear one decade under Adam?",
+  "population": {
+    "input_level": "frozen",
+    "s_r": 0.5,
+    "unique_n": 8,
+    "after": "task 0",
+    "quantity": "weight_change A = \u2016\u0394W\u2016_F / \u2016W(0)\u2016_F",
+    "training_only": true,
+    "not": "geometry. Not the 192-arm slice."
+  },
+  "bar": "mean(\u03b3=10) / mean(\u03b3=1) \u2265 10",
+  "bands": {
+    "clears_decade": "ratio \u2265 10: launch the 192",
+    "partial_manipulation": "3 \u2264 ratio < 10: stop for a decision",
+    "richness_manipulation_collapses": "ratio < 3: fail clearly"
+  },
+  "n_arms": 16,
+  "n_missed": 0,
+  "mean_dW_A_gamma10": 1.8356844424756662,
+  "mean_dW_A_gamma1": 0.5757775752576856,
+  "ratio": 3.188183287016896,
+  "mean_steps_gamma10": 24.0,
+  "mean_steps_gamma1": 501.5,
+  "step_ratio": 20.895833333333332,
+  "reading": "partial_manipulation",
+  "wall_seconds": 42.14400768280029,
+  "arms": [
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10000,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10000,
+      "converged": true,
+      "steps": 24,
+      "final_loss": 0.047237341692993505,
+      "weight_change": {
+        "A": 1.8291011753468978,
+        "B": 1.8304241752309465
+      },
+      "dW_A": 1.8291011753468978,
+      "dW_B": 1.8304241752309465
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10001,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10001,
+      "converged": true,
+      "steps": 24,
+      "final_loss": 0.044936842716408125,
+      "weight_change": {
+        "A": 1.8387281465188274,
+        "B": 1.842584186694814
+      },
+      "dW_A": 1.8387281465188274,
+      "dW_B": 1.842584186694814
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10002,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10002,
+      "converged": true,
+      "steps": 24,
+      "final_loss": 0.048140663073637104,
+      "weight_change": {
+        "A": 1.8521855526496127,
+        "B": 1.853949274957848
+      },
+      "dW_A": 1.8521855526496127,
+      "dW_B": 1.853949274957848
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10003,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10003,
+      "converged": true,
+      "steps": 24,
+      "final_loss": 0.04094035287108045,
+      "weight_change": {
+        "A": 1.8405164844349053,
+        "B": 1.8436019343861634
+      },
+      "dW_A": 1.8405164844349053,
+      "dW_B": 1.8436019343861634
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10004,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10004,
+      "converged": true,
+      "steps": 24,
+      "final_loss": 0.04215339845031583,
+      "weight_change": {
+        "A": 1.8515215126303806,
+        "B": 1.852495368622682
+      },
+      "dW_A": 1.8515215126303806,
+      "dW_B": 1.852495368622682
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10005,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10005,
+      "converged": true,
+      "steps": 26,
+      "final_loss": 0.0465548973715381,
+      "weight_change": {
+        "A": 1.9124438188082589,
+        "B": 1.916182051813295
+      },
+      "dW_A": 1.9124438188082589,
+      "dW_B": 1.916182051813295
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10006,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10006,
+      "converged": true,
+      "steps": 23,
+      "final_loss": 0.04285040680919834,
+      "weight_change": {
+        "A": 1.7721110628233308,
+        "B": 1.7757254916748682
+      },
+      "dW_A": 1.7721110628233308,
+      "dW_B": 1.7757254916748682
+    },
+    {
+      "key": "gamma=10,a=0,input=frozen,s_r=0.5,stream=10007,seed=0,opt=adam",
+      "gamma_0": 10.0,
+      "stream_id": 10007,
+      "converged": true,
+      "steps": 23,
+      "final_loss": 0.04036612423094689,
+      "weight_change": {
+        "A": 1.7888677865931157,
+        "B": 1.789263567461511
+      },
+      "dW_A": 1.7888677865931157,
+      "dW_B": 1.789263567461511
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10000,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10000,
+      "converged": true,
+      "steps": 504,
+      "final_loss": 0.049755784808536895,
+      "weight_change": {
+        "A": 0.5759035931577584,
+        "B": 0.5774176892174093
+      },
+      "dW_A": 0.5759035931577584,
+      "dW_B": 0.5774176892174093
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10001,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10001,
+      "converged": true,
+      "steps": 509,
+      "final_loss": 0.04973340089477105,
+      "weight_change": {
+        "A": 0.5869572443935653,
+        "B": 0.587956176131537
+      },
+      "dW_A": 0.5869572443935653,
+      "dW_B": 0.587956176131537
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10002,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10002,
+      "converged": true,
+      "steps": 513,
+      "final_loss": 0.04975767552292557,
+      "weight_change": {
+        "A": 0.584366780824911,
+        "B": 0.584358577839339
+      },
+      "dW_A": 0.584366780824911,
+      "dW_B": 0.584358577839339
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10003,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10003,
+      "converged": true,
+      "steps": 498,
+      "final_loss": 0.04984382894942313,
+      "weight_change": {
+        "A": 0.5757104832318589,
+        "B": 0.5764208121544099
+      },
+      "dW_A": 0.5757104832318589,
+      "dW_B": 0.5764208121544099
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10004,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10004,
+      "converged": true,
+      "steps": 499,
+      "final_loss": 0.04966758015932035,
+      "weight_change": {
+        "A": 0.5772474195053111,
+        "B": 0.578339223897098
+      },
+      "dW_A": 0.5772474195053111,
+      "dW_B": 0.578339223897098
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10005,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10005,
+      "converged": true,
+      "steps": 521,
+      "final_loss": 0.04963476541768138,
+      "weight_change": {
+        "A": 0.5803741509881888,
+        "B": 0.5815479403119499
+      },
+      "dW_A": 0.5803741509881888,
+      "dW_B": 0.5815479403119499
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10006,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10006,
+      "converged": true,
+      "steps": 487,
+      "final_loss": 0.049807250744125064,
+      "weight_change": {
+        "A": 0.5622311093591496,
+        "B": 0.5620614518085372
+      },
+      "dW_A": 0.5622311093591496,
+      "dW_B": 0.5620614518085372
+    },
+    {
+      "key": "gamma=1,a=0,input=frozen,s_r=0.5,stream=10007,seed=0,opt=adam",
+      "gamma_0": 1.0,
+      "stream_id": 10007,
+      "converged": true,
+      "steps": 481,
+      "final_loss": 0.04952962752321813,
+      "weight_change": {
+        "A": 0.563429820600741,
+        "B": 0.5646587048694702
+      },
+      "dW_A": 0.563429820600741,
+      "dW_B": 0.5646587048694702
+    }
+  ],
+  "identity": {
+    "stream_10000_gamma10_dW_A": 1.8291011753468978,
+    "one_arm_task0_dW_A": 1.8291011753468978,
+    "must_match": "the one-arm task-0 weight_change A, same spec"
+  },
+  "will_not_do": [
+    "Launch the 192 unless reading is clears_decade.",
+    "Interpret \u03b3-dependent claims if the decade is not cleared.",
+    "Re-pin lr0 from this gate.",
+    "Write into results/phase1/."
+  ]
+}

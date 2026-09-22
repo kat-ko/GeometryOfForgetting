@@ -1,0 +1,94 @@
+{
+  "generated_by": "scripts/run_mup_l2_operating_point.py",
+  "precommit": "results/mup_l3_gate2_frozen_precommit.json",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "check_B": {
+    "grid": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0,
+      10.0
+    ],
+    "argmins": {
+      "mup": {
+        "64": {
+          "lr0": 10.0,
+          "loss": 0.031197776942582897,
+          "index": 8
+        },
+        "300": {
+          "lr0": 10.0,
+          "loss": 0.014546847780150602,
+          "index": 8
+        }
+      },
+      "ntp": {
+        "64": {
+          "lr0": 10.0,
+          "loss": 0.031197776942582897,
+          "index": 8
+        },
+        "300": {
+          "lr0": 10.0,
+          "loss": 0.05920041008914069,
+          "index": 8
+        }
+      }
+    },
+    "mup_index_distance": 0,
+    "ntp_index_distance": 0,
+    "mup_stable": true,
+    "ntp_slides": false,
+    "pass": false
+  },
+  "check_A_recorded_not_a_licence": {
+    "rms_delta_z": {
+      "64": 1.3800390098940059e-06,
+      "300": 1.1681466189903977e-06
+    },
+    "ratio_N300_over_N64": 0.84645912949962,
+    "pass": true
+  },
+  "check_C_recorded_not_a_licence": {
+    "per_width": {
+      "64": {
+        "by_gamma": {
+          "1.0": {
+            "W": 4.90146143555687e-09,
+            "W2": 2.9987057038137586e-09
+          },
+          "10.0": {
+            "W": 4.901468856159509e-07,
+            "W2": 2.998710986977112e-07
+          }
+        },
+        "W_separates": true,
+        "W2_separates": true
+      },
+      "300": {
+        "by_gamma": {
+          "1.0": {
+            "W": 3.948120066352325e-09,
+            "W2": 1.303144810810669e-09
+          },
+          "10.0": {
+            "W": 3.948125421152952e-07,
+            "W2": 1.3031466031995666e-07
+          }
+        },
+        "W_separates": true,
+        "W2_separates": true
+      }
+    },
+    "pass": true
+  },
+  "overall_pass": false,
+  "applied_reading": "l3_b_fails",
+  "reading": "Check B passes at L=2 at the frozen point and fails at L=3 on that same point. That is an L=3 problem. Stop. Do not invent 1/\u221aL or per-layer LRs to make it pass. Do not lift A6."
+}

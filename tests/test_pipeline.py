@@ -144,3 +144,10 @@ def test_measurement_rng_is_shared_across_boundaries():
     assert a.D_eff == pytest.approx(b.D_eff, rel=1e-12)
     c = pl._measure(*args, 3, 0, 999)
     assert c.alpha != pytest.approx(a.alpha, rel=1e-12)
+
+
+def test_run_arm_refuses_l3():
+    """A21: diagnostic SGD does not lift sequential arms."""
+    spec = pl.Phase1Spec(n_hidden_layers=2, **SMOKE)
+    with pytest.raises(NotImplementedError, match="L=3 training"):
+        pl.run_arm(spec)

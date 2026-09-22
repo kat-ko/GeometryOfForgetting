@@ -1,0 +1,156 @@
+{
+  "generated_by": "docs/22, after partial_manipulation filed as a finding",
+  "written_before_running": true,
+  "written_before_running_applies_to": "96-arm Adam Hamming-only at γ=10",
+  "status": "pre-commit — written after the richness gate, before the Hamming-only one-arm and the 96",
+  "question": "On the existing Hamming 2×3 at γ=10, do the cliff, the drift gradation, and the frozen–drift crossover reproduce under Adam at lr0=0.0002?",
+  "why_now": "The richness gate read partial_manipulation (3.19× against 10×; steps 20.9×). That is a finding: μP and Adam do not compose. The 192 is refused. The Hamming-axis claims were found at both γ, so one γ is enough to ask whether they reproduce under a different optimiser.",
+  "why_gamma_10": "Every Hamming-axis effect is largest at γ=10, so a failure to reproduce is unambiguous. Adam's lr at the pin is 0.094 rather than 0.00094 with 502 steps at γ=1.",
+  "cannot_speak_to": [
+    "γ",
+    "finding 1",
+    "channel reorganisation",
+    "γ-dependence of cliff sizes",
+    "a second learner agreeing",
+    "the original five 192-arm readings"
+  ],
+  "cannot_speak_to_why": "Those need a working richness manipulation. Adam supplies only a partial one. This arm tests whether the Hamming-axis findings are artefacts of full-batch GD. It is not a γ contrast.",
+  "i3_exception": {
+    "licensed": true,
+    "scope": "this off-design arm only",
+    "never": "results/phase1/",
+    "parent": "results/adam_precommit.json"
+  },
+  "not_the_192": true,
+  "parent_precommit": "results/adam_precommit.json",
+  "gate_reading": "partial_manipulation",
+  "gate_does_not_license_192": true,
+  "primary_law": "quadratic",
+  "population": {
+    "name": "reserved arrangements",
+    "source": "results/reserved_arrangements.json populations.reserved",
+    "arrangement_source": "stream_rng",
+    "unique_n": 8,
+    "not": "old arrangements / legacy_seed."
+  },
+  "design": {
+    "manipulation": "Same Hamming 2×3 as the GD-MSE slice, γ=10 only. Four exact Hamming levels at P=16, crossed with three input levels. Optimizer is Adam; loss, targets, streams, architecture, target_loss=0.05, and lr0=0.0002 are held.",
+    "optimizer": {
+      "name": "adam",
+      "batch": "full",
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-8,
+      "weight_decay": 0.0,
+      "not": "a search; library defaults. No momentum SGD. No RMSProp."
+    },
+    "loss": "mse",
+    "stopping": "matched_loss at target_loss 0.05. Sequential K=1. The registered pin. Not re-pinned for this arm.",
+    "hamming_levels": {
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "h_at_P16": [0, 2, 4, 6],
+      "rounding": "none — these four are exact"
+    },
+    "input_levels": {
+      "frozen": {"s_f": 1.0, "what": "rule-only at s_r<1; no-change null at s_r=1"},
+      "drift": {"s_f": 0.9, "what": "slow consecutive centre motion; recovers finding 3 vs jump at s_r=1"},
+      "jump": {"s_f": 0.1, "what": "abrupt consecutive centre motion"}
+    },
+    "schedule": {
+      "T": 16,
+      "tracked_stride": 2,
+      "n_evals_two_modules": 106,
+      "lag12_tasks": [0, 2],
+      "lag4_tasks": [0, 2, 4, 6, 8, 10]
+    },
+    "first_slice": {
+      "gammas": [10.0],
+      "input_levels": ["frozen", "drift", "jump"],
+      "s_r": [1.0, 0.75, 0.5, 0.25],
+      "unique_n": 8,
+      "n_arms": 96,
+      "gamma_1_excluded": "Adam does not supply a working richness manipulation. This arm cannot speak to γ."
+    },
+    "held_fixed": {
+      "lr_scaling": "quadratic",
+      "lr0": 0.0002,
+      "lr0_provenance": "The signed one-time Phase 0 re-pin in results/adam_precommit.json and results/adam_lr0_repin.md. Not re-pinned for this arm. Not informed by the Hamming axis or by this cell.",
+      "target_loss": 0.05,
+      "N": 300,
+      "a": 0.0,
+      "L": 2,
+      "T": 16,
+      "P": 16,
+      "seed": 0,
+      "tracked_stride": 2
+    },
+    "primary_cell": {
+      "task": 0,
+      "lag": 12,
+      "module": "A",
+      "quantity": "Δ log α (floors) against Hamming, per input level, γ=10 only",
+      "unique_n": 8,
+      "unit": "reserved stream_id, seed=0",
+      "reported_not_a_reading": "Lag-4 series across task position {0,2,4,6,8,10}. Δρ_c against Hamming, including frozen. Neither is a reading."
+    }
+  },
+  "recovery": {
+    "cell": "At s_r=1, drift vs jump on reserved stream_ids, γ=10, unique n=8, module A, task 0 lag 12.",
+    "must": "Keep the sign of finding 3 (gain under drift, loss under jump) or stop. The new streams are not the same object.",
+    "if_fails": "finding3_fails_to_recover. Stop. Not one of the three Hamming readings."
+  },
+  "misses": {
+    "rule": "An arm that misses target_loss on any task is unusable and counted.",
+    "if_one_arm_misses": "lr0_miss. Stop. Do not run the 96. Do not re-pin a second time."
+  },
+  "one_arm_first": {
+    "spec": "γ=10, s_r=0.5, drift (not frozen), first reserved arrangement, a=0, N=300, quadratic, matched_loss, target_loss=0.05, lr0=0.0002, tracked_stride=2, Adam, MSE",
+    "why": "A Hamming cell that is not the richness-gate cell frozen × s_r=0.5. Drift is where the gradation lives. AGENTS.md §5.",
+    "report": "results/adam_hamming_one_arm.json",
+    "governs": false,
+    "not": "the frozen × s_r=0.5 one-arm already on file"
+  },
+  "readings_committed_before_seeing_numbers": {
+    "hamming_reproduces": "Cliff, drift gradation, and frozen–drift crossover all hold. The Hamming-axis findings are not artefacts of full-batch GD.",
+    "hamming_fails": "None of the three hold. Name all three. The findings are scoped to the optimiser.",
+    "partial": "A split: report which held and which did not. No post-hoc story.",
+    "finding3_fails_to_recover": "At s_r=1, drift vs jump does not keep gain vs loss on Δ log α. Stop. The Adam streams are not the same object. Not a Hamming-axis reading."
+  },
+  "operationalization": {
+    "written_before_96_arm_numbers": true,
+    "primary": "Unique n=8, module A, task 0, lag 12, Δ log α vs Hamming, per input level, γ=10 only. 95% CI = mean ± 1.96 SEM.",
+    "cliff_holds": "At frozen and at jump: floors(s_r=1.0) − floors(s_r=0.75) ≥ 2 (1-decimal) AND the post-cliff range |floors(0.75) − floors(0.25)| does not clear two floors (range < 2, or 0.75 vs 0.25 CIs overlap).",
+    "drift_gradation_holds": "Under drift: 0.75 vs 0.25 CIs do not overlap AND that range is ≥ 2 floors.",
+    "crossover_holds": "At s_r=0.75, drift 1-decimal floors > frozen (drift better). At s_r=0.25, frozen 1-decimal floors > drift (frozen better).",
+    "finding3_fails_to_recover": "At s_r=1, drift mean Δ log α is not > 0 or jump is not < 0 (γ=10, unique n=8).",
+    "hamming_reproduces": "Recovery holds, and cliff, drift gradation, and crossover all hold.",
+    "hamming_fails": "Recovery holds, and none of cliff / drift gradation / crossover hold. Name all three.",
+    "partial": "Recovery holds, and a nonempty proper subset of the three hold. Report the split. No post-hoc story.",
+    "mutually_exclusive_given_recovery": ["hamming_reproduces", "hamming_fails", "partial"],
+    "gamma_1": "Not in this arm. Do not interpret. Do not pool with GD γ=1."
+  },
+  "results_dir": "results/adam/",
+  "not_in_phase1": true,
+  "will_not_do": [
+    "Launch the 192.",
+    "Interpret γ, finding 1, or the channel reorganisation from this arm.",
+    "Include γ=1.",
+    "Another classification loss.",
+    "Per-γ pins.",
+    "Reopen the CE arm.",
+    "EWC or replay.",
+    "Write into results/phase1/.",
+    "Use old arrangements.",
+    "Re-pin lr0 a second time.",
+    "Inform lr0 or stopping from this axis.",
+    "Include γ=0.03 as a control.",
+    "P=32 on this slice.",
+    "Pool Hamming 0 with 0.75.",
+    "Treat consecutive s_r as lag-12 s_r.",
+    "Inherit tracked_stride=4.",
+    "Expand A8.",
+    "Edit figures from this arm.",
+    "Salvage a stream claim from a partial split after seeing numbers.",
+    "Treat a reproduction as a second learner agreeing."
+  ]
+}

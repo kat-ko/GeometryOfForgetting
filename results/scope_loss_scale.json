@@ -1,0 +1,376 @@
+{
+  "generated_by": "scripts/check_scope_loss_scale.py",
+  "question": "does matched-loss stopping at target_loss=0.05 survive multi-output?",
+  "loss": "0.5 * mean over batch and outputs of (f-y)^2; y=\u00b11",
+  "target_loss": 0.05,
+  "lr0": 5.0,
+  "gamma_0": 1.0,
+  "N": 300,
+  "K": [
+    1,
+    2,
+    4
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "max_steps": 20000,
+  "by_K_mean_stop": {
+    "1": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 295.6666666666667,
+      "hit_mean_rate": 1.0,
+      "hit_worst_rate": 1.0,
+      "spread_mean": 0.0,
+      "max_per_output_mean": 0.049152889713887225
+    },
+    "2": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 289.6666666666667,
+      "hit_mean_rate": 1.0,
+      "hit_worst_rate": 0.0,
+      "spread_mean": 0.01410731355732546,
+      "max_per_output_mean": 0.05609646672451968
+    },
+    "4": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 268.0,
+      "hit_mean_rate": 1.0,
+      "hit_worst_rate": 0.0,
+      "spread_mean": 0.023178187916685394,
+      "max_per_output_mean": 0.06202371715944437
+    }
+  },
+  "by_K_worst_stop": {
+    "1": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 294.6666666666667,
+      "hit_mean_rate": 0.0,
+      "hit_worst_rate": 1.0,
+      "spread_mean": 0.0,
+      "max_per_output_mean": 0.04970987869707069
+    },
+    "2": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 300.3333333333333,
+      "hit_mean_rate": 1.0,
+      "hit_worst_rate": 1.0,
+      "spread_mean": 0.012936775318346104,
+      "max_per_output_mean": 0.04978905308754634
+    },
+    "4": {
+      "init_loss_mean": 0.5,
+      "steps_mean": 287.3333333333333,
+      "hit_mean_rate": 1.0,
+      "hit_worst_rate": 1.0,
+      "spread_mean": 0.01851254679955491,
+      "max_per_output_mean": 0.049734588716122435
+    }
+  },
+  "init_loss_independent_of_K": true,
+  "mean_hit_with_an_output_above_target": true,
+  "worst_of_K_holds_every_output_to_target": true,
+  "confound_controlled_cleanly": true,
+  "decision": "granularity (multi-output) is licensed with worst-of-K stopping: halt when max_k \u00bd mean_b (f_k \u2212 y_k)\u00b2 \u2264 0.05. Mean-reduced stopping leaves a graded residual (the informative quantity). |S| is class-count as scope, which Line 2 records as unspecified; do not fall back to it.",
+  "will_not_do": [
+    "Fall back to breadth |S|. That repeats the Line 2 criticism of class-count-as-scope."
+  ],
+  "runs": [
+    {
+      "seed": 0,
+      "K": 1,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.04941775447329018,
+      "steps": 283,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.048774295846964924
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.048774295846964924
+    },
+    {
+      "seed": 1,
+      "K": 1,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.049964359812154836,
+      "steps": 292,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.04944133924685553
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.04944133924685553
+    },
+    {
+      "seed": 2,
+      "K": 1,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.049747521805767046,
+      "steps": 312,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.04924303404784122
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.04924303404784122
+    },
+    {
+      "seed": 0,
+      "K": 2,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.04967194244777132,
+      "steps": 286,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.04340573045000461,
+        0.05471968496292265
+      ],
+      "per_output_spread": 0.011313954512918035,
+      "max_per_output_mse": 0.05471968496292265
+    },
+    {
+      "seed": 1,
+      "K": 2,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.04967891829367065,
+      "steps": 296,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.0430168703468272,
+        0.05527685522253127
+      ],
+      "per_output_spread": 0.012259984875704073,
+      "max_per_output_mse": 0.05527685522253127
+    },
+    {
+      "seed": 2,
+      "K": 2,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.049545995240894536,
+      "steps": 287,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.05829285998810512,
+        0.03954485870475085
+      ],
+      "per_output_spread": 0.01874800128335427,
+      "max_per_output_mse": 0.05829285998810512
+    },
+    {
+      "seed": 0,
+      "K": 4,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.0498632981513284,
+      "steps": 268,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.044594939132606794,
+        0.05543362244370127,
+        0.0482979189492769,
+        0.048822328525899274
+      ],
+      "per_output_spread": 0.010838683311094478,
+      "max_per_output_mse": 0.05543362244370127
+    },
+    {
+      "seed": 1,
+      "K": 4,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.04993323072155206,
+      "steps": 273,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.046716935770980635,
+        0.0653679799266743,
+        0.04221634267473663,
+        0.04317613867867691
+      ],
+      "per_output_spread": 0.023151637251937668,
+      "max_per_output_mse": 0.0653679799266743
+    },
+    {
+      "seed": 2,
+      "K": 4,
+      "stop": "mean",
+      "init_loss": 0.5,
+      "final_loss": 0.04959483305734633,
+      "steps": 263,
+      "hit_mean_target": true,
+      "hit_worst_target": false,
+      "per_output_mse": [
+        0.06526954910795754,
+        0.03853667988315703,
+        0.0622973894871473,
+        0.029725305920933517
+      ],
+      "per_output_spread": 0.035544243187024024,
+      "max_per_output_mse": 0.06526954910795754
+    },
+    {
+      "seed": 0,
+      "K": 1,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.05007261296995999,
+      "steps": 282,
+      "hit_mean_target": false,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.04941775447329018
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.04941775447329018
+    },
+    {
+      "seed": 1,
+      "K": 1,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.05049538553162014,
+      "steps": 291,
+      "hit_mean_target": false,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.049964359812154836
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.049964359812154836
+    },
+    {
+      "seed": 2,
+      "K": 1,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.05025928396730029,
+      "steps": 311,
+      "hit_mean_target": false,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.049747521805767046
+      ],
+      "per_output_spread": 0.0,
+      "max_per_output_mse": 0.049747521805767046
+    },
+    {
+      "seed": 0,
+      "K": 2,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.045081455470677274,
+      "steps": 294,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.03920750977772643,
+        0.049894940815823186
+      ],
+      "per_output_spread": 0.010687431038096752,
+      "max_per_output_mse": 0.049894940815823186
+    },
+    {
+      "seed": 1,
+      "K": 2,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.044712101766981295,
+      "steps": 306,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.0388628270793508,
+        0.049650115858788105
+      ],
+      "per_output_spread": 0.010787288779437305,
+      "max_per_output_mse": 0.049650115858788105
+    },
+    {
+      "seed": 2,
+      "K": 2,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.0416503872546857,
+      "steps": 301,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.04982210258802773,
+        0.032486496450523476
+      ],
+      "per_output_spread": 0.017335606137504254,
+      "max_per_output_mse": 0.04982210258802773
+    },
+    {
+      "seed": 0,
+      "K": 4,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.044519221969661134,
+      "steps": 278,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.03865150829176235,
+        0.0498401430152429,
+        0.043639488116816394,
+        0.04399977151208043
+      ],
+      "per_output_spread": 0.01118863472348055,
+      "max_per_output_mse": 0.0498401430152429
+    },
+    {
+      "seed": 1,
+      "K": 4,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.03815434766023706,
+      "steps": 298,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.03530666611427791,
+        0.04973498904090885,
+        0.032339970202411646,
+        0.033702907088775144
+      ],
+      "per_output_spread": 0.017395018838497207,
+      "max_per_output_mse": 0.04973498904090885
+    },
+    {
+      "seed": 2,
+      "K": 4,
+      "stop": "worst",
+      "init_loss": 0.5,
+      "final_loss": 0.03742724103793078,
+      "steps": 286,
+      "hit_mean_target": true,
+      "hit_worst_target": true,
+      "per_output_mse": [
+        0.049628634092215546,
+        0.027931341510827632,
+        0.047770808500738296,
+        0.022674647255528577
+      ],
+      "per_output_spread": 0.02695398683668697,
+      "max_per_output_mse": 0.049628634092215546
+    }
+  ]
+}

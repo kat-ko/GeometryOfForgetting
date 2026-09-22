@@ -1,0 +1,48 @@
+{
+  "generated_by": "docs/16 A24 follow-up: ‖ΔW‖ floor then loss-vs-width, 2026-09-07",
+  "written_before_running": true,
+  "written_before_running_applies_to": "L=2 search for K where μP ‖ΔW‖/‖W‖ meets the floor, then A24 contrast at that K on L=2 and L=3",
+  "status": "unsigned diagnostic contract — not Verification 2, not a finding",
+  "governs_stream_arms": false,
+  "signed_finding": false,
+  "question": "Once L=2 hidden weights have actually moved, does the A24 loss-vs-width contrast still hold at L=2 and at L=3?",
+  "why": "A24 passed at K=16, lr0=10, but A/C at small lr0 had ‖ΔW‖/‖W‖ ~ 10⁻⁹. The contrast may be readout-only. This contract freezes a K at L=2 where features have moved, then applies the same contrast. No stream. No signature.",
+  "held_fixed": {
+    "d": 40,
+    "batch": 32,
+    "seed": 0,
+    "data_seed": 1,
+    "gamma_0": 1.0,
+    "named_lr0": 10.0,
+    "widths": [64, 300],
+    "module": "A"
+  },
+  "floor_search": {
+    "depth": "L=2 only",
+    "parameterization": "mup",
+    "N": 64,
+    "quantity": "weight_change = ‖ΔW‖_F / ‖W(0)‖_F, module A",
+    "floor": 0.001,
+    "floor_why": "Three orders above the ~10⁻⁹ A/C junk. Written before this run, not taken from it. Not a stream-scale magnitude.",
+    "K_sequence": [16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
+    "freeze": "first K in the sequence with finite weight_change ≥ floor. One trajectory from init, snapshots at those K.",
+    "search_failed": "no K in the sequence meets the floor. Do not apply L=3. Do not extend K after seeing numbers."
+  },
+  "identification": {
+    "at": "frozen K, named_lr0=10, independent runs from init",
+    "contrast_present": "both losses finite, μP: loss(N=300) ≤ loss(N=64), NTP: loss(N=300) > loss(N=64)",
+    "not": "argmin. Whether L=3 itself meets the ‖ΔW‖ floor. Check A/C at small lr0."
+  },
+  "recorded_not_a_reading": [
+    "L=2 weight_change vs K for μP/NTP × N=64/300 (context for the freeze)",
+    "weight_change on W (and W2 at L=3) at frozen K for all four cells at both depths",
+    "rms(Δz_last) at frozen K",
+    "whether L=3 μP N=64 weight_change meets the same floor at frozen K"
+  ],
+  "readings_committed_before_seeing_numbers": {
+    "search_failed": "L=2 μP N=64 never reaches ‖ΔW‖/‖W‖ ≥ 0.001 on this sequence at lr0=10. Stop. A24 remains the last licensed contrast, still readout-unresolved. Do not lift A6.",
+    "instrument_blind": "Floor met. L=2 contrast absent at that K. The A24 contrast does not survive feature motion at L=2. Stop. L=3 numbers are recorded and are not a reading. Do not lift A6.",
+    "table_supported_at_floor": "Floor met. Contrast present at L=2 and L=3 at that K. Empirical support for Table 1 at L=3 after hidden weights have moved at L=2. Not Verification 2. Do not lift A6.",
+    "l3_problem": "Floor met. Contrast present at L=2 and absent at L=3. An L=3 problem once features move. Stop. Do not invent 1/√L in code. Do not lift A6."
+  }
+}

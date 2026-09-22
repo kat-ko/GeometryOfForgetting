@@ -15,6 +15,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .dichotomies import (
+    assert_balanced,
     hamming_for_readout_similarity,
     readout_similarity,
     sample_at_hamming,
@@ -48,6 +49,7 @@ class StreamConfig:
     probe_target_s_r: float = 0.5  # target s_r(y*, y_t) typical distance
     rho_A: float = 0.0
     psi_gen: float = 0.0
+    manifold_kind: str = "spherical"
 
 
 @dataclass(frozen=True)
@@ -115,6 +117,7 @@ def make_stream(cfg: StreamConfig, rng: np.random.Generator) -> Stream:
             rho_C=0.0,
             rho_A=cfg.rho_A,
             psi_gen=cfg.psi_gen,
+            kind=cfg.manifold_kind,
         )
     )
     for t in range(1, cfg.T):
@@ -193,3 +196,79 @@ def _sample_probe(
             continue
         return cand
     raise RuntimeError("failed to sample a probe dichotomy distinct from the stream")
+
+
+def recurrence_control_rng(stream_id: int, k: int) -> np.random.Generator:
+    """Independent of `stream_rng`. Control sampling must not consume arrangement draws."""
+    return np.random.default_rng([20260817, int(stream_id), int(k), 0xA8])
+
+
+def replace_task_dichotomy(stream: Stream, t: int, y: np.ndarray) -> Stream:
+    """Rewrite dichotomy t. Arrangements stay put (A8: same arrangement)."""
+    y = np.asarray(y, dtype=np.int8)
+    assert_balanced(y)
+    ys = stream.dichotomies.copy()
+    if t < 0 or t >= len(ys):
+        raise ValueError(f"task index {t} out of range for T={len(ys)}")
+    if y.shape != (ys.shape[1],):
+        raise ValueError(f"dichotomy shape {y.shape} != {(ys.shape[1],)}")
+    ys[t] = y
+    T = ys.shape[0]
+    S_r = np.empty((T, T), dtype=np.float64)
+    for i in range(T):
+        for j in range(T):
+            S_r[i, j] = readout_similarity(ys[i], ys[j])
+    probe_s_r = np.array(
+        [readout_similarity(stream.probe, ys[i]) for i in range(T)],
+        dtype=np.float64,
+    )
+    return Stream(
+        config=stream.config,
+        labeling=stream.labeling,
+        dichotomies=ys,
+        arrangements=stream.arrangements,
+        S_f=stream.S_f,
+        S_r=S_r,
+        probe=stream.probe,
+        probe_s_r=probe_s_r,
+    )
+
+
+def apply_recurrence(
+    stream: Stream,
+    *,
+    k: int,
+    mode: str,
+    rng: np.random.Generator,
+) -> Stream:
+    """Re-present y_0 at index k, or a novel y_k matched on s_r to y_{k−1}.
+
+    Prefix dichotomies 0..k−1 and every arrangement are unchanged.
+    """
+    T = stream.config.T
+    if k < 1 or k >= T:
+        raise ValueError(f"recurrence index k={k} must be in [1, {T})")
+    y0 = stream.dichotomies[0]
+    y_prev = stream.dichotomies[k - 1]
+    target = readout_similarity(y0, y_prev)
+    if target >= 1.0 - 1e-12:
+        raise ValueError(
+            f"s_r(y_0, y_{k - 1})=1; re-presentation at k={k} is degenerate"
+        )
+    if mode == "represent":
+        return replace_task_dichotomy(stream, k, y0)
+    if mode != "control":
+        raise ValueError(f"unknown recurrence mode {mode!r}")
+    h = hamming_for_readout_similarity(stream.config.P, target)
+    blocked = list(stream.dichotomies[:k]) + [
+        (-y).astype(np.int8) for y in stream.dichotomies[:k]
+    ]
+    for _ in range(10_000):
+        cand = sample_at_hamming(y_prev, h, rng)
+        if any(np.array_equal(cand, b) for b in blocked):
+            continue
+        if abs(readout_similarity(cand, y_prev) - target) > 1e-12:
+            continue
+        return replace_task_dichotomy(stream, k, cand)
+    raise RuntimeError("failed to sample a novel control dichotomy matched on s_r")
+

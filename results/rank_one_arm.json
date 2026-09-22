@@ -1,0 +1,36 @@
+{
+  "generated_by": "scripts/run_rank.py --one-arm",
+  "precommit": "results/rank_precommit.json",
+  "question": "Does the tightest rank × richest γ cell reach target_loss at lr0 pinned on r = N?",
+  "spec": {
+    "gamma_0": 10.0,
+    "readout_rank": 4,
+    "condition": "S-HL",
+    "a": 0.0,
+    "N": 300,
+    "lr0": 5.0,
+    "target_loss": 0.05,
+    "lr_scaling": "quadratic (RankSpec default; not stored on this arm's spec dict)",
+    "arrangement_source": "stream_rng",
+    "stream_id": 10000,
+    "seed": 0,
+    "population": "reserved arrangements"
+  },
+  "usable": true,
+  "n_tasks": 16,
+  "n_tasks_missed": 0,
+  "all_converged": true,
+  "steps_taken": [70, 32, 30, 24, 21, 18, 22, 20, 20, 20, 18, 16, 19, 18, 19, 23],
+  "mean_steps": 24.375,
+  "max_steps": 70,
+  "wall_seconds": 495.1715750694275,
+  "path": "results/rank_one_arm_unnested/gamma-10__a-0__cond-S-HL__stream-10000__seed-0__rank-4.json",
+  "miss_rule": "lr0 stays 5.0. This arm reached target; the miss clause is not triggered. It remains in force for the 288-arm slice.",
+  "reading": "One-arm reached target on all 16 tasks. Used the un-nested, r-dependent projection (I_N at r=N). Not governed by the rank_precommit commit; not pooled with the 288-arm slice.",
+  "cost_288_serial_hours_from_this_arm": 39.6,
+  "cost_note": "39.6 h is a lower bound. Arms that hit the 20k cap cost roughly 3×. Budget 60-100 h serial, or state parallelism.",
+  "will_not_do": [
+    "Re-pin lr0 because r=4 was expected to miss and did not.",
+    "Expand the slice from this file."
+  ]
+}

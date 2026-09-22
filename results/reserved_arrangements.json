@@ -1,0 +1,61 @@
+{
+  "generated_by": "docs/16 §Amendments A3 (2026-09-01)",
+  "purpose": "Two named arrangement populations. The reservation is the file; the rule is in the file.",
+  "stream_rng": {
+    "constructor": "np.random.default_rng([salt, int(stream_id)])",
+    "salt": 20260817,
+    "code": "src/pipeline.py:stream_rng"
+  },
+  "rule": "The reserved set never informs lr0, the rank grid, or the stopping criterion.",
+  "rule_enforced_by": "tests/test_reserved_arrangements.py (lr0 / grid / stopping provenance, not string presence of reserved ids in new-axis pre-commits)",
+  "populations": {
+    "old": {
+      "name": "old arrangements",
+      "purpose": "LR comparator: corrected versus quadratic, to choose the primary law. Not a not-tuned report.",
+      "keying": "legacy_seed",
+      "keying_detail": "On the registered grid, make_stream consumed paired_init(seed)['stream']; stream_id was stored and unread. Unique arrangements are init seeds 0-7. Reproducing them requires arrangement_source='legacy_seed', not stream_rng.",
+      "unique_n": 8,
+      "arrangements": [
+        {"id": "legacy_seed:0", "init_seed": 0},
+        {"id": "legacy_seed:1", "init_seed": 1},
+        {"id": "legacy_seed:2", "init_seed": 2},
+        {"id": "legacy_seed:3", "init_seed": 3},
+        {"id": "legacy_seed:4", "init_seed": 4},
+        {"id": "legacy_seed:5", "init_seed": 5},
+        {"id": "legacy_seed:6", "init_seed": 6},
+        {"id": "legacy_seed:7", "init_seed": 7}
+      ]
+    },
+    "reserved": {
+      "name": "reserved arrangements",
+      "purpose": "Every new axis, plus a duplicate of the headline measurement under the primary law as the not-tuned report.",
+      "keying": "stream_rng",
+      "keying_detail": "pipeline.stream_rng(stream_id). Init seed is a separate factor (paired_init). Unique n=8 arrangements are these eight stream_ids.",
+      "unique_n": 8,
+      "stream_ids": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007],
+      "block_reason": "Ids 0-7 appear on disk as stored labels (unread on the registered grid) and as genuine-n keys after the RNG fix. This block is above every used id."
+    }
+  },
+  "design_decision_artifacts": [
+    "results/cost_model.json",
+    "results/phase0.json",
+    "results/phase1_summary.json",
+    "results/small_n16_precommit.json",
+    "results/small_n_grid_precommit.json",
+    "results/shh_width_precommit.json",
+    "results/width_smoke_precommit.json",
+    "results/gamma5_k8_precommit.json",
+    "results/unconfound_k3_precommit.json",
+    "src/pipeline.py",
+    "scripts/run_phase0.py",
+    "scripts/run_phase0_richness.py",
+    "scripts/run_phase1.py"
+  ],
+  "design_decision_globs": [],
+  "not_design_decision": [
+    "This file (the reservation itself).",
+    "New-axis pre-commits that name the reserved population as experimental subjects. That is the intended use. Provenance of lr0, the rank grid, and stopping is asserted directly.",
+    "Per-arm result records whose stream_id is the experimental unit after the law, rank grid, and stopping criterion are already fixed.",
+    "The not-tuned duplicate under the primary law, which is the point of the reserved set."
+  ]
+}
