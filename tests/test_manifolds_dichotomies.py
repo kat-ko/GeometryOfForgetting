@@ -76,6 +76,30 @@ def test_stream_reproducible():
     assert np.array_equal(s1.probe, s2.probe)
 
 
+def test_default_stream_unchanged_by_dichotomy_rng_option():
+    cfg = StreamConfig(stream_id=7, condition="S-HL", T=8, d=40, M=20, D=2)
+    s1 = make_stream(cfg, np.random.default_rng(100))
+    s2 = make_stream(cfg, np.random.default_rng(100), rng_dichotomies=None)
+    assert np.array_equal(s1.dichotomies, s2.dichotomies)
+    assert np.array_equal(s1.arrangements[3].points, s2.arrangements[3].points)
+
+
+def test_separate_dichotomy_rng_pairs_task0_across_readout_similarity():
+    P = 16
+    task0 = []
+    for h in (0, 2, 4, 6, 8):
+        cfg = StreamConfig(stream_id=0, condition="x", T=6, P=P, d=40, M=20, D=2,
+                           feature_similarity=0.9, readout_similarity=1 - 2 * h / P)
+        s = make_stream(cfg, np.random.default_rng(5),
+                        rng_dichotomies=np.random.default_rng(6))
+        for t in range(1, cfg.T):
+            assert int(np.sum(s.dichotomies[t] != s.dichotomies[t - 1])) == h
+        task0.append((s.arrangements[0].points, s.dichotomies[0]))
+    for pts, y0 in task0[1:]:
+        assert np.array_equal(pts, task0[0][0])
+        assert np.array_equal(y0, task0[0][1])
+
+
 def test_readout_similarity_target_on_stream():
     cfg = StreamConfig(stream_id=1, condition="S-HL", T=8, d=40, M=20, D=2)
     stream = make_stream(cfg, np.random.default_rng(11))

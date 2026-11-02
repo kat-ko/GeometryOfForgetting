@@ -87,22 +87,35 @@ def _resolve_similarities(cfg: StreamConfig) -> tuple[float, float]:
     raise ValueError(f"unknown stream condition {cfg.condition!r}")
 
 
-def make_stream(cfg: StreamConfig, rng: np.random.Generator) -> Stream:
+def make_stream(
+    cfg: StreamConfig,
+    rng: np.random.Generator,
+    *,
+    rng_dichotomies: np.random.Generator | None = None,
+) -> Stream:
     """Build a stream with controlled s_f(t,t−1) and s_r(t,t−1).
 
     Only consecutive similarities are controlled; the full T×T matrices are
     recorded as covariates. The probe y* is sampled once and verified not to
     appear (up to sign) among training dichotomies.
+
+    With ``rng_dichotomies=None`` dichotomies are drawn from ``rng`` before the
+    arrangements, so the number of draws they consume depends on the Hamming
+    distance and task 0's arrangement differs across ``s_r`` at a fixed
+    ``rng`` seed. Passing a separate generator makes the arrangements
+    independent of ``s_r``: task 0's arrangement is then paired across all
+    ``(s_f, s_r)`` cells.
     """
     s_f, s_r = _resolve_similarities(cfg)
     labeling = make_labeling(cfg.P)
     h = hamming_for_readout_similarity(cfg.P, s_r)
+    rng_y = rng if rng_dichotomies is None else rng_dichotomies
 
     # --- dichotomies ---
     ys = np.zeros((cfg.T, cfg.P), dtype=np.int8)
-    ys[0] = sample_balanced(cfg.P, rng)
+    ys[0] = sample_balanced(cfg.P, rng_y)
     for t in range(1, cfg.T):
-        ys[t] = sample_at_hamming(ys[t - 1], h, rng)
+        ys[t] = sample_at_hamming(ys[t - 1], h, rng_y)
 
     # --- arrangements ---
     arrs: list[Arrangement] = []

@@ -4426,3 +4426,157 @@ Artifacts: `docs/07-writeup.md` §A.9, `docs/15-what-was-actually-run.md`,
 `docs/23-order-arm.md`, `results/order_precommit.json`,
 `src/analysis/ledger.py`.
 
+
+---
+
+## 2026-10-28 — Stream pairing across s_r; identity-Q fast path; v3 notebook start
+
+**Pairing across `s_r` was not what the Hamming slice assumed.**
+`make_stream` draws dichotomies from the same generator *before* the
+arrangements. `sample_at_hamming` consumes a Hamming-dependent number of
+draws, so at a fixed `stream_id` task 0's arrangement is identical across
+`s_f` (at fixed `s_r`) but **differs across `s_r`**. Checked directly:
+stream 20000, M=50, all 15 cells `s_f ∈ {1, 0.9, 0.1}` × Hamming
+`{0, 2, 4, 6, 8}`; `A_0` equal to the Hamming-0 cell only at Hamming 0;
+`y_0` equal everywhere. The 2026-09-10 note "pairing of A_0 and
+dichotomies across input levels at fixed s_r was tested" is correct as
+stated. It does not extend to the Hamming axis. Comparisons across `s_r`
+in `results/hamming_slice.*` are unpaired at the arrangement: extra
+between-cell variance, no bias in expectation. Not re-analysed; flag for
+any paired reading across Hamming levels.
+
+*Artifact check.* Could this be a symptom of a different seed per cell?
+No: the same `stream_rng(20000)` generator was passed to every cell, and
+`y_0` matches in all 15 cells, which it would not under different seeds.
+
+Fix, opt-in: `make_stream(..., rng_dichotomies=...)`. Default unchanged
+(test `test_default_stream_unchanged_by_dichotomy_rng_option`); with a
+separate generator task 0 is paired across all cells
+(`test_separate_dichotomy_rng_pairs_task0_across_readout_similarity`).
+No existing campaign is regenerated.
+
+**Identity-Q fast path in `TwoModuleNet`.** With `readout_rank=None`,
+`Q = I_N` was multiplied on every step and the forward pass recomputed
+the hidden layer. Both are skipped now. Bitwise identical: 30 SGD steps at
+γ ∈ {0.03, 1, 10}, losses, `W`, `u`, `f` all `array_equal` against the
+unmodified code. Measured 118 → 58 ms per step at P=16, M=50, d=150, N=300,
+one BLAS thread. 80 tests pass under `PYTHONUTF8=1`. Without it, three
+tests fail on Windows on cp1252 decoding of repo JSON. Those failures are
+not related to this change and also occur on the unmodified tree.
+
+**v3 overview notebook, reduced scale.** M=50 (design 150), n_t=50
+(design 200), otherwise the design point. Treated as a robustness
+configuration, not paper numbers. `lr0` and `target_loss` are re-pinned by
+the Phase 0 decade ladder on a reserved calibration stream (30000,
+`s_f=0.1`, Hamming 8, first 4 tasks, all six γ). The rule was fixed in
+`notebooks/v3_lib.py::calibrate` before running. Evaluation streams are
+30100+r with a new salt; not pooled with any earlier population. Order
+schedules are out of scope for v3 (separate notebook later). Readout
+floor at `W(0)`, calibration stream: 8.0e-5, so `target_loss=0.05` is not
+expressivity-limited.
+
+**2026-10-29 — v3 `lr0` rule, decided before the lower rungs were seen.**
+The first rule written into `v3_lib.calibrate` ("smallest `lr0` on
+{0.05, 0.5, 5, 50} that reaches at every γ, next decade also reaching")
+was the Adam re-pin variant, which walks down from an inherited *miss*.
+Phase 0 practice is to keep the inherited value unless it misses. With
+`lr0=5` reaching at γ ∈ {0.03…3} on the calibration stream, the old rule
+could have pinned 0.5, at roughly 10× the steps and near the 20,000 cap.
+Kati chose Phase 0 practice: keep `lr0=5` if every γ reaches on all 4
+calibration tasks within cap/4 steps and `lr0=50` also reaches; otherwise
+stop and decide by hand. The `lr0 ∈ {0.05, 0.5}` rungs were not read. The
+scratch run was killed and its outputs deleted unread. The notebook
+recomputes calibration from scratch under the new rule. A learning-rate
+sweep across final results stays planned (scale and learning-rate
+robustness).
+
+*Artifact check.* Could this rule choice be outcome-driven? The rungs that
+would have decided between the two rules were never seen. The evidence
+used was steps-to-target at `lr0 ∈ {5, 50}` (cost and margin to the
+cap). Geometry was not used: none had been computed on any evaluation
+stream.
+
+Contention measured on that scratch run: 11 workers ran about 170 ms per
+step, against 58 ms for one worker alone, about 3× slower per worker.
+Projection at `lr0=5`, 15 cells × 6 γ: about 4.3 h wall per replicate on
+11 workers (inferred from calibration timings; §3.1 of the notebook
+measures it). First execution uses 3 replicates.
+
+**2026-10-30 — v3 calibration and measured one-arm, reduced scale.** The
+`lr0` check passes. `lr0=5` reaches 0.05 at every γ on all 4 calibration
+tasks, max 1,722 steps (allowed 5,000). `lr0=50` reaches at every γ. Pin
+`lr0=5`. Step counts are bitwise those of the killed scratch run
+(deterministic). Timing arms, cell `s_f=0.1`, Hamming 8, replicate 0,
+16 tasks + 34 GLUE evaluations each:
+
+| γ | wall s | total steps |
+|---|---|---|
+| 10 | 127 | 246 |
+| 3 | 155 | 707 |
+| 1 | 237 | 1,965 |
+| 0.3 | 456 | 6,114 |
+| 0.1 | 739 | 15,559 |
+| 0.03 | 1,350 | 28,906 |
+
+The first five ran together at 6 workers. γ=0.03 ran nearly alone after a
+restart, so its contention is understated. Sum 3,064 s per (cell,
+replicate). For 15 cells × 3 replicates on 11 workers that projects to
+3.5 h with no extra contention. Expect 5–7 h; the earlier scratch run
+measured contention at about 3× per step at 11 workers. All 6 arms usable.
+
+Two runs died with no error when the agent session was interrupted.
+Processes started from the agent shell end with it. The run now goes
+through `notebooks/run_v3.py`, launched via WMI and holding an idle-sleep
+inhibit. Smoke wall times were inflated by about 28,000 s of laptop sleep
+(`time.time()` counts suspend); the smoke cache was deleted.
+
+---
+
+## 2026-11-02 — v3 grid finished (notebook written 2026-10-31 17:38)
+
+Checked the run state. Nothing is running (0 Python processes). The completing
+execution wrote `notebooks/project-overview-v3.ipynb` in place at 17:38 on
+2026-10-31 (10,092,107 bytes, 35 figures, 0 error outputs).
+`notebooks/_v3_cache/grid.jsonl` has 270 lines, last write 17:33 the same day.
+The grid cell of that execution reports wall 13,326 s and summed arm wall
+282.8 h. `lr0` stayed the cached pin 5.
+
+**Record.** 270 arms, one config, 270 distinct `(γ, s_f, Hamming, replicate)`.
+Checkpoint key digest `30a08ddd7c615f4c` on all 270. 0 unusable. 0 tasks at the
+20,000-step cap. Max steps on any task: 2,653. Max final loss: 0.050.
+Every arm has 17 rows (init plus 16 boundaries). Stamps: git `1922626` on 269,
+`unknown` on 1; dirty on all 270; `stale` empty on all 270. Every stamp lists
+`pipeline` as unregistered, because this notebook path does not import it, so
+the stamp does not cover that module.
+
+Final `||ΔW||/||W||`, median over the 45 arms at each γ, module A (B within
+0.01 of A at every γ): 0.007, 0.045, 0.127, 0.260, 0.452, 0.880 at
+γ = 0.03, 0.1, 0.3, 1, 3, 10. Lag-0 sign accuracy is 1 on all 270 arms.
+The coverage table (retained `log α`, lag 0 to lag 15, n=3, 95% CI) is in the
+executed notebook. Resolved there means the CI excludes 0 and
+`|mean| ≥ 2 ×` the retained-`log α` floor; that threshold printed as 0.1531.
+Replicates stay at 3 until a later decision about 5–8.
+
+*Artifact checks, run on the cache and by regenerating stream 30100.*
+
+1. Sleep in the arm timer. Eleven arms, all replicate 0, have wall
+   71,104–73,749 s against 4,572–27,945 steps (median over all arms is 0.171 s
+   per step; these reach 15.6). Those are the first session, where `time.time`
+   counted suspend. Each of them reached the loss target inside the cap. The
+   282.8 h sum is not a compute cost.
+2. Sign accuracy 0 as a failed arm. The only six such records are
+   `s_f=1`, Hamming 8, replicate 0, boundary 14, all six γ, `margin_mean`
+   about −0.81. Regenerating that stream: Hamming distance from task 0's
+   dichotomy is 16 at task 14 and nowhere else in the three replicates.
+   The same dichotomy sequence at `s_f ∈ {0.9, 0.1}` does not give accuracy 0.
+   Lag-0 accuracy on these arms is 1, and they converged.
+3. Mixed code in the cache. One digest on all 270 keys, and no stale module
+   hash. The single `unknown` git sha is a stamp failure inside that digest.
+4. Task-0 pairing, re-checked for stream 30100: `y_0` is identical across all
+   15 cells, and the task-0 centres are identical across Hamming at `s_f=1`.
+   The notebook printed the same assert for replicate 0 at execution.
+
+The coverage table is left as the notebook's record. Consecutive Hamming is
+the generator knob; Hamming to task 0 at lag 15 is a walk (replicate 0 of the
+Hamming-8 stream reaches 16; replicate 2 of the same cell ends at 2). With
+n=3 the CI is wide. Neither is a reason to re-run.

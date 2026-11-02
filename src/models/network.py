@@ -170,6 +170,8 @@ class TwoModuleNet:
 
     def _projected(self, X: np.ndarray, module: str) -> np.ndarray:
         """Readout-path features: `h Qᵀ`, shape `(B, r)`. Q is frozen."""
+        if self.readout_rank is None:
+            return self.hidden(X, module)
         return self.hidden(X, module) @ self.Q[module].T
 
     def representation(self, X: np.ndarray, module: str | None = None) -> np.ndarray:
@@ -227,7 +229,13 @@ class TwoModuleNet:
         B = X.shape[0]
         chain = {m: self._hidden_chain(X, m) for m in MODULES}
         H = {m: chain[m][-1] for m in MODULES}
-        pred = self.forward(X)
+        identity_Q = self.readout_rank is None
+        if self.n_outputs == 1 and identity_Q:
+            pred = np.zeros(B, dtype=np.float64)
+            for m in MODULES:
+                pred += self.cfg[m].output_scale * (H[m] @ self.u[m])
+        else:
+            pred = self.forward(X)
         if loss == "mse":
             err = pred - y
             loss_val = float(0.5 * np.mean(err ** 2))
@@ -246,9 +254,9 @@ class TwoModuleNet:
             c = self.cfg[m]
             Q = self.Q[m]
             if self.n_outputs == 1:
-                Hp = H[m] @ Q.T
+                Hp = H[m] if identity_Q else H[m] @ Q.T
                 gu[m] = c.output_scale * (Hp.T @ err) / B
-                v = Q.T @ self.u[m]
+                v = self.u[m] if identity_Q else Q.T @ self.u[m]
                 delta = (H[m] > 0) * (c.output_scale * err)[:, None] * v[None, :]
             else:
                 gu[m] = c.output_scale * (err.T @ H[m]) / B

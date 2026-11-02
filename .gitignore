@@ -229,6 +229,13 @@ papers/*.pdf
 !/results/figures/
 !/results/logs/
 
+# v3 notebook cache. Data, not source. Lives on the machine that computes it.
+notebooks/_v3_cache/
+notebooks/_v3_cache_smoke/
+
+# Slurm logs from cluster jobs submitted in this repo.
+logs/
+
 # Compiled paper PDF; TeX sources are tracked.
 paper/harness/main.pdf
 paper/harness/main.aux
