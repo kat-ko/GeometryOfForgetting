@@ -12,8 +12,12 @@ export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
+export PYTHONUNBUFFERED=1
 
 cd "$SLURM_SUBMIT_DIR"
 mkdir -p logs
-uv sync --locked
-uv run --locked python scripts/v3_one_arm.py
+# Lockfile selects NumPy by Python version: 2.2.6 below 3.11, 2.4.6 on 3.11.
+# The laptop grid ran on 3.11.9 / NumPy 2.4.6. The login image is 3.10.
+uv python install 3.11
+uv sync --python 3.11 --locked
+uv run --python 3.11 --locked python scripts/v3_one_arm.py

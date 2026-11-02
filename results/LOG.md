@@ -4610,3 +4610,20 @@ All 29 hashed `src/**/*.py` files were CRLF on disk, and `code_digest` hashes
 file bytes. A Linux checkout of the same commit would hash different bytes.
 Added `* text=auto eol=lf`. The digest to compare is the one computed after
 the working tree is LF, on both machines, before any cache is trusted.
+
+---
+
+## 2026-11-02 — digest matched on the clone; NumPy follows the Python version
+
+Clone `/home/kathrin/GeometryOfForgetting` at `0e65c3f`. Digest of `src/**/*.py`
+plus `notebooks/v3_lib.py`, computed with the same hash on both machines after
+an LF checkout: `3d95619d3b1b3f7d`. CRLF count on the clone: 0 across 29 files.
+The October cache (`30a08ddd7c615f4c`) does not hit this tree.
+
+`uv.lock` selects NumPy by interpreter: 2.2.6 when `python_full_version < '3.11'`,
+2.4.6 on 3.11. The laptop grid ran in `.venv` on Python 3.11.9 / NumPy 2.4.6 /
+scipy-openblas 0.3.31.188.0. Job 3568 used the login image's CPython 3.10.12
+and installed NumPy 2.2.6, SciPy 1.15.3. It was cancelled while the arm was
+still running, so its wall time is not a measurement. The timing script now
+installs Python 3.11 before `uv sync --locked`. Grime's OpenBLAS build string
+is whatever that job prints.
