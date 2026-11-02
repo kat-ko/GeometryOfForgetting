@@ -4627,3 +4627,11 @@ and installed NumPy 2.2.6, SciPy 1.15.3. It was cancelled while the arm was
 still running, so its wall time is not a measurement. The timing script now
 installs Python 3.11 before `uv sync --locked`. Grime's OpenBLAS build string
 is whatever that job prints.
+
+Job 3569 on grime printed, before the arm: digest `3d95619d3b1b3f7d`,
+`cpu_count` 256, all four thread variables 1, Python 3.11.16, NumPy 2.4.6,
+SciPy 1.17.1, `scipy-openblas 0.3.31.188.0`. The laptop `.venv` is Python
+3.11.9, NumPy 2.4.6, SciPy 1.17.1, the same OpenBLAS version. The config
+line differs by the host kernel: laptop `SkylakeX MAX_THREADS=24`, grime
+`Haswell MAX_THREADS=64`. `DYNAMIC_ARCH` picks that at load. Both runs pin
+one thread. Wall time for 3569 is not in yet.
