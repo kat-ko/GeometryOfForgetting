@@ -4635,3 +4635,29 @@ SciPy 1.17.1, `scipy-openblas 0.3.31.188.0`. The laptop `.venv` is Python
 line differs by the host kernel: laptop `SkylakeX MAX_THREADS=24`, grime
 `Haswell MAX_THREADS=64`. `DYNAMIC_ARCH` picks that at load. Both runs pin
 one thread. Wall time for 3569 is not in yet.
+
+---
+
+## 2026-11-03 — grime one-arm timing finished; placeholder grid job did not run
+
+Checked `sacct` for `kathrin` from 2026-11-02. Nothing is queued.
+
+**Job 3569** (`gof-v3-time`, grime, 2 CPUs, 16 GiB) completed 2026-11-02
+18:23:48, elapsed 6 min 24 s, exit 0. Log
+`/home/kathrin/GeometryOfForgetting/logs/v3-time-one-3569.log`:
+
+```
+arm gamma=0.03 s_f=0.1 hamming=8 replicate=0 usable=True steps=28906 wall_s=348.9
+```
+
+Step count matches the laptop timing arm for this cell (28,906 steps, 1,350 s
+wall, 2026-10-30 entry). Grime wall is 348.9 s on one BLAS thread. This is
+the per-arm cost. It is not a contention measurement: the allocation was 2
+CPUs and the script runs one process.
+
+**Job 3570** (`gof-v3`, grime, 32 CPUs) failed 2026-11-02 19:27:27 after 1 s,
+exit 1. `sbatch/run.sh` still executes `python -m ENTRYPOINT_PLACEHOLDER`.
+Stderr: `No module named ENTRYPOINT_PLACEHOLDER`. No arm ran.
+
+`notebooks/_v3_cache/` and `logs/` stay untracked. The October cache digest
+does not match this tree.
