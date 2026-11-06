@@ -138,7 +138,7 @@ def draw_task(ax, points, centers, y, basis, *, flipped=None, title="", s=2):
     Z, C = project(points, basis), project(centers, basis)
     for i in range(Z.shape[0]):
         col = LABEL_COLOR[int(y[i])]
-        ax.scatter(*Z[i, :, :PROJ_DIM].T, s=s, color=col, alpha=0.3, linewidths=0)
+        ax.scatter(*Z[i, :, :PROJ_DIM].T, s=s, color=col, alpha=0.65, linewidths=0)
         edge = "black" if (flipped is not None and flipped[i]) else col
         ax.scatter(*C[i, :PROJ_DIM], s=28, color=col, edgecolors=edge,
                    linewidths=1.6 if edge == "black" else 0.0)
