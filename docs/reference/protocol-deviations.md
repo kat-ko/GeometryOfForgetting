@@ -45,11 +45,20 @@ well as in retained capacity, the two formulas diverge in the condition the
 paper is about. Current behavioural CF there is ~0; if accuracy is at
 ceiling they still coincide. The 2026-07-31 sheet's toy-example check passed
 because in that example the two references coincide (`07-writeup.md` §A.7).
-Do not switch the code to the running max without a pre-commit: existing
-arms would re-rank.
+~~Do not switch the code to the running max without a pre-commit: existing
+arms would re-rank.~~
 
 **Where recorded.** This file; `docs/reference/cl-metrics.md`;
 `07-writeup.md` §A.7.
+
+**[RESOLVED 2026-11-06, Kati]** `pipeline.forgetting_metrics` now uses the
+running max `max_{t ∈ {i..T−1}} a_{t,i}` (0-indexed rows `j … T−2`; the final
+row is excluded, so CF is signed). Tests:
+`tests/test_pipeline.py::test_forgetting_peak_is_running_max_when_accuracy_recovers`
+and `…_excludes_final_row_so_backward_transfer_is_negative`, both failing on
+the `a_{i,i}` code. The pre-commit condition above is withdrawn by the
+docs/24 §0a stance: existing arms are signal, not baselines, so re-ranking
+them is not a cost. No old arm is recomputed.
 
 ---
 

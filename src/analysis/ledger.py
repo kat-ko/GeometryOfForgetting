@@ -1038,7 +1038,8 @@ CORRECTIONS: tuple[Correction, ...] = (
                "the sheet was checked against Graldi's toy example, where the two references "
                "coincide, so the check could not see the discrepancy. S-HH is a case where a "
                "past task improves during later training; if that appears behaviourally the "
-               "formulas diverge in the paper's condition of interest. Code still uses a_{i,i}",
+               "formulas diverge in the paper's condition of interest. Code fixed to the "
+               "running max 2026-11-06 (protocol-deviations.md D.2, resolved)",
                "check", quoted_at="07-writeup.md §A.7; docs/reference/cl-metrics.md"),
     Correction("Hamming-axis monotone_dose / mixed",
                "monotone_dose at γ=1; mixed because γ=10 frozen is nonmonotone",

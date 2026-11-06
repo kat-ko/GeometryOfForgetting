@@ -4661,3 +4661,71 @@ Stderr: `No module named ENTRYPOINT_PLACEHOLDER`. No arm ran.
 
 `notebooks/_v3_cache/` and `logs/` stay untracked. The October cache digest
 does not match this tree.
+
+---
+
+## 2026-11-06 — Forgetting formula fixed to the running max (docs/07 §A.7)
+
+Decision (Kati, 2026-11-06): results produced before this date are early
+signal, not baselines (docs/24 §0a, to be amended in). That withdraws the
+pre-commit condition in `protocol-deviations.md` D.2, which blocked the fix
+because existing arms would re-rank.
+
+`pipeline.forgetting_metrics` peak changed from `acc[j, j]` to the running
+max over rows `j … T−2` (Graldi A.3/A.4, `max_{t∈{i..T−1}} a_{t,i}`). The
+final row is excluded, so CF is negative when a task is still improving at
+the end. NaN rows are skipped.
+
+Tests: `test_forgetting_peak_is_running_max_when_accuracy_recovers` (CF 0.2,
+the `a_{i,i}` code gives 0.1) and
+`test_forgetting_peak_excludes_final_row_so_backward_transfer_is_negative`.
+Both fail on the old code and pass on the new. `tests/test_pipeline.py` +
+`tests/test_analysis_ledger.py`: 36 passed under `PYTHONUTF8=1`. Without it
+one ledger test fails on the known cp1252 decode error (2026-10-28 note),
+unrelated to this change.
+
+Side effect: `src/` changed, so `CODE_DIGEST` changed and
+`notebooks/_v3_cache/` no longer resumes. No old arm is recomputed.
+Amended: D.2 (resolved), `cl-metrics.md` status, `07` §A.7, ledger text.
+
+---
+
+## 2026-11-06 — Decisions on the docs/24–26 review; amendments applied
+
+Kati reviewed the agent's analysis of docs/24–26 and confirmed the code findings:
+- the loss is `0.5·mean(err²)`, so L(0) = 0.5;
+- `weight_change` is measured from init;
+- there was no NTK or CKA code;
+- `MODULES` is hard-coded.
+
+Decisions, applied as visible amendments (originals struck through, not
+deleted) in docs/24, docs/25, docs/26 and AGENTS.md:
+
+- **Stance on old results** (docs/24 §0a). They are signal, not baselines.
+  There is no comparability requirement and no reruns. The error registry
+  means fixes with tests.
+- **Stopping.** ε = 0.1·L(0). The target stays 0.05.
+- **Configurations renamed 1M/2M.** The core is 1M at N = 300. Width becomes an
+  ablation, N ∈ {150, 600}.
+- **Richness.** The analytic NTK is primary: ΔK, ΔK_u and CKA(K, yyᵀ). Weight
+  change and r_t are secondary. There is no hidden-Gram CKA.
+- **Forward transfer.** Specific = Δlog α_{y_{t+1}} − Δlog α_{y*}, with
+  s_r(y*, y_t) recorded. The generic subtraction is dropped. FT_beh is measured
+  against a fresh learner. Only the first loss is stored. The only exclusion is
+  Hamming 0 with frozen input.
+- **Order.** The two-task A–B–A paradigm comes first and the stream second.
+- **Other amendments.**
+  - n = 16 dropped.
+  - C2 scoped to gradient descent.
+  - Factorial-labelling sentence struck.
+  - Second-learner rationale given as the three failures in `07` §A.9.
+  - Stopping-rule ablation row added.
+  - docs 25 and 26 listed as active.
+  - PoC location is `notebooks/poc/`.
+  - The 25 §6.2 pointer now goes to docs/27.
+  - "Read docs/24, 25, 26 first." added to AGENTS.md (root and docs/ copies,
+    which are identical).
+
+Pending: the error registry, the choices register and the confirmatory-test
+draft (docs/25 §8 steps 4–6). No stream grid runs before Kati signs docs/26
+and the grid.

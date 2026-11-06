@@ -22,10 +22,20 @@ Validation and robustness results are never reported as findings.
 
 ## 1. Core rerun — one module, one change
 
-**What changes.** Configuration C2 (two identical modules summed into one
-readout) becomes C1: one hidden layer, `N = 300`. Nothing else changes, so the
-new core is comparable to every existing result. The two-module structure was
+**What changes.** Configuration ~~C2~~ **2M** (two identical modules summed into one
+readout) becomes ~~C1~~ **1M**: one hidden layer, `N = 300`. ~~Nothing else changes, so the
+new core is comparable to every existing result.~~ The two-module structure was
 a vestige of the modularity origin, not a design choice for this question.
+
+**[Amended 2026-11-06, Kati]**
+- There is no comparability requirement with existing results (`docs/24` §0a).
+- 1M at N = 300 halves total width relative to 2M (2 × 300). Kati's reason, for
+  the choices register:
+  - N = 300 is the smallest width at which readings were width-invariant
+    (N = 150–600), at the lowest cost.
+  - `lr0` and the noise floors were established at 300.
+  - μP keeps γ₀ comparable across widths.
+- Width is tested as an ablation, N ∈ {150, 600} (`docs/24` §5).
 
 **Added to the measurement (same runs, no extra arms):**
 - forward-transfer quantities, §4
@@ -50,10 +60,16 @@ v3 (`M = 50`, `n_t = 50`) is a robustness configuration, not paper numbers.
 not fit, propose a cut to Kati — γ₀ {0.1, 1, 10} × Hamming {0, 2, 4, 8} is
 the fallback (288 arms). Cut levels, never seeds.
 
-**Pre-commit before the grid (this is also the C2→C1 check):**
+~~**Pre-commit before the grid (this is also the C2→C1 check):**
 C1–C3 of `docs/24` §3 keep their **sign and ordering** under C1. Magnitudes
 are reported side by side with the C2 grid, not pooled. A sign change is a
-finding about the two-module learner and stops the arm for a decision.
+finding about the two-module learner and stops the arm for a decision.~~
+
+**[Amended 2026-11-06, Kati]** Dropped. Old results are signal, not baselines
+(`docs/24` §0a), so the 1M grid needs no agreement check against the 2M grid.
+The pre-commit for the grid is the confirmatory-test specification (`docs/26`
+A4; drafted for Kati to sign). No grid runs before Kati signs `docs/26` and the
+grid.
 
 ---
 
@@ -88,6 +104,24 @@ Change one choice at a time, as an ablation row, never inside the core.
 **Secondary:** relative NTK (or hidden-kernel) change after task 0.
 Both already exist as manipulation checks; report them per arm.
 
+**[Amended 2026-11-06, Kati]** ~~Primary and secondary above.~~ Primary is the
+**analytic NTK** on a fixed probe set (e.g. 20 points per manifold), reported
+three ways:
+- (a) relative change of the full NTK, `‖K(t) − K(0)‖_F / ‖K(0)‖_F`;
+- (b) relative change of the readout block `K_u = s²HHᵀ`;
+- (c) NTK–label alignment `CKA(K, yyᵀ)` (Chou et al. 2025, Table 1).
+
+Reason for (b): `u(0) = 0` makes the hidden-weight block `K_W` zero at init, so
+the full-NTK change includes readout growth even when training is lazy. Check
+whether `K_u` separates lazy from rich more cleanly than the full NTK.
+
+Secondary: weight change from init (logged), and the per-task
+`r_t = ‖W_end(t) − W_start(t)‖ / ‖W_start(t)‖`, which is new code (store `W` at
+each task start). Hidden-Gram CKA is **not** a richness axis, because it
+measures the representation, which is the outcome. Neither the NTK nor `r_t`
+existed in `src/` on 2026-11-06. The A–B–A notebook's `aba_lib.py` implements
+both.
+
 For every claim C1–C3, produce the result **twice**: against γ₀ and against
 `r`. Pre-commit, per claim: the reading is the same on both axes (sign and
 ordering of conditions). Disagreement is reported as a finding about what the
@@ -100,6 +134,17 @@ Within-learner, γ₀ stays the manipulated variable. Across learners (§6.1),
 ---
 
 ## 4. Forward transfer — one geometric, one behavioural measure
+
+**[Amended 2026-11-06, Kati]** This section is superseded by the forward-transfer
+definitions in `docs/26` A2 as amended:
+- **Geometric, specific:** `Δlog α_{y_{t+1}} − Δlog α_{y*}`, using the held-out
+  probe y*, with `s_r(y*, y_t)` recorded. Only `Δlog α_{y_{t+1}}` is decomposed
+  into channels.
+- **Behavioural:** steps to criterion against a fresh learner from the same init.
+- **Zero-shot:** the first loss of each task is stored.
+- **Exclusion:** only Hamming 0 with frozen input.
+
+The text below is kept for the record.
 
 At each boundary `t`, on the representation after task `t`:
 
@@ -126,6 +171,22 @@ Guards:
 ---
 
 ## 5. Rerun policy — results produced before a fix
+
+**[Amended 2026-11-06, Kati]** Simplified, and it overrides the text below:
+- **No old arm is rerun.** Every claim comes from new runs on fixed code.
+- The provenance audit is **one table** that marks every existing result file
+  "pre-method, signal only". The `clean` / `unaffected` / `rerun` statuses below
+  are not used.
+- The error registry stays, but each row's job is a **fix in code with a test**.
+  It does not drive reruns.
+- Add every item listed in the 2026-11-06 analysis (about 20 beyond the seed).
+- Split the two ρ_c errors into separate rows: the `rho_c_glue` calibration
+  clip, and the earlier `|ρ_c|` absolute-value convention.
+- Correct the `stream_id` row: the affected sets were the 960-arm grid, the
+  γ=5 n16 set (4 unique seeds × 4 copies) and the 2×2 width set (2 unique
+  seeds). The n=40 sets are the post-fix reruns.
+- The live forgetting-formula error (`a_{i,i}` instead of the running max) was
+  fixed in `src/pipeline.py` with tests on 2026-11-06.
 
 Build `docs/reference/error-registry.md`: every code error found so far, with
 the date and commit of the fix and what it could affect. Seed from LOG:
@@ -158,12 +219,12 @@ rerun (§1); list which. Items that feed nothing go to archive, not rerun.
 ## 6. Open ablations — run on the new core learner
 
 ### 6.1 Order (task position) — `docs/23`, amended
-Design and readings unchanged, except: the learner is C1, and the `forward`
+Design and readings unchanged, except: the learner is ~~C1~~ **1M**, and the `forward`
 schedule comes from the new core grid, not `results/hamming/`. Amend
 `results/order_precommit.json` accordingly **before** the one-arm. Primary
 cell stays lag 4, presentation index 8, γ₀ = 10.
 
-### 6.2 Exposure spacing — new pre-commit, `docs/26`
+### 6.2 Exposure spacing — new pre-commit, ~~`docs/26`~~ `docs/27` **[Amended 2026-11-06]**
 **Question.** At equal total exposure to a task, does distributing it change
 retained capacity and its channel composition?
 
@@ -210,9 +271,27 @@ Rules: one finding per notebook; no conflating claims. Built from a
 `_build_*.py` script so the notebook is reproducible. Under ~2 MB committed:
 inline figures at low dpi, publication figures written to `figures/`.
 
+**[Amended 2026-11-06, Kati]** Waiver for `notebooks/core/aba_controlled.ipynb`:
+- It has no `_build_*.py`. It comes with `aba_lib.py`, which holds the
+  generator, the 1M network, training, NTK and a vendored GLUE copy.
+- One notebook cell asserts that the vendored GLUE matches `src.glue.core`
+  whenever `src` imports.
+
 ---
 
 ## 8. Order of work
+
+**[Amended 2026-11-06, Kati]** This order replaces the list below:
+1. Fix the forgetting formula in `src`, with a test. (Done 2026-11-06.)
+2. The A–B–A notebook in QUICK mode; report the validation results and runtime.
+3. Docs amendments.
+4. Error registry: fixes plus tests.
+5. Choices register.
+6. Draft the confirmatory-test specification.
+7. Implement measurement on task t+1's manifolds for the stream, then time ONE
+   design-scale 1M stream arm with every `docs/26` measurement included.
+
+No stream grid, order or spacing runs until Kati signs `docs/26` and the grid.
 
 1. Error registry and provenance audit (§5). Zero compute.
 2. Choices register (§2). Zero compute.

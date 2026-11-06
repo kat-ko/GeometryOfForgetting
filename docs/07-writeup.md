@@ -727,9 +727,13 @@ The distinction is not pedantic here. `S-HH` is a case where a past task's retai
 *improves* during subsequent training. If that appears behaviourally as well as geometrically,
 `max_t ≠ a_{i,i}` and the two formulas diverge exactly in the condition the paper is about.
 Current behavioural CF in that corner is zero to within measurement (−0.0005 to +0.0001); if
-accuracy is already at ceiling the two still coincide on the accuracy metric. The code still
+accuracy is already at ceiling the two still coincide on the accuracy metric. ~~The code still
 uses `a_{i,i}` (`protocol-deviations.md` D.2). Switching to the running max would re-rank
-existing arms and is not licensed by correcting the sheet.
+existing arms and is not licensed by correcting the sheet.~~
+
+**[Amended 2026-11-06, Kati]** The code now uses the running max, with tests that fail on
+the `a_{i,i}` version (`protocol-deviations.md` D.2, resolved). Under the docs/24 §0a
+stance, existing arms are signal and not baselines, so re-ranking them is no longer a cost.
 
 The generalisable point is the same shape as §A.2's range test, on a formula rather than a guard:
 **a check that can only fire when two expressions disagree is not a check when it is run on data

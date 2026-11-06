@@ -2,6 +2,9 @@
 
 Rules for any LLM agent working in this repository.
 
+**Read docs/24, 25, 26 first.** (Added 2026-11-06, Kati.) They set the scientific
+hierarchy, the operating rules and the method. The invariants below still hold.
+
 Read `docs/00-math-spec.md` before writing any numerical code. Read
 `docs/02-validation-suite.md` before claiming any component works.
 

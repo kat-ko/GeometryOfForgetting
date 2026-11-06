@@ -9,6 +9,9 @@ Principle: every manipulated variable has a measured counterpart, and
          claims are stated on the measured one. This is what makes the
          method general (any learner, any data) and specific (exact
          definitions) at once.
+Amended: 2026-11-06, Kati. Amendments are marked inline and the original text
+         stays visible (struck through where replaced). The docs/25 §6.2
+         pointer to docs/27 is done.
 ```
 
 ---
@@ -19,11 +22,14 @@ Principle: every manipulated variable has a measured counterpart, and
 
 **Stopping rule: relative loss.** Stop task `t` when the current-task loss
 falls to `ε · L_t(0)`, where `L_t(0)` is the loss of a zero-output network on
-task `t`. Default `ε = 0.05`.
+task `t`. Default ~~`ε = 0.05`~~ **`ε = 0.1`**.
 
-- It **reduces exactly to the existing rule**: with readout at zero,
+- ~~It **reduces exactly to the existing rule**: with readout at zero,
   `f(θ₀) = 0`, so MSE on ±1 targets gives `L(0) = 1` and the core's matched
-  loss 0.05 is already `ε = 0.05`. No existing result changes meaning.
+  loss 0.05 is already `ε = 0.05`. No existing result changes meaning.~~
+  **[Amended 2026-11-06, Kati]** The loss is `0.5·mean(err²)`
+  (`src/models/network.py:241`), so `L(0) = 0.5`, not 1. **ε = 0.1**, which
+  keeps the target at 0.05. ε = 0.05 would have stopped at 0.025.
 - It is defined the same way for any loss: BCE/CE `L(0) = log 2`. For EWC,
   apply it to the task term only, never the penalty. For replay, to the
   current-task data only. This fixes the "stopping rule per method" trap by
@@ -37,13 +43,22 @@ under a fixed step budget per task, the usual CL protocol. If C1–C3 keep
 their sign, the stopping rule is not doing the work.
 
 **Measured richness: per task, read at the operating point.**
-- `r_t = ‖W_end(t) − W_start(t)‖_F / ‖W_start(t)‖_F` for every task. Already
-  logged (`TaskRecord.weight_change`).
+- `r_t = ‖W_end(t) − W_start(t)‖_F / ‖W_start(t)‖_F` for every task. ~~Already
+  logged (`TaskRecord.weight_change`).~~ **[Amended 2026-11-06]**
+  `TaskRecord.weight_change` is cumulative from initialisation
+  (`network.py:129, 343`), so it equals `r_t` only at t = 0. `r_t` needs new
+  code: store `W` at each task start.
+- **[Amended 2026-11-06, Kati] Primary richness measure: the analytic NTK** on a
+  fixed probe set. Report the relative change of the full NTK, the relative
+  change of the readout block `K_u = s²HHᵀ`, and `CKA(K, yyᵀ)`. Weight change
+  from init and `r_t` are secondary. Full definitions are in `docs/25` §3.
 - **Learner-level summary:** `r_0`. Task 0 starts from initialisation for
   every learner, so it is the only comparable point across learners.
-- **Secondary:** kernel change on a fixed probe set, `1 − CKA(K_start, K_end)`
+- ~~**Secondary:** kernel change on a fixed probe set, `1 − CKA(K_start, K_end)`
   of the hidden Gram matrix. Functional rather than parametric. Pre-commit
-  that the two agree in ordering.
+  that the two agree in ordering.~~ **[Amended 2026-11-06, Kati]** Dropped.
+  Hidden-Gram CKA measures the representation, which is the outcome, so it is
+  not a richness axis.
 - The trajectory `r_0, r_1, …` is reported, not summarised. It tests
   endogenous regime drift (a network becoming lazy after task 0, the
   Graldi "pretraining effect"), which belongs to the big picture and costs
@@ -81,7 +96,20 @@ the stream made it faster.
 
 **Primary question, unchanged:** which channel of `FT_geo` predicts
 `FT_beh`, conditional on the label and input relation between `t` and
-`t+1`. Same-dichotomy pairs are excluded.
+`t+1`. ~~Same-dichotomy pairs are excluded.~~
+
+**[Amended 2026-11-06, Kati] — A2 as decided:**
+- **Specific:** `FT_geo = Δlog α_{y_{t+1}} − Δlog α_{y*}`, using the existing
+  held-out probe dichotomy y*. It is a fixed-y measure of the same estimator kind
+  as `y_{t+1}`. Record `s_r(y*, y_t)`.
+- **Channels:** only `Δlog α_{y_{t+1}}` is decomposed.
+- The generic-ensemble subtraction above (`Δlog α_gen`) is **dropped**.
+- **Behavioural:** steps to criterion against a fresh learner from the same
+  init, as above.
+- **Zero-shot:** store the first loss of each task, not the whole loss curve
+  (v3 did not store `loss_curve`).
+- **Exclusion:** only Hamming 0 with frozen input. Under drift or jump, a
+  Hamming-0 pair is not the same task.
 
 ## A3. Stream (setting)
 
@@ -94,6 +122,14 @@ controls consecutive steps.
 |---|---|---|
 | two-task `A → B` | label relation and input relation between A and B, exactly | mechanism: C1–C3, forward transfer |
 | stream `T = 16` | consecutive relations; the rest is realised | accumulation, position, order, spacing |
+
+**[Amended 2026-11-06, Kati]** Order:
+1. The controlled two-task paradigm comes **first**. It runs as **A → B → A**,
+   which adds relearning: savings, and A's geometry after re-exposure.
+2. The stream paradigm comes second.
+
+Boundary 1 of each stream (A → B) is the bridge between the two. Spec and
+implementation: `notebooks/core/aba_controlled.ipynb` and `aba_lib.py`.
 
 **In the stream, analyse on realised relations.** Retained capacity of task
 `j` at time `t` is read against `S_r(j, t)` and `ρ_in(j, t)`, the realised
@@ -131,9 +167,22 @@ mean relation over intervening tasks. The cliff becomes an exact statement
   design across γ₀ and conditions. A **confirmatory set** of six tests:
   C1, C2, C3, the forward-transfer primary, and the two richness-axis
   agreements. Holm correction across the set. Everything else is
-  exploratory and labelled in the caption. `n = 8` by default; `n = 16`
+  exploratory and labelled in the caption. `n = 8` by default; ~~`n = 16`
   only where a magnitude of `Δρ_c` is claimed (between-arrangement variance
-  is 5–10× within, `docs/14` §5).
+  is 5–10× within, `docs/14` §5).~~ **[Amended 2026-11-06, Kati]** No n = 16.
+  `Δρ_c` magnitudes are exploratory at n = 8.
+- **[Amended 2026-11-06, Kati] Confirmatory-test specification (to draft, then
+  Kati signs).** For each of the six tests:
+  - the primary cell;
+  - the paired contrast per unit;
+  - the statistic: a sign count plus a bootstrap CI over unique draws;
+  - the criterion;
+  - Holm correction across the six.
+
+  C1 is an interaction contrast. The richness-axis agreements need a **positive
+  agreement criterion**: same sign, with the CI excluding 0 on both axes, and
+  the same ordering of conditions. Failure to reject a difference does not
+  count. Kati sets the thresholds.
 
 ---
 
@@ -161,9 +210,12 @@ realised and recorded; it measures how effects accumulate with lag and
 position.
 
 **Instantiation.** Synthetic manifolds after Chou et al. (2025): `P = 16`
-four-dimensional spherical manifolds in `d = 150`, `M = 150` points each,
+four-dimensional spherical manifolds in `d = 150`, `M = 150` points each~~,
 labelled by four binary factors (labelling only; centres drawn
-independently). Label relation is set by Hamming steps; input relation by an
+independently)~~. **[Amended 2026-11-06]** Each manifold is a unit 3-sphere of
+radius R in a random 4-dimensional span, plus small isotropic noise, with
+independently drawn centres. Dichotomies are random balanced draws or Hamming
+steps from the previous one. Label relation is set by Hamming steps; input relation by an
 AR(1) redraw of the centres with axes and shapes held (centre displacement).
 Real-data instantiations (§4) keep the task definition and measure `ρ_in`.
 
@@ -177,12 +229,17 @@ Every non-default choice and its reason is listed in the choices register
 (Appendix).
 
 **Operating point.** Each task is trained until current-task loss reaches
-`ε = 0.05` of the zero-output loss. The rule is defined identically for any
+~~`ε = 0.05`~~ **`ε = 0.1`** of the zero-output loss (**[Amended 2026-11-06]**:
+the loss is `½·mean(err²)`, so the zero-output loss is 0.5 and the target is 0.05). The rule is defined identically for any
 loss or algorithm, so different learners are each run at their own operating
 point and compared only through within-learner contrasts.
 
-**Measured richness.** Relative weight change per task, `r_t`, with `r_0`
-as the learner-level summary and kernel change as a secondary measure. Within
+**Measured richness.** ~~Relative weight change per task, `r_t`, with `r_0`
+as the learner-level summary and kernel change as a secondary measure.~~
+**[Amended 2026-11-06]** The analytic NTK on a fixed probe set is primary:
+relative change of the full kernel, relative change of its readout block, and
+kernel–label alignment. Relative weight change from initialisation and per
+task (`r_t`) are secondary. Within
 a learner, `γ₀` is manipulated and `r` checks it; across learners, `r` is
 the axis.
 
@@ -208,24 +265,28 @@ representation relates tasks rather than how well it supports one.
 | | geometric | behavioural |
 |---|---|---|
 | **backward** (task `j`, after `t > j`) | `Δlog α_{y_j}` from end of `j` to `t`, three channels | loss on `j`, end of `j` → `t` |
-| **forward** (task `t+1`, before training it) | specific `FT_geo`: change in `α_{y_{t+1}}` minus change in generic capacity, from `h_0` to `h_t` | `FT_beh`: steps to criterion vs a paired fresh learner |
+| **forward** (task `t+1`, before training it) | specific `FT_geo`: change in `α_{y_{t+1}}` minus change in ~~generic capacity~~ **capacity for the held-out probe y\*** [Amended 2026-11-06], from `h_0` to `h_t` | `FT_beh`: steps to criterion vs a paired fresh learner |
 
 Negative backward change is forgetting; positive is backward transfer. The
-generic term, capacity averaged over random dichotomies, separates a
-representation that became more separable in general from one prepared for
-a particular task.
+~~generic term, capacity averaged over random dichotomies,~~ **probe term,
+capacity for a held-out dichotomy never trained on** [Amended 2026-11-06],
+separates a representation that became more separable in general from one
+prepared for a particular task.
 
 ## 4. Design and inference
 
 **Core design.** Richness `γ₀ ∈ {0.03, …, 10}` × label relation × input
 relation (frozen, drift, jump), in both paradigms. Initialisations and
 streams are shared across conditions (paired design).
+**[Amended 2026-11-06]** The two-task paradigm (A → B → A) runs first, and the
+stream second.
 
 **Ablations.** Each tests one named alternative explanation (generator
 structure, tuning leakage, learning-rate law, dimensionality versus
 dynamics, width, stopping rule, schedule) and is reported in one table.
+**[Amended 2026-11-06]** Width is N ∈ {150, 600} against the core's N = 300.
 
-**Extensions.** The same measurement on further learners (width, depth,
+**Extensions.** The same measurement on further learners (~~width,~~ depth,
 optimiser, loss), on continual-learning methods used as instruments (EWC
 constrains parameter directions, replay re-presents inputs; we ask which
 channel each protects), and on real manifolds with designed dichotomies
@@ -233,7 +294,8 @@ channel each protects), and on real manifolds with designed dichotomies
 whether the within-learner contrasts keep their sign.
 
 **Inference.** The sampling unit is a unique (arrangement, initialisation)
-draw, `n = 8`. Effects are reported in `log α` with 95% intervals and called
+draw, `n = 8`. **[Amended 2026-11-06]** C2 (stream sets sign) is scoped to
+full-batch gradient descent. Effects are reported in `log α` with 95% intervals and called
 resolved when the interval excludes zero and the effect exceeds twice the
 measurement floor. Six confirmatory tests, Holm-corrected; all else is
 exploratory and labelled as such.

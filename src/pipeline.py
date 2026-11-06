@@ -421,19 +421,25 @@ def _output_variance_share(model, X, modules) -> dict[str, float]:
 def forgetting_metrics(acc: np.ndarray) -> dict:
     """`CF` and `CFr` (`docs/reference/cl-metrics.md`) from the accuracy matrix.
 
-    `acc[i, j]` is accuracy on task `j` after training task `i`. Peak is
-    `acc[j, j]`, not Graldi's `max_{t ∈ {j,...,T−1}} a_{t,j}` (Def. A.3).
-    Equivalent when accuracy on `j` never recovers after learning. Recorded in
-    `protocol-deviations.md` D.2. `CFr` normalizes by that peak, which is what
-    makes it comparable across tasks of different attained accuracy — and the
-    two metrics can rank arms differently, so both are reported.
+    `acc[i, j]` is accuracy on task `j` after training task `i` (0-indexed).
+    Peak is Graldi's running max (Def. A.3/A.4): in 1-indexed form
+    `max_{t ∈ {i,...,T−1}} a_{t,i}`, i.e. rows `j … T−2` here. The final row is
+    excluded, so `CF < 0` when accuracy on `j` is highest at the end (backward
+    transfer stays signed). Unmeasured (NaN) rows are skipped. The earlier
+    `acc[j, j]` peak (`protocol-deviations.md` D.2) was fixed 2026-11-06.
+    `CFr` normalizes by the peak, which is what makes it comparable across
+    tasks of different attained accuracy — and the two metrics can rank arms
+    differently, so both are reported.
     """
     T = acc.shape[0]
     per_task = {}
     for j in range(T - 1):
-        peak, final = acc[j, j], acc[T - 1, j]
-        if not np.isfinite(peak) or not np.isfinite(final):
+        window = acc[j:T - 1, j]
+        window = window[np.isfinite(window)]
+        final = acc[T - 1, j]
+        if window.size == 0 or not np.isfinite(final):
             continue
+        peak = window.max()
         per_task[j] = {"peak": float(peak), "final": float(final),
                        "CF": float(peak - final),
                        "CFr": float((peak - final) / peak) if peak > 0 else float("nan")}

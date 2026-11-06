@@ -18,6 +18,25 @@ killed, H3–H5 were never run. What survived is a *different and cleaner*
 story than `PROJECT.md` tells. This document states that story and nothing
 else.
 
+## 0a. Stance on existing results — **[Amended 2026-11-06, Kati]**
+
+Results produced before 2026-11-06 are **early signal and inputs for improving
+the method. They are not baselines.**
+- No comparability requirement between new and old runs.
+- No old arm is rerun. Every claim comes from new runs on fixed code.
+- The provenance audit is one table that marks every existing result file
+  "pre-method, signal only".
+- The error registry's job is to get each error **fixed in code with a test**.
+  It does not drive reruns.
+
+The "Tier A" statuses in §3 and the "done" statuses in §5 are therefore
+statements about early signal. Each claim is re-established on the 1M core.
+
+**Naming.** `C1`–`C3` refer only to the claims in §3. The network
+configurations are **1M** (one module) and **2M** (two identical modules
+summed into one readout). Older text that says "C1" or "C2" for a
+configuration is struck through and renamed.
+
 ---
 
 ## 1. Question
@@ -62,7 +81,7 @@ activations at boundaries are retained) or title the paper
 |---|---|---|---|
 | M | Forgetting/transfer decomposes **exactly** into three geometric channels; the estimator recovers ground truth | done | identity residual at machine precision; `glue_core_recovery.json`, Gate 2a |
 | C1 | **Learner sets magnitude and channel.** Richness increases forgetting and shifts it from radius to alignment/utility | Tier A | `14` §4 A1–A2; rank arm: driver is optimisation dynamics, not dimension |
-| C2 | **Stream sets sign.** Transfer appears only when the task repeats under slowly drifting input. Task change acts as a cliff, graded only under drift | Tier A (cliff, S-HH gain); learner-specific? see §6.1 | `14` A3; `hamming_slice.md` |
+| C2 | **Stream sets sign.** Transfer appears only when the task repeats under slowly drifting input. Task change acts as a cliff, graded only under drift. **[Amended 2026-11-06]** Scoped to full-batch gradient descent; the Adam null (§6.1) leaves other optimisers open | Tier A (cliff, S-HH gain); learner-specific? see §6.1 | `14` A3; `hamming_slice.md` |
 | C3 | **Centre geometry dissociates from capacity.** Input change drives centre convergence; task change drives graded divergence while capacity steps | Tier A (sign, ordering); magnitudes soft across arrangements | `14` A4–A5; `20` §1 |
 
 C1 is an interaction, not a main effect (`interaction_gamma_condition.json`):
@@ -87,12 +106,18 @@ State it that way.
 | input change | frozen / drift / jump |
 | replication | n=8 unique arrangements |
 
-Already run. No new compute needed for the core.
+~~Already run. No new compute needed for the core.~~
 
 **Decided:** the existing results use two identical modules summed into one
-readout (config C2), a leftover of the modularity origin. The core is rerun as
-one module (C1), with forward transfer and measured richness added to the
+readout (config ~~C2~~ **2M**), a leftover of the modularity origin. The core is rerun as
+one module (~~C1~~ **1M**), with forward transfer and measured richness added to the
 same runs (`docs/25` §1).
+
+**[Amended 2026-11-06, Kati]** The core is rerun as 1M (one hidden ReLU layer,
+N = 300). The grid is the one in `docs/25` §1, not the "varied" table above,
+which describes the early-signal runs. The controlled two-task A–B–A paradigm
+comes first (`docs/26` Part B; `notebooks/core/aba_controlled.ipynb`), and the
+stream comes second.
 
 ---
 
@@ -105,6 +130,8 @@ same runs (`docs/25` §1).
 | γ sweep is secretly an LR sweep | corrected LR law | composition unchanged at γ>1 | done |
 | it is dimensionality, not dynamics | rank bottleneck | tracks γ regardless of rank | done |
 | it is capacity load | width N=150…600 | invariant within a bound | done (Tier B) |
+| **[Amended 2026-11-06]** it is the chosen width | width N ∈ {150, 600} on the 1M core (moved here from §6.1) | — | not started |
+| **[Amended 2026-11-06]** it is the stopping rule | fixed step budget per task, the usual CL protocol (`docs/26` A1) | — | not started |
 | "similarity" is a dose | Hamming grading | cliff, not dose | done |
 | task boundaries are given, not chosen | scope / partition | forgetting differs by partition | done |
 | geometric surplus implies savings | recurrence | no behavioural difference | done (null) |
@@ -122,9 +149,18 @@ reported per block, not compared across blocks.
 
 ### 6.1 Learners — fix the comparison rule first
 
-The repo closed the second-learner line because MSE/BCE and GD/Adam have no
+~~The repo closed the second-learner line because MSE/BCE and GD/Adam have no
 shared operating point (`07` §A.9). That obstruction comes from requiring γ to
-mean the same thing across learners. Two changes remove it:
+mean the same thing across learners. Two changes remove it:~~
+
+**[Amended 2026-11-06, Kati]** `07` §A.9 records three distinct failures:
+- CE failed the shared-operating-point condition.
+- The Adam gate failed the manipulation-survives condition (`partial_manipulation`).
+- The Adam slice failed the primary-contrast-recovers condition.
+
+Only the first is about a common operating point. The second says γ₀ was not
+reliably manipulated under Adam, which argues for measuring richness instead of
+labelling it. Two changes address all three:
 
 1. **Learner as a block.** Each learner gets its own operating point, set by the
    same behavioural rule (train to criterion on the current task). Only
@@ -134,14 +170,23 @@ mean the same thing across learners. Two changes remove it:
    The rank arm already says the driver is dynamics, so the axis should
    measure dynamics. Every learner then becomes points on one axis, and
    Adam's `partial_manipulation` stops being a blocker.
+   **[Amended 2026-11-06, Kati]** The primary measure is the analytic NTK on a
+   fixed probe set:
+   - (a) relative change of the full NTK;
+   - (b) relative change of the readout block `K_u = s²HHᵀ`;
+   - (c) NTK–label alignment `CKA(K, yyᵀ)` (Chou et al. 2025, Table 1).
+
+   Weight change from init and the per-task `r_t` are secondary. Hidden-Gram CKA
+   is not a richness axis: it measures the representation, which is the outcome.
+   Definitions are in `docs/25` §3.
 
 Under this rule the existing Adam result is a **reading, not an obstruction**:
 the S-HH gain did not appear (drift −0.3 fl, CI includes 0). Either C2 is
 GD-specific or Adam sits at a different measured richness. That is
 answerable from data already on disk.
 
-Then, in order: width (larger range), depth L=3 (blocked on the μP derivation),
-Adam, CE.
+Then, in order: ~~width (larger range),~~ depth L=3 (blocked on the μP derivation),
+Adam, CE. **[Amended 2026-11-06]** Width is an ablation (§5), not an extension.
 
 ### 6.2 CL methods — as instruments, not competitors
 
@@ -185,6 +230,10 @@ the whole mechanism.
 `project-overview-v3.ipynb` moves to archive. The POC is Figure 1's source
 and the entry point for collaborators.
 
+**[Amended 2026-11-06]** The single PoC location is `notebooks/poc/`
+(`notebooks/poc/01_stream.py` … `04_contrast.py`), as in `docs/25` §7. The
+`poc/` paths in the table above mean that folder. The PoC network is 1M.
+
 ---
 
 ## 8. Figures
@@ -208,6 +257,8 @@ and the entry point for collaborators.
    `results/archive/`.
 3. Active docs: this file, `00-math-spec.md`, the ablation table, `LOG.md`.
    Others archived, not deleted.
+   **[Amended 2026-11-06]** Also active: `25-agent-instructions.md` and
+   `26-method.md`, plus `docs/27` once written.
 4. Validation and robustness are never reported as findings.
 
 ---
@@ -219,7 +270,7 @@ and the entry point for collaborators.
 2. **Forward transfer:** added to the core measurement, minimally — one
    geometric and one behavioural measure, conditional on task structure
    (`docs/25` §4). Title kept.
-3. **One module:** the core is rerun as C1; no architecture choice without a
+3. **One module:** the core is rerun as ~~C1~~ **1M**; no architecture choice without a
    stated reason (`docs/25` §1–2).
 4. **Venue:** deferred until the method is drafted; ICML and CCN deadlines are
    close enough that the choice can follow the method.

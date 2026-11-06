@@ -12,9 +12,13 @@ Transcribed by: agent, 2026-09-01, from the human paste (supersedes 2026-07-31
 Verified by (human): Kati, 2026-09-01 — A.3/A.4 are the running max, 1/(T−1),
                      sum to T−1. Toy-example check does not distinguish the two
                      references.
-Status: source formulas corrected 2026-09-01. Code still uses a_{i,i}
+Status: source formulas corrected 2026-09-01. ~~Code still uses a_{i,i}
         (protocol-deviations.md D.2). Do not treat this sheet as a license to
-        change pipeline.forgetting_metrics. Artifact family: 07-writeup.md §A.7.
+        change pipeline.forgetting_metrics.~~ Artifact family: 07-writeup.md §A.7.
+        [Amended 2026-11-06, Kati] Code fixed: pipeline.forgetting_metrics uses
+        the running max over t ∈ {i..T−1}; tests in tests/test_pipeline.py.
+        Licensed by the docs/24 §0a stance (old results are signal, not
+        baselines), not by this sheet. D.2 resolved.
 ```
 
 ---
@@ -46,7 +50,8 @@ during subsequent training.** If that appears behaviourally as well as
 geometrically, `max_t ≠ a_{i,i}` and the two formulas diverge exactly in the
 condition the paper is about. Current behavioural CF in that corner is ~0
 (§5.1: −0.0005 to +0.0001); if accuracy is already at ceiling they still
-coincide. Do not switch the code. Recorded in `protocol-deviations.md` D.2
+coincide. ~~Do not switch the code.~~ **[Amended 2026-11-06]** Code switched to
+the running max (see Status). Recorded in `protocol-deviations.md` D.2
 and `07-writeup.md` §A.7.
 
 **Toy example (source A.1):** two-task, peak = `a_{1,1}`. Model A 100→80 ⇒ CF

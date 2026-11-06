@@ -80,6 +80,35 @@ def test_forgetting_metrics_ignore_unmeasured_entries():
     assert f["CF"] == pytest.approx(0.4)
 
 
+def test_forgetting_peak_is_running_max_when_accuracy_recovers():
+    """Graldi A.3/A.4: peak is max over t ∈ {i..T−1}, not a_{i,i} (`docs/07` §A.7).
+
+    Task 0 rises from 0.8 to 0.9 during task 1, then drops to 0.7. The a_{i,i}
+    peak would give CF 0.1; the running max gives 0.2.
+    """
+    acc = np.array([[0.80, np.nan, np.nan],
+                    [0.90, 0.85, np.nan],
+                    [0.70, 0.60, 0.95]])
+    f = pl.forgetting_metrics(acc)
+    t0 = f["per_task"][0]
+    assert t0["peak"] == pytest.approx(0.90)
+    assert t0["CF"] == pytest.approx(0.20)
+    assert t0["CFr"] == pytest.approx(0.20 / 0.90)
+    assert f["per_task"][1]["CF"] == pytest.approx(0.25)
+    assert f["CF"] == pytest.approx((0.20 + 0.25) / 2)
+
+
+def test_forgetting_peak_excludes_final_row_so_backward_transfer_is_negative():
+    """The final row is not in the peak window, so a task still improving at the end
+    gets CF < 0 rather than being clipped to 0."""
+    acc = np.array([[0.60, np.nan, np.nan],
+                    [0.70, 0.90, np.nan],
+                    [0.80, 0.90, 0.90]])
+    t0 = pl.forgetting_metrics(acc)["per_task"][0]
+    assert t0["peak"] == pytest.approx(0.70)
+    assert t0["CF"] == pytest.approx(-0.10)
+
+
 def test_probe_measures_include_a_graded_alternative_to_saturated_accuracy():
     """Accuracy saturates at sub-critical load; margin and held-out must be present."""
     spec = pl.Phase1Spec(**SMOKE)
