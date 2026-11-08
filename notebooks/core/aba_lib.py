@@ -100,6 +100,8 @@ class ABAConfig:
     center_policy: str = "all"
     ntk_per_manifold: int = 20
     probe_hamming: int = 4          # y* anchored at s_r = 0.5 from y_A, as streams._sample_probe
+    n_probe_neutral: int = 4        # neutral y*_k at s_r(y*_k, y_A) = 0 (forward-transfer baseline)
+    refit_steps: int = 2000         # fixed GD budget for the refit-readout probe
     # design
     gammas: tuple = (0.1, 10.0)
     hammings: tuple = (0, 4, 8)
@@ -246,6 +248,7 @@ class SeedBase:
     y_star: np.ndarray
     W0: np.ndarray
     ntk_idx: np.ndarray       # (P, k) point indices for the NTK probe set
+    y_star_neutral: tuple = ()   # K balanced dichotomies at s_r = 0 from y_A
 
 
 @functools.lru_cache(maxsize=16)
@@ -261,7 +264,16 @@ def seed_base(cfg: ABAConfig, seed: int) -> SeedBase:
     W0 = r_init.standard_normal((cfg.N, cfg.d))
     k = min(cfg.ntk_per_manifold, cfg.M)
     ntk_idx = np.stack([r_ntk.choice(cfg.M, size=k, replace=False) for _ in range(cfg.P)])
-    return SeedBase(seed, A, y_A, y_Bs, y_star, W0, ntk_idx)
+    # Neutral probes: Hamming P/2 from y_A (s_r = 0), balanced, distinct (up to sign)
+    # from y_A, every y_B, the anchored y* and each other. Own stream: earlier draws unchanged.
+    r_neu = np.random.default_rng([SALT, seed, 4])
+    others = [*y_Bs.values(), y_star]
+    neutral = []
+    for _ in range(cfg.n_probe_neutral):
+        yk = sample_probe(y_A, others + neutral, cfg.P // 2, r_neu)
+        assert s_r(yk, y_A) == 0.0
+        neutral.append(yk)
+    return SeedBase(seed, A, y_A, y_Bs, y_star, W0, ntk_idx, tuple(neutral))
 
 
 def b_arrangement(cfg: ABAConfig, base: SeedBase, s_f: float, noise: str = "copy") -> Arr:
@@ -436,6 +448,39 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
             "first_loss": float(first_loss), "final_loss": float(loss),
             "r_t": float(np.linalg.norm(net.W - W_start) / np.linalg.norm(W_start)),
             "records": recs}
+
+
+REFIT_CHECKPOINTS = (100, 500)
+
+
+def refit_probe(net: OneModuleNet, X: np.ndarray, y: np.ndarray, X_test: np.ndarray,
+                y_test: np.ndarray, cfg: ABAConfig) -> dict:
+    """Behavioural counterpart of capacity: fit a FRESH readout (u = 0) on the frozen
+    hidden features of `net`, full-batch GD with `net`'s own s and lr, for exactly
+    `cfg.refit_steps` steps (no early stop), and score it on the test points.
+
+    In μP, lr·s² = lr0/N, so the effective step on the readout is the same at every γ0
+    given H. `net` is not modified.
+    """
+    H, Ht = net.hidden(X), net.hidden(X_test)
+    s, lr, B = net.s, net.lr, y.shape[0]
+    u = np.zeros(H.shape[1])
+    out = {}
+
+    def score(tag):
+        f = s * (Ht @ u)
+        out[f"loss@{tag}"] = float(0.5 * np.mean((f - y_test) ** 2))
+        out[f"acc@{tag}"] = float(np.mean(np.sign(f) == y_test))
+
+    for t in range(1, cfg.refit_steps + 1):
+        err = s * (H @ u) - y
+        u -= lr * s * (H.T @ err) / B
+        if t in REFIT_CHECKPOINTS:
+            score(t)
+    out["train_loss"] = float(0.5 * np.mean((s * (H @ u) - y) ** 2))
+    score("end")
+    out["loss"], out["acc"] = out["loss@end"], out["acc@end"]
+    return out
 
 
 # ==========================================================================
@@ -764,18 +809,31 @@ def forgetting_running_max(recs: list[dict], key: str) -> dict:
 
 def richness_snapshot(net: OneModuleNet, K0: np.ndarray, Ku0: np.ndarray,
                       probe_A: np.ndarray, yA_p: np.ndarray,
-                      probe_B: np.ndarray, yB_p: np.ndarray) -> dict:
+                      probe_B: np.ndarray, yB_p: np.ndarray,
+                      prev: tuple | None = None) -> tuple[dict, tuple]:
     """Kernel changes, all normalised by ‖K(0)‖_F so the three are on one scale.
 
     K_W(0) = 0 (readout starts at 0) and K(0) = K_u(0), so `dK_W` is the hidden-
     weight block's growth in units of the initial kernel. `dK_full` mixes readout-
     block change (`dK_u`) with that growth.
+
+    `prev` = (K, K_u, K_W) at the previous phase boundary: adds the phase-to-phase
+    changes `d*_step` (each ‖now − prev‖ / ‖K_prev‖_F) and `align_step` = CKA(K_prev, K).
+    Returns (measures, (K, K_u, K_W)) so the caller can chain phases.
     """
     Ku, KW = net.ntk_blocks(probe_A)
     K = Ku + KW
     KuB, KWB = net.ntk_blocks(probe_B)
     n0 = np.linalg.norm(K0)
-    return {
+    step = {}
+    if prev is not None:
+        Kp, Kup, KWp = prev
+        npv = np.linalg.norm(Kp)
+        step = {"dK_full_step": float(np.linalg.norm(K - Kp) / npv),
+                "dK_u_step": float(np.linalg.norm(Ku - Kup) / npv),
+                "dK_W_step": float(np.linalg.norm(KW - KWp) / npv),
+                "align_step": cka(Kp, K)}
+    return {**step,
         "weight_change": net.weight_change(),
         "dK_full": float(np.linalg.norm(K - K0) / n0),
         "dK_u": float(np.linalg.norm(Ku - Ku0) / np.linalg.norm(Ku0)),
@@ -783,7 +841,7 @@ def richness_snapshot(net: OneModuleNet, K0: np.ndarray, Ku0: np.ndarray,
         "KW_share": float(np.linalg.norm(KW) / np.linalg.norm(K)),
         "cka_K_yA": cka(K, np.outer(yA_p, yA_p)),
         "cka_K_yB": cka(KuB + KWB, np.outer(yB_p, yB_p)),
-    }
+    }, (K, Ku, KW)
 
 
 # ==========================================================================
@@ -812,7 +870,7 @@ def _logratio_steps(a: int, b: int) -> float:
 
 def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     t_start = time.perf_counter()
-    timing = {"train_s": 0.0, "glue_s": 0.0, "ntk_s": 0.0}
+    timing = {"train_s": 0.0, "glue_s": 0.0, "ntk_s": 0.0, "refit_s": 0.0}
     base = seed_base(cfg, spec.seed)
     A, y_A, y_star = base.A, base.y_A, base.y_star
     y_B = base.y_Bs[spec.hamming]
@@ -837,10 +895,21 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
         timing["glue_s"] += time.perf_counter() - t0
         return out
 
+    kprev = [None]
+
     def rich():
         t0 = time.perf_counter()
-        out = richness_snapshot(net, K0, Ku0, probe_A, yA_p, probe_B, yB_p)
+        out, kprev[0] = richness_snapshot(net, K0, Ku0, probe_A, yA_p, probe_B, yB_p,
+                                          prev=kprev[0])
         timing["ntk_s"] += time.perf_counter() - t0
+        return out
+
+    XA_test, yA_test = monitors["A_test"]
+
+    def refit():
+        t0 = time.perf_counter()
+        out = refit_probe(net, XA, yA, XA_test, yA_test, cfg)
+        timing["refit_s"] += time.perf_counter() - t0
         return out
 
     def train(model, X, y, mons):
@@ -851,31 +920,43 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
     Ku0, KW0 = net.ntk_blocks(probe_A)
     K0 = Ku0 + KW0
-    g, r, ph = {}, {}, {}
+    neutral = base.y_star_neutral
+    g, r, ph, rf = {}, {}, {}, {}
     r["init"] = rich()
+    rf["init"] = refit()
     g["A@init"] = geo("A", A.points, y_A)
     g["B_yB@init"] = geo("B", B.points, y_B)
     g["B_ystar@init"] = geo("B*", B.points, y_star)
+    for k, yk in enumerate(neutral):
+        g[f"B_ystarN{k}@init"] = geo("B*N", B.points, yk)
 
     ph["A1"] = train(net, XA, yA, monitors)
     r["A1"] = rich()
+    rf["A1"] = refit()
     g["A@A1"] = geo("A", A.points, y_A)
     g["B_yB@A1"] = geo("B", B.points, y_B)
     g["B_ystar@A1"] = geo("B*", B.points, y_star)
+    for k, yk in enumerate(neutral):
+        g[f"B_ystarN{k}@A1"] = geo("B*N", B.points, yk)
 
     ph["B"] = train(net, XB, yB, monitors)
     r["B"] = rich()
+    rf["B"] = refit()
     g["A@B"] = geo("A", A.points, y_A)
 
     ph["A2"] = train(net, XA, yA, monitors)
     r["A2"] = rich()
+    rf["A2"] = refit()
     g["A@A2"] = geo("A", A.points, y_A)
 
     fresh = OneModuleNet(base.W0, spec.gamma, cfg)
     ph["freshB"] = train(fresh, XB, yB, None)
 
     ft_total = channels(g["B_yB@init"], g["B_yB@A1"])
-    ft_star = math.log(g["B_ystar@A1"]["alpha"] / g["B_ystar@init"]["alpha"])
+    ft_anch = math.log(g["B_ystar@A1"]["alpha"] / g["B_ystar@init"]["alpha"])
+    ft_neu = {str(k): math.log(g[f"B_ystarN{k}@A1"]["alpha"] / g[f"B_ystarN{k}@init"]["alpha"])
+              for k in range(len(neutral))}
+    ft_neu_mean = float(np.mean(list(ft_neu.values())))
     steps = {k: v["steps"] for k, v in ph.items()}
     out = {
         "key": spec.key, "spec": asdict(spec), "config": cfg.key_fields(),
@@ -886,6 +967,8 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
         "relations": {
             "s_r_AB": s_r(y_A, y_B), "s_r_ystar_A": s_r(y_star, y_A),
             "s_r_ystar_B": s_r(y_star, y_B),
+            "s_r_ystar_neutral_A": {str(k): s_r(yk, y_A) for k, yk in enumerate(neutral)},
+            "s_r_ystar_neutral_B": {str(k): s_r(yk, y_B) for k, yk in enumerate(neutral)},
             "rho_in_AB": float(np.mean(np.diag(centre_cosines(A.centers, B.centers)))),
         },
         "geometry": g,
@@ -893,8 +976,12 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
                      "A1_to_B": channels(g["A@A1"], g["A@B"]),
                      "B_to_A2": channels(g["A@B"], g["A@A2"]),
                      "A1_to_A2": channels(g["A@A1"], g["A@A2"])},
-        "forward": {"total": ft_total, "ystar": ft_star,
-                    "specific": ft_total["total"] - ft_star},
+        "forward": {"total": ft_total,
+                    "ystar_neutral": {**ft_neu, "mean": ft_neu_mean},
+                    "specific": ft_total["total"] - ft_neu_mean,
+                    "ystar_anchored": ft_anch,
+                    "specific_anchored": ft_total["total"] - ft_anch},
+        "refit": rf,
         "behaviour": {
             "steps": steps,
             "first_loss": {k: v["first_loss"] for k, v in ph.items()},
@@ -948,11 +1035,21 @@ SCHEMA: dict[str, str] = {
     **{f"behaviour.forget_B_{m}.{k}": f"forgetting on A during B vs running {'max' if m == 'acc' else 'min'} ({k})"
        for m in ("acc", "loss") for k in ("peak", "final", "forgetting")},
     **{f"forward.total.{c}": f"Δlog α_{{y_B}} on B's manifolds, init → after A, {c}" for c in _CH},
-    "forward.ystar": "Δlog α_{y*} on B's manifolds, init → after A",
-    "forward.specific": "FT_geo specific = Δlog α_{y_B} − Δlog α_{y*}",
+    **{f"forward.ystar_neutral.{k}": f"Δlog α_{{y*_{k}}} (neutral, s_r = 0 to y_A) on B's manifolds, init → after A"
+       for k in ("0", "1", "2", "3", "mean")},
+    "forward.specific": "FT_geo specific = Δlog α_{y_B} − mean_k Δlog α_{y*_k} (neutral baseline)",
+    "forward.ystar_anchored": "Δlog α_{y*} for the anchored probe (s_r = +0.5 to y_A); comparison only",
+    "forward.specific_anchored": "Δlog α_{y_B} − Δlog α_{y* anchored}; comparison only",
     "relations.s_r_AB": "s_r(y_A, y_B), signed",
-    "relations.s_r_ystar_A": "s_r(y*, y_A), signed",
-    "relations.s_r_ystar_B": "s_r(y*, y_B), signed",
+    "relations.s_r_ystar_A": "s_r(y* anchored, y_A), signed",
+    "relations.s_r_ystar_B": "s_r(y* anchored, y_B), signed",
+    **{f"relations.s_r_ystar_neutral_{t}.{k}": f"s_r(y*_{k} neutral, y_{t})"
+       for t in ("A", "B") for k in ("0", "1", "2", "3")},
+    **{f"refit.{ph}.{m}": f"fresh readout on frozen features after {ph}, {m}"
+       for ph in ("init", "A1", "B", "A2")
+       for m in ("loss", "acc", "train_loss", "loss@100", "acc@100", "loss@500", "acc@500")},
+    **{f"richness.{ph}.{k}": f"{k}: kernel change from previous boundary to {ph}"
+       for ph in ("A1", "B", "A2") for k in ("dK_full_step", "dK_u_step", "dK_W_step", "align_step")},
     "relations.rho_in_AB": "mean centre cosine A ↔ B (input relation)",
     "behaviour.FT_beh": "log((1+steps fresh B)/(1+steps B))",
     "behaviour.savings": "log((1+steps A1)/(1+steps A2))",
