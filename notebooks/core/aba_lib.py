@@ -264,7 +264,17 @@ def seed_base(cfg: ABAConfig, seed: int) -> SeedBase:
     return SeedBase(seed, A, y_A, y_Bs, y_star, W0, ntk_idx)
 
 
-def b_arrangement(cfg: ABAConfig, base: SeedBase, s_f: float) -> Arr:
+def b_arrangement(cfg: ABAConfig, base: SeedBase, s_f: float, noise: str = "copy") -> Arr:
+    """B's manifolds. At s_f = 1.0, `noise="copy"` returns A itself; `"fresh"` keeps
+    A's centres, axes and coordinates and redraws only the ε noise (choice check)."""
+    if noise not in ("copy", "fresh"):
+        raise ValueError(f"noise must be 'copy' or 'fresh'; got {noise!r}")
+    if s_f >= 1.0 and noise == "fresh":
+        A = base.A
+        rng = np.random.default_rng([SALT, base.seed, 3])
+        points = _realize_points(A.centers, A.axes, A.coords, A.R, NOISE_EPS, rng)
+        test = _realize_points(A.centers, A.axes, A.coords, A.R, NOISE_EPS, rng)
+        return Arr(A.centers, A.axes, A.coords, points, test, A.R)
     return redraw_centers(base.A, s_f,
                           np.random.default_rng([SALT, base.seed, 2, int(round(s_f * 1000))]))
 
@@ -755,13 +765,21 @@ def forgetting_running_max(recs: list[dict], key: str) -> dict:
 def richness_snapshot(net: OneModuleNet, K0: np.ndarray, Ku0: np.ndarray,
                       probe_A: np.ndarray, yA_p: np.ndarray,
                       probe_B: np.ndarray, yB_p: np.ndarray) -> dict:
+    """Kernel changes, all normalised by ‖K(0)‖_F so the three are on one scale.
+
+    K_W(0) = 0 (readout starts at 0) and K(0) = K_u(0), so `dK_W` is the hidden-
+    weight block's growth in units of the initial kernel. `dK_full` mixes readout-
+    block change (`dK_u`) with that growth.
+    """
     Ku, KW = net.ntk_blocks(probe_A)
     K = Ku + KW
     KuB, KWB = net.ntk_blocks(probe_B)
+    n0 = np.linalg.norm(K0)
     return {
         "weight_change": net.weight_change(),
-        "dK_full": float(np.linalg.norm(K - K0) / np.linalg.norm(K0)),
+        "dK_full": float(np.linalg.norm(K - K0) / n0),
         "dK_u": float(np.linalg.norm(Ku - Ku0) / np.linalg.norm(Ku0)),
+        "dK_W": float(np.linalg.norm(KW - (K0 - Ku0)) / n0),
         "KW_share": float(np.linalg.norm(KW) / np.linalg.norm(K)),
         "cka_K_yA": cka(K, np.outer(yA_p, yA_p)),
         "cka_K_yB": cka(KuB + KWB, np.outer(yB_p, yB_p)),
@@ -779,10 +797,12 @@ class ArmSpec:
     gamma: float
     hamming: int
     s_f: float
+    noise: str = "copy"     # only meaningful at s_f = 1.0
 
     @property
     def key(self) -> str:
-        return f"seed={self.seed},gamma={self.gamma:g},H={self.hamming},s_f={self.s_f:g}"
+        k = f"seed={self.seed},gamma={self.gamma:g},H={self.hamming},s_f={self.s_f:g}"
+        return k if self.noise == "copy" else k + f",noise={self.noise}"
 
 
 def _logratio_steps(a: int, b: int) -> float:
@@ -796,7 +816,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     base = seed_base(cfg, spec.seed)
     A, y_A, y_star = base.A, base.y_A, base.y_star
     y_B = base.y_Bs[spec.hamming]
-    B = b_arrangement(cfg, base, spec.s_f)
+    B = b_arrangement(cfg, base, spec.s_f, spec.noise)
     glue_key = [SALT, spec.seed, 9]
 
     XA, yA = flatten(A.points, y_A)
@@ -869,9 +889,10 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
             "rho_in_AB": float(np.mean(np.diag(centre_cosines(A.centers, B.centers)))),
         },
         "geometry": g,
-        "backward": {"A1_to_B": channels(g["A@A1"], g["A@B"]),
-                     "A1_to_A2": channels(g["A@A1"], g["A@A2"]),
-                     "init_to_A1": channels(g["A@init"], g["A@A1"])},
+        "backward": {"init_to_A1": channels(g["A@init"], g["A@A1"]),
+                     "A1_to_B": channels(g["A@A1"], g["A@B"]),
+                     "B_to_A2": channels(g["A@B"], g["A@A2"]),
+                     "A1_to_A2": channels(g["A@A1"], g["A@A2"])},
         "forward": {"total": ft_total, "ystar": ft_star,
                     "specific": ft_total["total"] - ft_star},
         "behaviour": {
@@ -898,9 +919,66 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
 
 def all_specs(cfg: ABAConfig) -> list[ArmSpec]:
-    return [ArmSpec(s, float(g), int(h), float(f))
+    """The design grid plus the fresh-noise identity check (Hamming 0, s_f 1.0, seed 0)."""
+    grid = [ArmSpec(s, float(g), int(h), float(f))
             for s in range(cfg.n_seeds) for g in cfg.gammas
             for h in cfg.hammings for f in cfg.s_fs]
+    fresh = [ArmSpec(0, float(g), 0, 1.0, "fresh") for g in cfg.gammas]
+    return grid + fresh
+
+
+def trained_floor(cfg: ABAConfig, gamma: float, seed: int = 0, K: int = 6) -> dict:
+    """Noise floor on the representation after training on A: SD(log α_A) over K
+    estimator seeds, at this config's n_t. The resolution unit for Δlog α at this γ0."""
+    base = seed_base(cfg, seed)
+    net = OneModuleNet(base.W0, gamma, cfg)
+    X, y = flatten(base.A.points, base.y_A)
+    train_to_criterion(net, X, y, cfg)
+    logs = [math.log(rep_capacity(net, base.A.points, base.y_A, cfg, [SALT, seed, 2000 + k])["alpha"])
+            for k in range(K)]
+    return {"gamma": gamma, "seed": seed, "K": K, "n_t": cfg.n_t,
+            "floor": float(np.std(logs, ddof=1)), "mean_log_alpha": float(np.mean(logs))}
+
+
+# Every per-arm output the notebook reads, as dotted paths into the result dict.
+_CH = ("total", "utility", "radius", "dimension", "residual")
+SCHEMA: dict[str, str] = {
+    **{f"backward.{p}.{c}": f"Δlog α_A {p}, channel {c}" for p in
+       ("init_to_A1", "A1_to_B", "B_to_A2", "A1_to_A2") for c in _CH},
+    **{f"behaviour.forget_B_{m}.{k}": f"forgetting on A during B vs running {'max' if m == 'acc' else 'min'} ({k})"
+       for m in ("acc", "loss") for k in ("peak", "final", "forgetting")},
+    **{f"forward.total.{c}": f"Δlog α_{{y_B}} on B's manifolds, init → after A, {c}" for c in _CH},
+    "forward.ystar": "Δlog α_{y*} on B's manifolds, init → after A",
+    "forward.specific": "FT_geo specific = Δlog α_{y_B} − Δlog α_{y*}",
+    "relations.s_r_AB": "s_r(y_A, y_B), signed",
+    "relations.s_r_ystar_A": "s_r(y*, y_A), signed",
+    "relations.s_r_ystar_B": "s_r(y*, y_B), signed",
+    "relations.rho_in_AB": "mean centre cosine A ↔ B (input relation)",
+    "behaviour.FT_beh": "log((1+steps fresh B)/(1+steps B))",
+    "behaviour.savings": "log((1+steps A1)/(1+steps A2))",
+    **{f"behaviour.steps.{p}": f"raw steps, {p}" for p in ("A1", "B", "A2", "freshB")},
+    **{f"behaviour.first_loss.{p}": f"zero-shot loss, {p}" for p in ("A1", "B", "A2", "freshB")},
+    **{f"richness.{ph}.{k}": f"{k} after {ph}" for ph in ("init", "A1", "B", "A2")
+       for k in ("weight_change", "dK_full", "dK_u", "dK_W", "KW_share", "cka_K_yA", "cka_K_yB")},
+    **{f"richness.r_t.{p}": f"r_t within {p}" for p in ("A1", "B", "A2")},
+    **{f"geometry.{b}.{k}": f"{k} at {b}" for b in ("A@init", "A@A1", "A@B", "A@A2")
+       for k in ("rho_c_signed", "rho_c_glue", "alpha", "identity_residual")},
+}
+
+
+def check_schema(row: dict) -> list[str]:
+    """Paths in SCHEMA that are missing or non-finite in `row`."""
+    bad = []
+    for path in SCHEMA:
+        v = row
+        try:
+            for part in path.split("."):
+                v = v[part]
+            if not np.isfinite(float(v)):
+                bad.append(f"{path}={v}")
+        except (KeyError, TypeError, ValueError):
+            bad.append(f"{path} missing")
+    return bad
 
 
 def cache_path(cfg: ABAConfig) -> Path:
@@ -935,7 +1013,7 @@ def run_grid(cfg: ABAConfig, specs: list[ArmSpec], *, workers: int | None = None
     todo = [s for s in specs if s.key not in done]
     stamp = git_stamp()
     if todo:
-        workers = workers or max(1, (os.cpu_count() or 2) - 1)
+        workers = workers or min(6, max(1, (os.cpu_count() or 2) - 1))   # laptop memory cap
         with ProcessPoolExecutor(max_workers=min(workers, len(todo)),
                                  mp_context=get_context("spawn")) as ex:
             futs = {ex.submit(_arm_job, (cfg, s, stamp)): s for s in todo}
