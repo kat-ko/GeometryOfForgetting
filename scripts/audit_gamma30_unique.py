@@ -100,7 +100,7 @@ def main() -> None:
                     "The additivity-failure claim is not licensed at unique n."),
     }
     dest = ROOT / "results" / "gamma30_unique.json"
-    dest.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    dest.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"wrote {dest.relative_to(ROOT)}")
     print(f"  interaction {eff['interaction']:+.4f}")
     print(f"  files  {z_f:.2f} SEM  CI {ci_f}  clears 3σ? {z_f >= 3}")

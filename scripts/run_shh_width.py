@@ -43,7 +43,7 @@ CONDITION = "S-HH"
 def _require_precommit() -> dict:
     if not PRE.is_file():
         raise SystemExit(f"missing {PRE.relative_to(ROOT)}")
-    return json.loads(PRE.read_text())
+    return json.loads(PRE.read_text(encoding="utf-8"))
 
 
 def _spec(N: int, gamma: float, seed: int) -> pl.Phase1Spec:
@@ -63,12 +63,12 @@ def _job(payload: tuple[dict, str]) -> dict:
     out = Path(payload[1])
     path = _path(spec, out)
     if path.exists():
-        stored = json.loads(path.read_text())
+        stored = json.loads(path.read_text(encoding="utf-8"))
         if stored.get("spec") == json.loads(json.dumps(asdict(spec))):
             return {"key": spec.key, "N": spec.N, "seed": spec.seed, "skipped": True,
                     "usable": stored.get("usable"), "gamma_0": spec.gamma_0}
     rec, clouds = _run_arm_with_clouds(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     if spec.N == 32:
         import numpy as np
         npz = path.with_suffix(".clouds.npz")

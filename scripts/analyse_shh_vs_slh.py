@@ -412,7 +412,7 @@ def main() -> None:
         "gates": {"min_floors": MIN_FLOORS, "bootstrap_n": BOOTSTRAP_N,
                   "bootstrap_seed": BOOTSTRAP_SEED},
     }
-    OUT.write_text(json.dumps(out, indent=2, default=str))
+    OUT.write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
     print(f"wrote {OUT}")
     print("task 0 lag 12 unique n=8:")
     for row in headline:

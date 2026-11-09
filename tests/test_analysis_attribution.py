@@ -71,7 +71,7 @@ def test_cancellation_is_flagged_when_factors_oppose():
 
 def test_rho_calibration_matches_the_recovery_sweep_it_was_fitted_on():
     """Pin the hardcoded constants to their source, so a refit cannot drift silently."""
-    d = json.loads((ROOT / "results" / "glue_core_recovery.json").read_text())
+    d = json.loads((ROOT / "results" / "glue_core_recovery.json").read_text(encoding="utf-8"))
     sweep = d["sweeps"]["center_correlation"]["n_t=200,policy=all"]
     rho = np.array([p[A.RHO_R_CONVENTION]["mean"] for p in sweep])
     R = np.array([p["R_eff"]["mean"] for p in sweep])

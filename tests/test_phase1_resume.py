@@ -35,7 +35,7 @@ def _write(spec, **override):
     rec = {"spec": {**asdict(spec), **override}, "key": spec.key, "usable": True,
            "geometry": [], "attribution": [], "wall_seconds": 1.0,
            "forgetting": {"CFr": 0.0}}
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     return path
 
 
@@ -60,7 +60,7 @@ def test_an_arm_whose_spec_changed_is_recomputed(arm, monkeypatch):
 def test_tuple_vs_list_round_trip_does_not_force_a_recompute(arm, monkeypatch):
     """`module_list` is a tuple in Python and a list after JSON, so a naive == fails."""
     path = _write(arm)
-    stored = json.loads(path.read_text())
+    stored = json.loads(path.read_text(encoding="utf-8"))
     assert any(isinstance(v, list) for v in stored["spec"].values()), \
         "no sequence field left to catch the tuple/list asymmetry"
     monkeypatch.setattr(pl, "run_arm", lambda s: pytest.fail("recomputed on round-trip"))
@@ -95,7 +95,7 @@ def test_fresh_moves_to_trash_rather_than_deleting(arm, monkeypatch, tmp_path):
     assert not path.exists(), "--fresh left the old arm in place"
     trashed = list(R.OUT.glob(".trash-*/*.json"))
     assert len(trashed) == 1, f"--fresh did not preserve the discarded arm: {trashed}"
-    assert json.loads(trashed[0].read_text())["key"] == arm.key
+    assert json.loads(trashed[0].read_text(encoding="utf-8"))["key"] == arm.key
 
 
 def test_resume_flag_is_accepted_for_compatibility(arm, monkeypatch, tmp_path):

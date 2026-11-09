@@ -29,7 +29,7 @@ from audit_seed_security import group_means, keyed_rho, sign_test, spread_stats,
 from fig4_corners_rho_c import CORNERS  # noqa: E402
 from src.analysis import grid as G  # noqa: E402
 
-PRE = json.loads((ROOT / "results" / "gamma5_k8_precommit.json").read_text())
+PRE = json.loads((ROOT / "results" / "gamma5_k8_precommit.json").read_text(encoding="utf-8"))
 OUT = ROOT / "results" / "gamma5_k8.json"
 DIR_K8 = ROOT / "results" / "gamma_5_k8"
 DIR_N40 = ROOT / "results" / "gamma_5_n40"
@@ -142,7 +142,7 @@ def main() -> None:
         "verdict": verdict,
         "paper_sentence_this_licenses": verdict["licenses"],
     }
-    OUT.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    OUT.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT)}  ({out['n_usable']}/{out['n_files']} usable)")
     print(f"overlap with gamma_5_n40: {overlap['verdict']}  "
           f"({overlap['n_identical']}/{overlap['n_overlap_expected']} identical, "

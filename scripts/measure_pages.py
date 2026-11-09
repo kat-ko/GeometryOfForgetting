@@ -49,7 +49,7 @@ def stub_captions(text: str) -> str:
 def caption_words() -> dict[str, int]:
     """Words per body caption. The label precedes the caption in `\\floatconts`, so the label is
     captured first -- reversing the two silently attributed one figure's count to the other."""
-    text = (ROOT / "paper" / "figures.tex").read_text()
+    text = (ROOT / "paper" / "figures.tex").read_text(encoding="utf-8")
     out = {}
     for m in re.finditer(r"\{fig:(\w+)\}\s*\n\s*\{\\caption\{(.*?)\}\}\s*\n\s*\{\\includegraphics",
                          text, re.S):
@@ -59,8 +59,8 @@ def caption_words() -> dict[str, int]:
 
 def main() -> None:
     cs = _check_submission()
-    harness = HARNESS.read_text()
-    figures = (ROOT / "paper" / "figures.tex").read_text()
+    harness = HARNESS.read_text(encoding="utf-8")
+    figures = (ROOT / "paper" / "figures.tex").read_text(encoding="utf-8")
 
     # (label, keep figures, keep references, stub the captions)
     variants = [
@@ -79,7 +79,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as td:
         td = Path(td)
         stubfile = scratch / "_measure_figstub.tex"
-        stubfile.write_text(stub_captions(figures))
+        stubfile.write_text(stub_captions(figures), encoding="utf-8")
         written.append(stubfile)
         rows = []
         try:
@@ -93,14 +93,14 @@ def main() -> None:
                     src = src.replace("\\bibliography{../references}", "%")
                 name = "_measure_" + re.sub(r"\W+", "_", label).strip("_")
                 tex = scratch / f"{name}.tex"
-                tex.write_text(src)
+                tex.write_text(src, encoding="utf-8")
                 written.append(tex)
                 subprocess.run([TECTONIC, "-X", "compile", str(tex),
                                 "--outdir", str(td), "--keep-logs"],
                                capture_output=True, check=False)
                 pdf, log = td / f"{name}.pdf", td / f"{name}.log"
                 pages = cs.count_pages(pdf) if pdf.exists() else 0
-                over = len(re.findall(r"Float too large", log.read_text(errors="replace"))) \
+                over = len(re.findall(r"Float too large", log.read_text(errors="replace", encoding="utf-8"))) \
                     if log.exists() else 0
                 rows.append((label, pages, over))
         finally:

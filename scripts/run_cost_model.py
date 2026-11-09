@@ -176,7 +176,7 @@ def main() -> None:
         )
 
     path = Path(__file__).resolve().parents[1] / "results" / "cost_model.json"
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {path}")
 
 

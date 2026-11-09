@@ -18,7 +18,7 @@ _STREAM_ID_KEYS = frozenset({"stream_id", "stream_ids"})
 
 
 def load() -> dict:
-    return json.loads(RESERVATION_PATH.read_text())
+    return json.loads(RESERVATION_PATH.read_text(encoding="utf-8"))
 
 
 def reserved_stream_ids() -> frozenset[int]:
@@ -108,7 +108,7 @@ def design_decision_paths(record: dict | None = None) -> list[Path]:
 
 def reserved_ids_in_path(path: Path, reserved: Iterable[int]) -> set[int]:
     reserved_set = set(reserved)
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     if path.suffix == ".json":
         found = stream_ids_in_json(json.loads(text))
     elif path.suffix == ".py":

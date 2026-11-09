@@ -74,10 +74,10 @@ def _cell(rows, g, conditions) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     reserved = reserved_stream_ids()
     paths = sorted(ARMS.glob("*.json"))
-    raw = [json.loads(p.read_text()) for p in paths]
+    raw = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     sids = {r["spec"]["stream_id"] for r in raw}
     if sids != set(reserved):
         sys.exit(f"stream ids {sorted(sids)} are not the reserved set")
@@ -110,7 +110,7 @@ def main() -> None:
 
     step = (cells["10"]["three_corner"]["utility_share_mean"]
             - cells["1"]["three_corner"]["utility_share_mean"])
-    rank = json.loads(RANK_SLICE.read_text())
+    rank = json.loads(RANK_SLICE.read_text(encoding="utf-8"))
     spherical = rank["gamma_1_to_10_share_step_at_rN"]
     readings = pre["readings_committed_before_seeing_numbers"]
     # Locked before the 64-arm numbers: half the spherical step is still a
@@ -158,7 +158,7 @@ def main() -> None:
             "from_precommit": pre["operationalization"],
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n_files": out["n_files"],
         "n_usable": out["n_usable"],

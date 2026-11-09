@@ -120,3 +120,12 @@ These were considered and left out on purpose, so the omission is visible.
 - **I12, I13:** small fixes. Each needs a test or a removal.
 - **Coverage gaps:** the rows in §1 marked "none found" (E3, E10, E12, E14). Tests should be added
   where the code still exists.
+
+## 5. Updates (dated; rows above are not edited)
+
+- **2026-11-09, I14 fixed.** All 309 text-mode `open` / `read_text` / `write_text` calls in `src/`,
+  `scripts/`, `tests/` and `notebooks/core/aba_cluster.py` now pass `encoding="utf-8"`. They were
+  rewritten mechanically with an AST-guided insertion and checked by re-parsing. `aba_lib.py` had no
+  such call and is unchanged (hash `4e110835b8fc2863`). Guard:
+  `tests/test_encoding.py::test_every_text_io_call_names_its_encoding`. Before the fix, the suite had
+  29 failures without `PYTHONUTF8=1`. After it: 287 passed, 1 skipped, without the variable.

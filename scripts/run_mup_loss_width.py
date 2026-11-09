@@ -112,7 +112,7 @@ def apply_reading(pre: dict, l2: dict, l3: dict) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["governs_stream_arms"] is False
     assert pre["no_search"] is True
@@ -142,7 +142,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": pre["readings_committed_before_seeing_numbers"][key],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "L2_present": l2["present"],
         "L2_mup_ratio": l2["ratio_N300_over_N64"]["mup"],

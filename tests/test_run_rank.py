@@ -32,7 +32,7 @@ def test_slice_is_288_reserved_nested_quadratic():
 
 def test_one_arm_is_the_precommit_cell_under_nested_q():
     spec = one_arm()
-    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text(encoding="utf-8"))
     assert spec.gamma_0 == 10.0
     assert spec.readout_rank == 4
     assert spec.condition == "S-HL"

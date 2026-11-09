@@ -327,7 +327,7 @@ def main() -> None:
             "consecutive_change_low_sf": 0.9,
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "verify": out["verify"],
         "lag12": lag12,

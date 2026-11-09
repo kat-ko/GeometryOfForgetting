@@ -21,7 +21,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-PRE = json.loads((ROOT / "results" / "width_smoke_precommit.json").read_text())
+PRE = json.loads((ROOT / "results" / "width_smoke_precommit.json").read_text(encoding="utf-8"))
 DIR = ROOT / "results" / "width_smoke"
 OUT = ROOT / "results" / "width_smoke.json"
 ALPHA_REF = 0.33
@@ -235,10 +235,10 @@ def score(curve: dict, arms: list[dict]) -> dict:
 def main() -> None:
     if not (DIR / "init_readout.json").is_file():
         raise SystemExit("run scripts/run_width_smoke.py --init-only first")
-    curve = json.loads((DIR / "init_readout.json").read_text())
+    curve = json.loads((DIR / "init_readout.json").read_text(encoding="utf-8"))
     recs = []
     for p in sorted(DIR.glob("N*.json")):
-        recs.append(json.loads(p.read_text()))
+        recs.append(json.loads(p.read_text(encoding="utf-8")))
     arms = [summarise_arm(r) for r in recs]
     verdict = score(curve, arms) if recs else {
         "pending_full_arms": True,
@@ -282,7 +282,7 @@ def main() -> None:
             "not findings about γ or forgetting."
         ),
     }
-    OUT.write_text(json.dumps(payload, indent=2))
+    OUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps({"verdict": verdict, "n_arms": len(arms),
                       "clouds": clouds, "wrote": str(OUT.relative_to(ROOT))},
                      indent=2))

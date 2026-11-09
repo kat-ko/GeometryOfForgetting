@@ -179,16 +179,16 @@ def _arms(name: str) -> list[dict]:
 
 
 def figjson(fig_id: str) -> dict:
-    man = json.loads((FIG / "MANIFEST.json").read_text())
+    man = json.loads((FIG / "MANIFEST.json").read_text(encoding="utf-8"))
     name = next(n for n in man["figures"][fig_id]["outputs"] if n.endswith(".json"))
-    return json.loads((FIG / name).read_text())
+    return json.loads((FIG / name).read_text(encoding="utf-8"))
 
 
 def _unique_n8() -> dict:
     """SEMs, CIs and sign tests reread at unique n=8. Missing file → empty dict."""
     if "unique_n8" not in _CACHE:
         p = RES / "unique_n8.json"
-        _CACHE["unique_n8"] = json.loads(p.read_text()) if p.exists() else {}
+        _CACHE["unique_n8"] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
     return _CACHE["unique_n8"]  # type: ignore[return-value]
 
 
@@ -248,7 +248,7 @@ def bootstrap_ci(values, statistic=np.mean, *, n: int = BOOTSTRAP_N) -> tuple[fl
 # --- 1. grid summary ----------------------------------------------------------
 
 def grid_summary() -> Table:
-    au = json.loads((RES / "audit_scope.json").read_text())
+    au = json.loads((RES / "audit_scope.json").read_text(encoding="utf-8"))
     rows_ = au.get("rows", au.get("checks", []))
 
     def says(fragment: str) -> str:
@@ -285,7 +285,7 @@ def grid_summary() -> Table:
 # --- 2. noise floors ----------------------------------------------------------
 
 def floors_table() -> Table:
-    mn = json.loads((RES / "measurement_null.json").read_text())
+    mn = json.loads((RES / "measurement_null.json").read_text(encoding="utf-8"))
     pg = mn["per_gamma"]
 
     def cv(gam: str, ch: str) -> float:
@@ -405,7 +405,7 @@ def benign_table() -> Table:
 
 
 def _tier2() -> dict:
-    return json.loads((RES / "tier2_backward_transfer.json").read_text())
+    return json.loads((RES / "tier2_backward_transfer.json").read_text(encoding="utf-8"))
 
 
 def channel_table() -> Table:
@@ -517,7 +517,7 @@ def peak_table() -> Table:
 
 
 def sign_audit_table() -> Table:
-    ap = json.loads((RES / "audit_propagation.json").read_text())
+    ap = json.loads((RES / "audit_propagation.json").read_text(encoding="utf-8"))
     s = ap["sign_audit"]
     t = Table("Is the gain unique to that corner?",
               "every (γ, condition, N, task, lag) cell of the registered grid, the width arms "
@@ -636,7 +636,7 @@ def corners_table() -> Table:
 
 
 def corners_gamma30() -> Table:
-    u = json.loads((RES / "gamma30_unique.json").read_text())
+    u = json.loads((RES / "gamma30_unique.json").read_text(encoding="utf-8"))
     t = Table("γ = 30 extension — what saturates and what does not",
               "4 unique seeds per corner at γ = 30, N = 300 (16 files are 4 unused stream_id "
               "copies); fenced appendix probe, not promotable, not pooled with the grid",
@@ -668,7 +668,7 @@ def corners_gamma30() -> Table:
 # --- 7. width -----------------------------------------------------------------
 
 def width_table() -> Table:
-    wn = json.loads((RES / "width_g10_n40.json").read_text())
+    wn = json.loads((RES / "width_g10_n40.json").read_text(encoding="utf-8"))
     wid = _obs("width")
     matched = [r for r in _obs() if r["stream_id"] < 2 and r["seed"] < 2]
     t = Table("Width invariance at matched lag — genuine n=40 is what §5.3 quotes",
@@ -753,7 +753,7 @@ def lag_task_table() -> Table:
 
 
 def variance_table() -> Table:
-    ap = json.loads((RES / "audit_propagation.json").read_text())
+    ap = json.loads((RES / "audit_propagation.json").read_text(encoding="utf-8"))
     t = Table("What explains per-arm forgetting at γ = 10",
               "three forgetting corners, module A, all (task, lag) comparisons; OLS R², "
               "categorical predictors one-hot with the first level dropped",
@@ -773,7 +773,7 @@ def variance_table() -> Table:
         t.rows.append(Row(k, v3[k], paper, v3["n"], extra))
     k3p = RES / "unconfound_k3.json"
     if k3p.exists():
-        k3 = json.loads(k3p.read_text())
+        k3 = json.loads(k3p.read_text(encoding="utf-8"))
         t.rows.append(Row(
             "stream alone (crossed arrangement×init, γ = 10)", k3["stream_R2_gamma10"],
             "0.001", k3["variance_three_corner"]["10"]["n"],
@@ -1121,7 +1121,7 @@ def ledger_table() -> Table:
 # --- figures: plotted values beside the rendering --------------------------------
 
 def figure_png(fig_id: str) -> Path:
-    man = json.loads((FIG / "MANIFEST.json").read_text())
+    man = json.loads((FIG / "MANIFEST.json").read_text(encoding="utf-8"))
     name = next(n for n in man["figures"][fig_id]["outputs"] if n.endswith(".png"))
     return FIG / name
 
@@ -1430,7 +1430,7 @@ def sampling_unit_table() -> Table:
     is. A SEM over arms is an inference about new arms, and only about new arrangements if the
     arms sample arrangements independently. Three populations differ exactly there.
     """
-    ss = json.loads((RES / "seed_security.json").read_text())
+    ss = json.loads((RES / "seed_security.json").read_text(encoding="utf-8"))
     k3 = ss["k3_arrangement_component"]
     w = ss["width"]
     shl5 = ss["gamma5_onset"]["corners"]["S-HL"]
@@ -1491,7 +1491,7 @@ def sampling_unit_table() -> Table:
         f"p = {shl5['init_unit']['sign_test']['p']:.4g}."))
     k8p = RES / "gamma5_k8.json"
     if k8p.exists():
-        k8 = json.loads(k8p.read_text())
+        k8 = json.loads(k8p.read_text(encoding="utf-8"))
         au8 = k8["corners"]["S-HL"]["arrangement_unit"]
         ci8 = k8["S-HL_t_ci_95"]
         t.rows.append(Row(
@@ -1540,7 +1540,7 @@ def rho_c_onset_table() -> Table:
     `G.load()` of the registered grid. Compared to γ = 3/10 at n = 40, this is **not** a
     matched 16-arm subset.
     """
-    g5 = json.loads((RES / "gamma5_onset.json").read_text())
+    g5 = json.loads((RES / "gamma5_onset.json").read_text(encoding="utf-8"))
     n5_disk = len(_arms("gamma_5"))
     t = Table("S-HL Δρ_c onset, including the γ = 5 probe — four richnesses, with n",
               "generic ensemble, first vs last stream boundary; γ = 3 and 10 are the registered "
@@ -1579,7 +1579,7 @@ def rho_c_onset_table() -> Table:
     onset = g5["onset"]
     n40p = RES / "gamma5_n40_onset.json"
     if n40p.exists():
-        r40 = json.loads(n40p.read_text())["by_gamma"]["5"]["S-HL"]
+        r40 = json.loads(n40p.read_text(encoding="utf-8"))["by_gamma"]["5"]["S-HL"]
         t.rows.append(Row(
             "γ = 5, 5×8 set, arm unit (not the onset evidence)",
             r40["delta_mean"], "−0.0102 (draft only)", 40,
@@ -1589,7 +1589,7 @@ def rho_c_onset_table() -> Table:
             "40 are crossed 5 arrangements × 8 inits. See the arrangement row below."))
     ssp = RES / "seed_security.json"
     if ssp.exists():
-        shl5 = json.loads(ssp.read_text())["gamma5_onset"]["corners"]["S-HL"]
+        shl5 = json.loads(ssp.read_text(encoding="utf-8"))["gamma5_onset"]["corners"]["S-HL"]
         au = shl5["arrangement_unit"]
         ci = au["spread"]["t_ci_95"]
         counts = "  ".join(f"{k}:{v['n_declining']}/{v['n']}"
@@ -1613,7 +1613,7 @@ def rho_c_onset_table() -> Table:
             "the one that does not resolve."))
     k8p = RES / "gamma5_k8.json"
     if k8p.exists():
-        k8 = json.loads(k8p.read_text())
+        k8 = json.loads(k8p.read_text(encoding="utf-8"))
         au8 = k8["corners"]["S-HL"]["arrangement_unit"]
         ci8 = k8["S-HL_t_ci_95"]
         counts8 = "  ".join(f"{k}:{v['n_declining']}/{v['n']}"
@@ -1718,7 +1718,7 @@ def paper_index() -> Table:
     inv = _inventory_mod()
     sources = []
     for rel in PAPER_FILES:
-        raw = (ROOT / rel).read_text()
+        raw = (ROOT / rel).read_text(encoding="utf-8")
         sources.append((rel, raw, inv.normalise(raw)))
 
     located = []
@@ -1815,7 +1815,7 @@ def unique_n_status_table() -> Table:
             + extra))
     g30p = RES / "gamma30_unique.json"
     if g30p.exists():
-        g30 = json.loads(g30p.read_text())
+        g30 = json.loads(g30p.read_text(encoding="utf-8"))
         t.rows.append(Row(
             "γ=30 Figure 4 interaction / SEM",
             f"{g30['interaction_over_sem_unique']:.2f} SEM (4 unique/corner)",
@@ -1828,7 +1828,7 @@ def unique_n_status_table() -> Table:
             "The additivity-failure claim is not licensed at unique n."))
     k3p = RES / "unconfound_k3.json"
     if k3p.exists():
-        k3 = json.loads(k3p.read_text())
+        k3 = json.loads(k3p.read_text(encoding="utf-8"))
         t.rows.append(Row(
             "K=3 unconfound vs precommit",
             f"{k3['n_arrangements_reproducing']}/3 leading; "
@@ -1842,7 +1842,7 @@ def unique_n_status_table() -> Table:
             "K=5 not run: detection, not estimation; fishing after seeing arr-2 S-LL."))
     k8p = RES / "gamma5_k8.json"
     if k8p.exists():
-        k8 = json.loads(k8p.read_text())
+        k8 = json.loads(k8p.read_text(encoding="utf-8"))
         t.rows.append(Row(
             "γ=5 8-arrangement pre-commit",
             f"{k8['S-HL_n_arrangements_negative']}/8 negative; "
@@ -1964,8 +1964,8 @@ def unresolved_claims_table() -> Table:
     d2 = figjson("fig2")["data"]
     d2b = figjson("fig2_benign")["data"]
     f4 = figjson("fig4")
-    g5 = json.loads((RES / "gamma5_onset.json").read_text())
-    ap = json.loads((RES / "audit_propagation.json").read_text())
+    g5 = json.loads((RES / "gamma5_onset.json").read_text(encoding="utf-8"))
+    ap = json.loads((RES / "audit_propagation.json").read_text(encoding="utf-8"))
     u = _unique_n8()
     t = Table("Unresolved claims — the number that makes each one so",
               "every quantity the paper mentions whose gate has not been cleared, including "
@@ -2029,13 +2029,13 @@ def unresolved_claims_table() -> Table:
     g5n40_path = RES / "gamma5_n40_onset.json"
     k8_path = RES / "gamma5_k8.json"
     if g5n40_path.exists():
-        shl40 = json.loads(g5n40_path.read_text())["by_gamma"]["5"]["S-HL"]
+        shl40 = json.loads(g5n40_path.read_text(encoding="utf-8"))["by_gamma"]["5"]["S-HL"]
         extra = (f"{int(round(shl40['fraction_declining'] * shl40['n_arms']))}/40 arms on the "
                  f"5×8 set decline (arm-level p = 6.8e-4); those 40 are crossed, not 40 "
                  f"arrangement draws.")
         n_arr, paper_n = 5, "40 arms / 5 arrangements"
         if k8_path.exists():
-            k8 = json.loads(k8_path.read_text())
+            k8 = json.loads(k8_path.read_text(encoding="utf-8"))
             ci8 = k8["S-HL_t_ci_95"]
             extra += (f" 8-arrangement pre-commit: {k8['S-HL_n_arrangements_negative']}/8 "
                       f"negative, 95% CI [{ci8[0]:+.3f}, {ci8[1]:+.3f}] **includes zero**, "
@@ -2086,7 +2086,7 @@ def unresolved_claims_table() -> Table:
                          / w["10|300 (full grid)"]["three"]["floors_signed"] - 1)
     wn_path = RES / "width_g10_n40.json"
     if wn_path.exists():
-        wn = json.loads(wn_path.read_text())
+        wn = json.loads(wn_path.read_text(encoding="utf-8"))
         t.rows.append(Row(
             "width spread at γ = 10 (genuine n=40, N=150 vs 600)",
             wn["three_corner_spread_pct"], "0.62%", 120,

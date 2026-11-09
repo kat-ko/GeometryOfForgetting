@@ -70,8 +70,8 @@ def prefix_matches(rows: list[dict], a26: dict) -> bool:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
-    a26 = json.loads(A26.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
+    a26 = json.loads(A26.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["governs_stream_arms"] is False
     held = pre["held_fixed"]
@@ -102,7 +102,7 @@ def main() -> None:
             "applied_reading": "prefix_mismatch",
             "reading": pre["readings_committed_before_seeing_numbers"]["prefix_mismatch"],
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({"applied_reading": "prefix_mismatch"}, indent=2))
         return
 
@@ -143,7 +143,7 @@ def main() -> None:
         "applied_reading": "recorded_rate",
         "reading": pre["readings_committed_before_seeing_numbers"]["recorded_rate"],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "prefix_ok": True,
         "L2": out["L2"],

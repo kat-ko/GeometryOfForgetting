@@ -114,7 +114,7 @@ def main() -> None:
         ),
         "per_seed": rows,
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "param_matched_L3_vs_L2": param,
         "width_matched_L3_vs_L2": depth_at_fixed_n,

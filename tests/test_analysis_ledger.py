@@ -161,7 +161,7 @@ def test_gamma30_interaction_does_not_clear_at_unique_n():
     from pathlib import Path
     import json
     p = Path(__file__).resolve().parents[1] / "results" / "gamma30_unique.json"
-    d = json.loads(p.read_text())
+    d = json.loads(p.read_text(encoding="utf-8"))
     assert d["clears_3sem_files"] is True
     assert d["clears_3sem_unique"] is False
     assert d["interaction_over_sem_unique"] < 3
@@ -174,7 +174,7 @@ def test_k3_precommit_exists_before_the_run_and_states_what_k3_cannot_show():
     from pathlib import Path
     import json
     p = Path(__file__).resolve().parents[1] / "results" / "unconfound_k3_precommit.json"
-    d = json.loads(p.read_text())
+    d = json.loads(p.read_text(encoding="utf-8"))
     assert d["written_before_any_unconfound_arm_completed"] is True
     assert "variance" in d["cannot_show"].lower()
     assert "not arrangement-specific" in d["if_reproduces"]
@@ -194,7 +194,7 @@ def test_gamma5_k8_precommit_predates_arms_and_scored_arrangement_dependent():
     from pathlib import Path
     import json
     root = Path(__file__).resolve().parents[1]
-    pre = json.loads((root / "results" / "gamma5_k8_precommit.json").read_text())
+    pre = json.loads((root / "results" / "gamma5_k8_precommit.json").read_text(encoding="utf-8"))
     assert pre["written_before_any_gamma5_k8_arm_completed"] is True
     assert "7 of 8" in pre["decision_rule"]["stands_at_arrangement_level"]
     assert "arrangement-dependent" in pre["decision_rule"]["arrangement_dependent"]
@@ -205,7 +205,7 @@ def test_gamma5_k8_precommit_predates_arms_and_scored_arrangement_dependent():
         assert (root / "results" / "gamma5_k8_precommit.json").stat().st_mtime < newest
     scored = root / "results" / "gamma5_k8.json"
     if scored.exists():
-        d = json.loads(scored.read_text())
+        d = json.loads(scored.read_text(encoding="utf-8"))
         assert d["n_usable"] == 256
         assert d["overlap_with_gamma_5_n40"]["ok"] is True
         assert d["verdict"]["outcome"] == "arrangement_dependent"
@@ -213,7 +213,7 @@ def test_gamma5_k8_precommit_predates_arms_and_scored_arrangement_dependent():
         assert d["S-HL_ci_excludes_zero"] is False
         md = L.unique_n_status_table().markdown()
         assert "arrangement-dependent" in md.lower() or "arrangement_dependent" in md
-        body = (root / "paper" / "body.tex").read_text()
+        body = (root / "paper" / "body.tex").read_text(encoding="utf-8")
         assert "four of eight" in body
         assert r"6.8\times 10^{-4}" not in body
         assert "factor of 3.3" in body

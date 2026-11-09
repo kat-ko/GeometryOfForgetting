@@ -77,10 +77,10 @@ def _cell(rows, g, r, conditions) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     reserved = reserved_stream_ids()
     paths = sorted(ARMS.glob("*.json"))
-    raw = [json.loads(p.read_text()) for p in paths]
+    raw = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     if any(not r["spec"].get("q_nested") for r in raw):
         sys.exit("un-nested record in the slice directory")
     sids = {r["spec"]["stream_id"] for r in raw}
@@ -167,7 +167,7 @@ def main() -> None:
         "wall_seconds_slice": 16614.381955385208,
         "n_workers": 192,
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n_files": out["n_files"],
         "n_usable": out["n_usable"],

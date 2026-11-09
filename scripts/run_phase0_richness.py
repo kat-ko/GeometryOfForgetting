@@ -113,13 +113,13 @@ def main() -> None:
     }
 
     path = Path(__file__).resolve().parents[1] / "results" / "phase0.json"
-    d = json.loads(path.read_text())
+    d = json.loads(path.read_text(encoding="utf-8"))
     d["richness_separation"] = out
     d["summary"]["richness_separation"] = passed
     d["config"].update({"stopping": "matched_loss", "target_loss": TARGET_LOSS,
                         "richness_T": T_TASKS, "richness_max_steps": MAX_STEPS,
                         "lr0": LR0})
-    path.write_text(json.dumps(d, indent=2, default=float) + "\n")
+    path.write_text(json.dumps(d, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"\nupdated {path}")
 
 

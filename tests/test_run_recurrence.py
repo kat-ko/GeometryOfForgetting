@@ -46,7 +46,7 @@ def test_slice_is_64_reserved_matched_loss():
 
 def test_one_arm_is_the_precommit_cell():
     spec = one_arm()
-    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text(encoding="utf-8"))
     assert spec.gamma_0 == 10.0
     assert spec.recurrence_mode == "represent"
     assert spec.recurrence_k == pre["design"]["k"] == K
@@ -183,8 +183,8 @@ def test_slice_reading_is_the_precommit_key():
     path = ROOT / "results" / "recurrence_slice.json"
     if not path.exists():
         pytest.skip("slice not written yet")
-    rec = json.loads(path.read_text())
-    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text())
+    rec = json.loads(path.read_text(encoding="utf-8"))
+    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text(encoding="utf-8"))
     assert rec["n_usable"] == 64
     assert rec["n_arms_missed"] == 0
     assert rec["reading"]["key"] in pre["readings_committed_before_seeing_numbers"]

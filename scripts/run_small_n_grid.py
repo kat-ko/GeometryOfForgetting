@@ -48,7 +48,7 @@ OVERLAP_DIRS = (
 def _require_precommit(path: Path) -> dict:
     if not path.is_file():
         raise SystemExit(f"missing {path}")
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _spec(N: int, gamma: float, condition: str, seed: int) -> pl.Phase1Spec:
@@ -76,7 +76,7 @@ def import_overlap(out: Path, widths: tuple[int, ...]) -> list[str]:
             dest = out / src.name
             if src.name not in wanted:
                 continue
-            rec = json.loads(src.read_text())
+            rec = json.loads(src.read_text(encoding="utf-8"))
             spec = wanted[src.name]
             if rec.get("spec") != json.loads(json.dumps(asdict(spec))):
                 continue
@@ -97,7 +97,7 @@ def _job(payload: tuple[dict, str]) -> dict:
     out = Path(payload[1])
     path = _path(spec, out)
     if path.exists():
-        stored = json.loads(path.read_text())
+        stored = json.loads(path.read_text(encoding="utf-8"))
         if stored.get("spec") == json.loads(json.dumps(asdict(spec))):
             return {
                 "key": spec.key, "N": spec.N, "seed": spec.seed,
@@ -106,7 +106,7 @@ def _job(payload: tuple[dict, str]) -> dict:
                 "CF": stored.get("forgetting", {}).get("CF"),
             }
     rec, clouds = _run_arm_with_clouds(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     if spec.N in (16, 32) and spec.seed == 0:
         import numpy as np
         npz = path.with_suffix(".clouds.npz")

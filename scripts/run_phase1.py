@@ -89,7 +89,7 @@ def _job(spec: pl.Phase1Spec) -> dict:
     path = _path(spec)
     if path.exists():
         try:
-            stored = json.loads(path.read_text())["spec"]
+            stored = json.loads(path.read_text(encoding="utf-8"))["spec"]
         except (json.JSONDecodeError, KeyError):
             stored = None
         # Compare through the same serialization: `module_list` is a tuple in Python
@@ -98,7 +98,7 @@ def _job(spec: pl.Phase1Spec) -> dict:
             return {"key": spec.key, "path": str(path), "skipped": True}
         print(f"  re-running {spec.key}: stored spec differs", flush=True)
     rec = pl.run_arm(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     return {"key": spec.key, "path": str(path), "skipped": False,
             "usable": rec["usable"], "wall_seconds": rec["wall_seconds"]}
 
@@ -170,7 +170,7 @@ def rho_coverage(recs: list[dict]) -> dict:
 
 def summarize(paths: list[Path]) -> dict:
     """Pool attribution by (γ, `a`, condition, module, lag) and surface the checks."""
-    recs = [json.loads(p.read_text()) for p in paths]
+    recs = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     usable = [r for r in recs if r["usable"]]
 
     groups: dict[tuple, list[Attribution]] = {}
@@ -255,7 +255,7 @@ def main() -> None:
     summary = summarize([_path(s) for s in specs if _path(s).exists()])
     name = ("phase1_summary_smoke.json" if args.smoke
             else "phase1_summary_pilot.json" if args.pilot else "phase1_summary.json")
-    (ROOT / "results" / name).write_text(json.dumps(summary, indent=2))
+    (ROOT / "results" / name).write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print(f"\n{summary['n_usable']}/{summary['n_arms']} usable; "
           f"max identity residual {summary['max_identity_residual']:.2e}")

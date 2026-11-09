@@ -15,7 +15,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-PRE = json.loads((ROOT / "results" / "small_n_grid_precommit.json").read_text())
+PRE = json.loads((ROOT / "results" / "small_n_grid_precommit.json").read_text(encoding="utf-8"))
 PRE16 = ROOT / "results" / "small_n16_precommit.json"
 DIR = ROOT / "results" / "small_n_grid"
 OUT = ROOT / "results" / "small_n_grid.json"
@@ -164,7 +164,7 @@ def verdict(cells: dict) -> dict:
 
 
 def main() -> None:
-    recs = [json.loads(p.read_text()) for p in sorted(DIR.glob("N*.json"))]
+    recs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(DIR.glob("N*.json"))]
     if not recs:
         raise SystemExit(f"no arms in {DIR}")
     arms = [summarise(r) for r in recs]
@@ -177,7 +177,7 @@ def main() -> None:
         for n, g, c in sorted(cells)
     }
     v = verdict(cells)
-    extra_pre = json.loads(PRE16.read_text()) if PRE16.is_file() else None
+    extra_pre = json.loads(PRE16.read_text(encoding="utf-8")) if PRE16.is_file() else None
     payload = {
         "generated_by": "scripts/analyse_small_n_grid.py",
         "precommit": PRE,
@@ -187,7 +187,7 @@ def main() -> None:
         "cells": cells_out,
         "verdict": v,
     }
-    OUT.write_text(json.dumps(payload, indent=2))
+    OUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps({"n_arms": len(arms), "verdict": v}, indent=2))
     print("\nγ=10 mean CF / Δlogα / retained α")
     widths = sorted({k[0] for k in cells})

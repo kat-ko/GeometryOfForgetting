@@ -23,7 +23,7 @@ def _arm(**over) -> dict:
 
 
 def _write(d, name, rec):
-    (d / name).write_text(json.dumps(rec))
+    (d / name).write_text(json.dumps(rec), encoding="utf-8")
 
 
 def test_on_design_arm_loads(tmp_path, monkeypatch):

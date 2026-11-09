@@ -98,11 +98,11 @@ def _grid_aligned(rows, field, gammas, conditions, units) -> np.ndarray:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     reserved = reserved_stream_ids()
     units = tuple(sorted(reserved))
     paths = sorted(ARMS.glob("*.json"))
-    raw = [json.loads(p.read_text()) for p in paths]
+    raw = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     sids = {r["spec"]["stream_id"] for r in raw}
     if sids != set(reserved):
         sys.exit(f"stream ids {sorted(sids)} are not the reserved set")
@@ -138,7 +138,7 @@ def main() -> None:
         }
     step = (cells["10"]["three_corner"]["utility_share_mean"]
             - cells["1"]["three_corner"]["utility_share_mean"])
-    old = json.loads(CORRECTED.read_text())
+    old = json.loads(CORRECTED.read_text(encoding="utf-8"))
     old_step = old["composition_at_gamma_gt_1"]["paper_gamma_step_utility_share_1_to_10"]
     old_share_1 = old["three_corner_pooled"]["quadratic"]["1"]["shares"]["utility"]
     old_share_10 = old["three_corner_pooled"]["quadratic"]["10"]["shares"]["utility"]
@@ -218,7 +218,7 @@ def main() -> None:
             "operationalization": op,
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n_files": out["n_files"],
         "n_usable": out["n_usable"],

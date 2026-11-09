@@ -174,7 +174,7 @@ def main() -> None:
     print(f"  seeds 5 -> 8 costs +{extra_h:.2f} h wall")
 
     path = Path(__file__).resolve().parents[1] / "results" / "estimator_followups.json"
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {path}")
 
 

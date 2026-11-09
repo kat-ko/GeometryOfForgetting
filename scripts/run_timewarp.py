@@ -63,7 +63,7 @@ def main() -> None:
         # analysis can be revised without retraining.
         print(f"reusing trajectories from {path}")
         trajs = [trajectories.GeometryTrajectory.from_dict(t)
-                 for t in json.loads(path.read_text())["trajectories"]]
+                 for t in json.loads(path.read_text(encoding="utf-8"))["trajectories"]]
     else:
         print(f"trajectories at P={P}, N={N}, M={M}, gammas={GAMMAS}, "
               f"{N_CHECKPOINTS} checkpoints to {MAX_STEPS} steps, "
@@ -146,7 +146,7 @@ def main() -> None:
            "consequence": ("heterogeneity contrasts unrestricted, but must use "
                            "gamma pairs whose trajectories differ" if h3_alive else
                            "restrict contrasts to gamma << 1 vs gamma ~ 1")}
-    path.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    path.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"\nwrote {path}")
 
 

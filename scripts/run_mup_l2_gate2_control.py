@@ -204,7 +204,7 @@ def apply_reading(pre: dict, g1: dict, b: dict) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["governs_stream_arms"] is False
     assert pre["gates"]["2"]["shared"]["n_hidden_layers"] == 1
@@ -225,7 +225,7 @@ def main() -> None:
             "applied_reading": key,
             "reading": pre["readings_committed_before_seeing_numbers"][key],
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps(out, indent=2))
         return
 
@@ -256,7 +256,7 @@ def main() -> None:
             },
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "gate1_pass": g1["pass"],
         "check_A_pass": a["pass"],

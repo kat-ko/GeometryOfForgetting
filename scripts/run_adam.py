@@ -63,7 +63,7 @@ class AdamSpec(HammingSpec):
 
 
 def _pre() -> dict:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     if pre.get("written_before_running_applies_to") != "192-arm Adam Hamming first slice":
@@ -159,7 +159,7 @@ def one_arm_hamming() -> AdamSpec:
 
 
 def _pre_hamming() -> dict:
-    pre = json.loads(HAMMING_PRECOMMIT.read_text())
+    pre = json.loads(HAMMING_PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("hamming-only pre-commit missing")
     if pre.get("written_before_running_applies_to") != "96-arm Adam Hamming-only at γ=10":
@@ -321,7 +321,7 @@ def _write_gate_report(jobs: list[dict], wall: float) -> dict:
             "stream_10000_gamma10_dW_A": next(
                 j["dW_A"] for j in g10 if j["stream_id"] == min(reserved_stream_ids())
             ),
-            "one_arm_task0_dW_A": json.loads(ONE_ARM_REPORT.read_text())["task0_weight_change"]["A"],
+            "one_arm_task0_dW_A": json.loads(ONE_ARM_REPORT.read_text(encoding="utf-8"))["task0_weight_change"]["A"],
             "must_match": "the one-arm task-0 weight_change A, same spec",
         },
         "will_not_do": [
@@ -331,7 +331,7 @@ def _write_gate_report(jobs: list[dict], wall: float) -> dict:
             "Write into results/phase1/.",
         ],
     }
-    GATE_REPORT.write_text(json.dumps(report, indent=2) + "\n")
+    GATE_REPORT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     md = [
         "# Adam richness gate — frozen × s_r=0.5, unique n=8, task 0",
         "",
@@ -353,7 +353,7 @@ def _write_gate_report(jobs: list[dict], wall: float) -> dict:
         "Source: `results/adam_richness_gate.json`.",
         "",
     ]
-    (ROOT / "results" / "adam_richness_gate.md").write_text("\n".join(md))
+    (ROOT / "results" / "adam_richness_gate.md").write_text("\n".join(md), encoding="utf-8")
     return report
 
 
@@ -369,12 +369,12 @@ def _job(spec: AdamSpec) -> dict:
     provenance.assert_current()
     path = _path(spec)
     if path.exists():
-        stored = json.loads(path.read_text()).get("spec")
+        stored = json.loads(path.read_text(encoding="utf-8")).get("spec")
         if stored == _norm(spec):
             return {"key": spec.key, "path": str(path), "skipped": True}
         sys.exit(f"refusing to overwrite {path.name}: stored spec does not match")
     rec = pl.run_arm(spec, verbose=True)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     n_miss = sum(1 for t in rec["tasks"] if not t["converged"])
     task0 = rec["tasks"][0]
     return {
@@ -466,7 +466,7 @@ def _write_one_arm_report(
         ],
         "cannot_speak_to": ["γ", "finding 1", "channel reorganisation"],
     }
-    path.write_text(json.dumps(report, indent=2) + "\n")
+    path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -485,7 +485,7 @@ def main() -> None:
         sys.exit("one flag at a time")
     _pre()
     if args.richness_gate:
-        if not ONE_ARM_REPORT.exists() or not json.loads(ONE_ARM_REPORT.read_text()).get("reached_target"):
+        if not ONE_ARM_REPORT.exists() or not json.loads(ONE_ARM_REPORT.read_text(encoding="utf-8")).get("reached_target"):
             sys.exit("one-arm first")
         specs = gate_arms()
         print(
@@ -511,7 +511,7 @@ def main() -> None:
     if args.hamming_only:
         if not HAMMING_ONE_ARM_REPORT.exists():
             sys.exit("hamming one-arm first: run scripts/run_adam.py --one-arm-hamming")
-        one = json.loads(HAMMING_ONE_ARM_REPORT.read_text())
+        one = json.loads(HAMMING_ONE_ARM_REPORT.read_text(encoding="utf-8"))
         if one.get("reached_target") is not True:
             sys.exit("hamming one-arm missed target; lr0_miss, stop")
         if one.get("spec", {}).get("input_level") == GATE_INPUT and one.get("spec", {}).get("readout_similarity") == GATE_S_R:
@@ -524,12 +524,12 @@ def main() -> None:
     else:
         if not ONE_ARM_REPORT.exists():
             sys.exit("one-arm first: run scripts/run_adam.py --one-arm")
-        one = json.loads(ONE_ARM_REPORT.read_text())
+        one = json.loads(ONE_ARM_REPORT.read_text(encoding="utf-8"))
         if one.get("reached_target") is not True:
             sys.exit("one-arm missed target; re-pin by docs/22 before the slice")
         if not GATE_REPORT.exists():
             sys.exit("richness gate first: run scripts/run_adam.py --richness-gate")
-        gate = json.loads(GATE_REPORT.read_text())
+        gate = json.loads(GATE_REPORT.read_text(encoding="utf-8"))
         if gate.get("reading") != "clears_decade":
             sys.exit(
                 f"richness gate reading is {gate.get('reading')!r}; "

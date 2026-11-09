@@ -70,7 +70,7 @@ def test_lr0_and_stopping_are_the_registered_pin():
     spec = Phase1Spec()
     assert spec.lr0 == REGISTERED_LR0
     assert spec.target_loss == REGISTERED_TARGET_LOSS
-    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -81,7 +81,7 @@ def test_lr0_and_stopping_are_the_registered_pin():
 
 
 def test_rank_grid_provenance_is_the_brief_not_reserved_pilots():
-    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text(encoding="utf-8"))
     assert pre["design"]["first_slice"]["ranks"] == A5_RANKS
     assert "docs/16 A5" in pre["design"]["held_fixed"]["rank_grid_provenance"]
     assert "not informed by the reserved set" in pre["design"]["held_fixed"]["rank_grid_provenance"].lower()
@@ -90,7 +90,7 @@ def test_rank_grid_provenance_is_the_brief_not_reserved_pilots():
 
 
 def test_isotropic_precommit_uses_registered_pin():
-    pre = json.loads((ROOT / "results" / "isotropic_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "isotropic_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -104,7 +104,7 @@ def test_isotropic_precommit_uses_registered_pin():
 
 
 def test_nottuned_precommit_uses_registered_pin():
-    pre = json.loads((ROOT / "results" / "nottuned_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "nottuned_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -118,7 +118,7 @@ def test_nottuned_precommit_uses_registered_pin():
 
 
 def test_scope_precommit_uses_registered_pin():
-    pre = json.loads((ROOT / "results" / "scope_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "scope_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -132,7 +132,7 @@ def test_scope_precommit_uses_registered_pin():
 
 
 def test_hamming_precommit_uses_registered_pin():
-    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -154,7 +154,7 @@ def test_hamming_precommit_uses_registered_pin():
 
 
 def test_recurrence_precommit_uses_registered_pin():
-    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "recurrence_precommit.json").read_text(encoding="utf-8"))
     held = pre["design"]["held_fixed"]
     assert held["lr0"] == REGISTERED_LR0
     assert held["target_loss"] == REGISTERED_TARGET_LOSS
@@ -172,7 +172,7 @@ def test_recurrence_precommit_uses_registered_pin():
 
 
 def test_rank_precommit_does_not_claim_to_govern_the_one_arm():
-    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "rank_precommit.json").read_text(encoding="utf-8"))
     assert pre["one_arm_preceded_this_commit"] is True
     assert pre["written_before_running_applies_to"] == "288-arm first slice"
     assert pre["one_arm"]["governs"] is False

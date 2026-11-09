@@ -435,7 +435,7 @@ def main() -> None:
         "q10_richness_coverage": richness_coverage(recs, width, ext),
     }
     p = ROOT / "results" / "open_questions.json"
-    p.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    p.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
 
     m = out["q4_margins"]
     print(f"\nQ4  {m['n_resolved']}/{m['n_total']} pooled quantities resolved; "

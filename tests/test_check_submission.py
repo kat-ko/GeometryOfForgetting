@@ -53,8 +53,8 @@ def test_a_mid_line_comment_keeps_the_code_before_it():
 def test_an_unverified_bib_field_fails_even_though_its_marker_is_behind_a_percent(tmp_path):
     (tmp_path / "refs.bib").write_text(
         "@article{x,\n  author = {A},\n  journal = {J},\n"
-        "  % TODO-VERIFY: volume is not in the reference record\n}\n")
-    (tmp_path / "body.tex").write_text(r"\cite{x}")
+        "  % TODO-VERIFY: volume is not in the reference record\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"\cite{x}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["bibliography fields verified"] == "FAIL"
@@ -69,8 +69,8 @@ def test_an_unverified_bib_field_fails_when_its_marker_is_a_note_field(tmp_path)
     """
     (tmp_path / "refs.bib").write_text(
         "@article{x,\n  author = {A},\n  journal = {J},\n"
-        "  note    = {TODO-VERIFY: volume is not in the reference record},\n}\n")
-    (tmp_path / "body.tex").write_text(r"\cite{x}")
+        "  note    = {TODO-VERIFY: volume is not in the reference record},\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"\cite{x}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["bibliography fields verified"] == "FAIL"
@@ -80,32 +80,32 @@ def test_the_bib_header_describing_the_marker_does_not_count_as_one(tmp_path):
     """A header explaining the convention names the token; that is not an unverified field."""
     (tmp_path / "refs.bib").write_text(
         "% Entries needing a lookup carry TODO-VERIFY in a note field.\n"
-        "@article{x,\n  author = {A},\n  volume = {11},\n}\n")
-    (tmp_path / "body.tex").write_text(r"\cite{x}")
+        "@article{x,\n  author = {A},\n  volume = {11},\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"\cite{x}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["bibliography fields verified"] == "PASS"
 
 
 def test_a_fully_specified_bib_passes(tmp_path):
-    (tmp_path / "refs.bib").write_text("@article{x,\n  author = {A},\n  volume = {11},\n}\n")
-    (tmp_path / "body.tex").write_text(r"\cite{x}")
+    (tmp_path / "refs.bib").write_text("@article{x,\n  author = {A},\n  volume = {11},\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"\cite{x}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["bibliography fields verified"] == "PASS"
 
 
 def test_a_citation_with_no_bib_entry_fails(tmp_path):
-    (tmp_path / "refs.bib").write_text("@article{present,\n  volume = {1},\n}\n")
-    (tmp_path / "body.tex").write_text(r"as shown by \citet{absent}")
+    (tmp_path / "refs.bib").write_text("@article{present,\n  volume = {1},\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"as shown by \citet{absent}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["citations resolve"] == "FAIL"
 
 
 def test_no_citations_at_all_is_unknown_rather_than_pass(tmp_path):
-    (tmp_path / "refs.bib").write_text("@article{x,\n  volume = {1},\n}\n")
-    (tmp_path / "body.tex").write_text(r"\section{No citations here}")
+    (tmp_path / "refs.bib").write_text("@article{x,\n  volume = {1},\n}\n", encoding="utf-8")
+    (tmp_path / "body.tex").write_text(r"\section{No citations here}", encoding="utf-8")
     rep = CS.Report()
     CS.check_bibliography(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["citations resolve"] == "UNKNOWN"
@@ -114,14 +114,14 @@ def test_no_citations_at_all_is_unknown_rather_than_pass(tmp_path):
 # --- anonymisation must read comments, unlike everything else ----------------------------------
 
 def test_an_identifying_string_in_a_comment_still_fails(tmp_path):
-    (tmp_path / "body.tex").write_text("% drawn from /home/someone/work\n\\section{A}")
+    (tmp_path / "body.tex").write_text("% drawn from /home/someone/work\n\\section{A}", encoding="utf-8")
     rep = CS.Report()
     CS.check_anonymity(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["anonymisation"] == "FAIL"
 
 
 def test_a_self_citation_by_arxiv_id_is_treated_as_deanonymising(tmp_path):
-    (tmp_path / "body.tex").write_text(r"our earlier work (arXiv:2604.27656) showed")
+    (tmp_path / "body.tex").write_text(r"our earlier work (arXiv:2604.27656) showed", encoding="utf-8")
     rep = CS.Report()
     CS.check_anonymity(rep, tmp_path, CS.tex_sources(tmp_path))
     assert _states(rep)["anonymisation"] == "FAIL"
@@ -130,8 +130,8 @@ def test_a_self_citation_by_arxiv_id_is_treated_as_deanonymising(tmp_path):
 # --- placeholders and keywords -----------------------------------------------------------------
 
 def test_a_placeholder_macro_fails_but_prose_naming_it_does_not(tmp_path):
-    (tmp_path / "a.tex").write_text(r"\todo{write this}")
-    (tmp_path / "b.tex").write_text(r"% the \todo{} count must reach zero")
+    (tmp_path / "a.tex").write_text(r"\todo{write this}", encoding="utf-8")
+    (tmp_path / "b.tex").write_text(r"% the \todo{} count must reach zero", encoding="utf-8")
     rep = CS.Report()
     CS.check_placeholders(rep, [tmp_path / "a.tex"])
     CS.check_placeholders(rep, [tmp_path / "b.tex"])
@@ -139,10 +139,10 @@ def test_a_placeholder_macro_fails_but_prose_naming_it_does_not(tmp_path):
 
 
 def test_missing_keywords_fails_and_present_keywords_passes(tmp_path):
-    (tmp_path / "a.tex").write_text(r"\section{A}")
+    (tmp_path / "a.tex").write_text(r"\section{A}", encoding="utf-8")
     rep = CS.Report()
     CS.check_keywords(rep, [tmp_path / "a.tex"])
-    (tmp_path / "a.tex").write_text("\\begin{keywords}\ngeometry\n\\end{keywords}")
+    (tmp_path / "a.tex").write_text("\\begin{keywords}\ngeometry\n\\end{keywords}", encoding="utf-8")
     CS.check_keywords(rep, [tmp_path / "a.tex"])
     assert [s for s, _n, _d in rep.rows] == ["FAIL", "PASS"]
 

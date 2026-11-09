@@ -120,7 +120,7 @@ def _reading(p: float, licensed: bool, which: str) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing or not marked written_before_running")
 
@@ -227,7 +227,7 @@ def main() -> None:
         },
         "alpha": ALPHA,
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n": len(rows),
         "F_interaction_signed": signed_anova["F_interaction"],

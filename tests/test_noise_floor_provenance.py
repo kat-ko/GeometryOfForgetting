@@ -23,7 +23,7 @@ REGISTERED_N_T = 200
 
 
 def _measured_row() -> dict:
-    rows = json.loads(COST_MODEL.read_text())["noise_vs_n_t"]
+    rows = json.loads(COST_MODEL.read_text(encoding="utf-8"))["noise_vs_n_t"]
     matching = [r for r in rows if r["n_t"] == REGISTERED_N_T]
     assert matching, f"cost_model.json has no n_t={REGISTERED_N_T} row to denominate against"
     return matching[0]

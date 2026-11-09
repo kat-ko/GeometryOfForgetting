@@ -50,7 +50,7 @@ def test_requested_hamming_is_exact_at_p16():
 
 def test_one_arm_is_frozen_half_hamming_first_reserved():
     spec = one_arm()
-    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text(encoding="utf-8"))
     assert spec.gamma_0 == 10.0
     assert spec.input_level == "frozen"
     assert spec.readout_similarity == 0.5
@@ -114,7 +114,7 @@ def test_same_stream_id_and_s_r_pair_A0_across_input_levels():
 
 def test_precommit_readings_are_named_before_the_slice_json():
     """The named outcomes exist in the pre-commit regardless of whether analysis has run."""
-    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "hamming_precommit.json").read_text(encoding="utf-8"))
     names = set(pre["readings_committed_before_seeing_numbers"])
     assert names >= {
         "monotone_dose", "binary_only", "nonmonotone",

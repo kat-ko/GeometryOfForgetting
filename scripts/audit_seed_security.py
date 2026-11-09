@@ -282,9 +282,9 @@ def width_by_arrangement() -> dict:
 
 def k3_by_arrangement() -> dict:
     """K=3 is the only set with a genuine arrangement axis. What does it say about the SEMs?"""
-    k3 = json.loads((RES / "unconfound_k3.json").read_text())
-    grid = json.loads((RES / "gamma5_n40_onset.json").read_text())["by_gamma"]["10"]
-    u8 = json.loads((RES / "unique_n8.json").read_text())["fig4"]["10"]["cells"]
+    k3 = json.loads((RES / "unconfound_k3.json").read_text(encoding="utf-8"))
+    grid = json.loads((RES / "gamma5_n40_onset.json").read_text(encoding="utf-8"))["by_gamma"]["10"]
+    u8 = json.loads((RES / "unique_n8.json").read_text(encoding="utf-8"))["fig4"]["10"]["cells"]
     recs = G.load(arms_dir=RES / "unconfound_k3")
     ent = keyed_rho(recs, 10.0)
 
@@ -364,7 +364,7 @@ def k3_by_arrangement() -> dict:
 # --- 4. the floors everything is denominated in -------------------------------
 
 def floor_security() -> dict:
-    mn = json.loads((RES / "measurement_null.json").read_text())
+    mn = json.loads((RES / "measurement_null.json").read_text(encoding="utf-8"))
     n_seeds = mn.get("n_seeds") or mn.get("seeds") or 4
     if isinstance(n_seeds, list):
         n_seeds = len(n_seeds)
@@ -391,7 +391,7 @@ def main() -> None:
         "k3_arrangement_component": k3_by_arrangement(),
         "floors": floor_security(),
     }
-    OUT.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    OUT.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT)}\n")
 
     g = out["grid_duplication"]

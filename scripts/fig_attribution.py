@@ -41,7 +41,7 @@ PRETTY = {"utility": r"$\Psi_{\mathrm{eff}}$ (utility)",
 
 def load(path: Path) -> dict:
     rows = {}
-    for key, t in json.loads(path.read_text())["attribution"].items():
+    for key, t in json.loads(path.read_text(encoding="utf-8"))["attribution"].items():
         gamma, a, cond, module, lag = key.split("|")
         rows.setdefault((float(gamma), cond, module), {})[int(lag)] = t
     return rows

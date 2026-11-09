@@ -209,11 +209,11 @@ def write_frozen_precommit(pre: dict, freeze: dict) -> None:
             "l3_b_fails": pre["readings_committed_before_seeing_numbers"]["l3_b_fails"],
         },
     }
-    FROZEN_PRE.write_text(json.dumps(body, indent=2))
+    FROZEN_PRE.write_text(json.dumps(body, indent=2), encoding="utf-8")
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["governs_stream_arms"] is False
     held = pre["held_fixed"]
@@ -262,7 +262,7 @@ def main() -> None:
             "applied_reading": "search_failed",
             "reading": pre["readings_committed_before_seeing_numbers"]["search_failed"],
         }
-        SEARCH_OUT.write_text(json.dumps(out, indent=2))
+        SEARCH_OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({
             "applied_reading": out["applied_reading"],
             "n_evaluated": len(evaluated),
@@ -271,7 +271,7 @@ def main() -> None:
         return
 
     write_frozen_precommit(pre, freeze)
-    frozen_pre = json.loads(FROZEN_PRE.read_text())
+    frozen_pre = json.loads(FROZEN_PRE.read_text(encoding="utf-8"))
     assert frozen_pre["written_before_running"] is True
     assert frozen_pre["frozen_from_l2"]["K"] == freeze["K"]
 
@@ -307,7 +307,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": pre["readings_committed_before_seeing_numbers"][key],
     }
-    SEARCH_OUT.write_text(json.dumps(search_out, indent=2))
+    SEARCH_OUT.write_text(json.dumps(search_out, indent=2), encoding="utf-8")
 
     l3_out = {
         "generated_by": "scripts/run_mup_l2_operating_point.py",
@@ -321,7 +321,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": frozen_pre["readings_committed_before_seeing_l3_numbers"][key],
     }
-    L3_OUT.write_text(json.dumps(l3_out, indent=2))
+    L3_OUT.write_text(json.dumps(l3_out, indent=2), encoding="utf-8")
     print(json.dumps({
         "frozen_K": freeze["K"],
         "frozen_n_tail": freeze["n_tail"],

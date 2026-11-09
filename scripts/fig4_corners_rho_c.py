@@ -289,7 +289,7 @@ def main() -> None:
          "baseline": {"gamma": BASELINE_GAMMA, "band": [lo, hi], "per_corner": base},
          "rich": rich,
          "effects_by_gamma": eff_by_gamma,
-         "effects_by_width": eff_by_width}, indent=2))
+         "effects_by_width": eff_by_width}, indent=2), encoding="utf-8")
     print(f"wrote figures/{stem}.{{pdf,png,json}}\n")
 
     print(f"γ={args.gamma:g}   lazy baseline band [{lo:+.5f}, {hi:+.5f}]")

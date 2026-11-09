@@ -64,11 +64,11 @@ def _job(spec: CorrectedLRSpec) -> dict:
     provenance.assert_current()
     path = _path(spec)
     if path.exists():
-        stored = json.loads(path.read_text()).get("spec")
+        stored = json.loads(path.read_text(encoding="utf-8")).get("spec")
         if stored == json.loads(json.dumps(asdict(spec))):
             return {"key": spec.key, "path": str(path), "skipped": True}
     rec = pl.run_arm(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     n_miss = sum(1 for t in rec["tasks"] if not t["converged"])
     return {
         "key": rec["key"], "path": str(path), "skipped": False,
@@ -88,7 +88,7 @@ def main() -> None:
     ap.add_argument("--cap", type=int, default=None)
     args = ap.parse_args()
 
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     OUT.mkdir(parents=True, exist_ok=True)

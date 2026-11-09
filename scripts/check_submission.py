@@ -104,13 +104,13 @@ def strip_comments(text: str) -> str:
 
 def read_all(paths: list[Path]) -> str:
     """Concatenated source with comments removed -- for structural checks only."""
-    return "\n".join(strip_comments(p.read_text(errors="replace")) for p in paths)
+    return "\n".join(strip_comments(p.read_text(errors="replace", encoding="utf-8")) for p in paths)
 
 
 def check_placeholders(rep: Report, tex: list[Path]) -> None:
     hits = []
     for p in tex:
-        for i, line in enumerate(strip_comments(p.read_text(errors="replace")).splitlines(), 1):
+        for i, line in enumerate(strip_comments(p.read_text(errors="replace", encoding="utf-8")).splitlines(), 1):
             for pat in PLACEHOLDERS:
                 if re.search(pat, line):
                     hits.append(f"{p.name}:{i}")
@@ -122,7 +122,7 @@ def check_placeholders(rep: Report, tex: list[Path]) -> None:
 
 def check_watermark(rep: Report, tex: list[Path]) -> None:
     hits = [f"{p.name}" for p in tex
-            if any(re.search(w, strip_comments(p.read_text(errors="replace")))
+            if any(re.search(w, strip_comments(p.read_text(errors="replace", encoding="utf-8")))
                    for w in WATERMARKS)]
     if hits:
         rep.bad("watermark removed", f"draft watermark still set in {', '.join(hits)}")
@@ -156,7 +156,7 @@ def check_figures(rep: Report, tex: list[Path]) -> None:
     if not man_path.exists():
         rep.unknown("figures traceable", "no figures/MANIFEST.json")
         return
-    man = json.loads(man_path.read_text())
+    man = json.loads(man_path.read_text(encoding="utf-8"))
     claimed = {n: d for e in man["figures"].values() for n, d in e["outputs"].items()}
 
     used = set()
@@ -201,7 +201,7 @@ def check_bibliography(rep: Report, paper: Path, tex: list[Path]) -> None:
     # Raw, not comment-stripped. BibTeX does not treat `%` as a comment anyway, and reading this
     # through strip_comments once made the check pass by not looking, which is the failure the whole
     # appendix is about.
-    text = "\n".join(p.read_text(errors="replace") for p in bibs)
+    text = "\n".join(p.read_text(errors="replace", encoding="utf-8") for p in bibs)
 
     # Anywhere inside an entry, in any syntax. This used to require the marker to be an indented
     # `%` comment. Then the markers were moved into `note` fields -- because `%` does not comment
@@ -313,7 +313,7 @@ def main() -> None:
         print(f"no {args.paper_dir}/ directory")
         sys.exit(1)
     tex = tex_sources(paper)
-    if not any(re.search(r"\\begin\{document\}", p.read_text(errors="replace")) for p in tex):
+    if not any(re.search(r"\\begin\{document\}", p.read_text(errors="replace", encoding="utf-8")) for p in tex):
         rep.unknown("main document", f"no \\begin{{document}} in {args.paper_dir}/ — the jmlr "
                                      f"skeleton has not been assembled yet")
 

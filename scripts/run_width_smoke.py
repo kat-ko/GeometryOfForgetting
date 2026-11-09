@@ -53,7 +53,7 @@ def _require_precommit() -> dict:
         raise SystemExit(
             f"missing {PRE.relative_to(ROOT)} — write the pre-commit before any arm."
         )
-    return json.loads(PRE.read_text())
+    return json.loads(PRE.read_text(encoding="utf-8"))
 
 
 def _spec(N: int, gamma: float, *, stream_id: int = 0, seed: int = 0) -> pl.Phase1Spec:
@@ -233,12 +233,12 @@ def _job(payload: tuple[dict, str]) -> dict:
     out = Path(payload[1])
     path = _path(spec, out)
     if path.exists():
-        stored = json.loads(path.read_text())
+        stored = json.loads(path.read_text(encoding="utf-8"))
         if stored.get("spec") == json.loads(json.dumps(asdict(spec))):
             return {"key": spec.key, "N": spec.N, "skipped": True,
                     "usable": stored.get("usable")}
     rec, clouds = _run_arm_with_clouds(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     npz = path.with_suffix(".clouds.npz")
     save = {k: v for k, v in clouds.items() if k not in ("N", "gamma_0")}
     np.savez_compressed(npz, **{k: np.asarray(v) for k, v in save.items()},
@@ -273,7 +273,7 @@ def main() -> None:
     if args.init_only or not init_path.exists():
         print("init-readout curve…", flush=True)
         curve = run_init_curve()
-        init_path.write_text(json.dumps(curve, indent=2))
+        init_path.write_text(json.dumps(curve, indent=2), encoding="utf-8")
         for row in curve["by_N"]:
             a = row["A"]
             print(

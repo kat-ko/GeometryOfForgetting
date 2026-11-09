@@ -453,7 +453,7 @@ def main() -> None:
     print(f"  location identified at lag 12: {p['location_identified_at_lag_12']}; "
           f"as a property of the corner: {p['location_identified']}")
 
-    OUT.write_text(json.dumps(report, indent=1, default=float))
+    OUT.write_text(json.dumps(report, indent=1, default=float), encoding="utf-8")
     print(f"\nwrote {OUT.relative_to(ROOT)}")
 
 

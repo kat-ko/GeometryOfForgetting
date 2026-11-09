@@ -30,7 +30,7 @@ def load(name: str) -> dict | None:
     path = ROOT / "results" / name
     if not path.is_file():
         return None
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def main() -> None:
@@ -124,7 +124,7 @@ def main() -> None:
             "Do not lift A6. Do not start sequential depth arms.",
         ],
     }
-    OUT.write_text(json.dumps(status, indent=2))
+    OUT.write_text(json.dumps(status, indent=2), encoding="utf-8")
     print(json.dumps(status, indent=2))
     if not gate1_ok:
         print(proc.stdout)

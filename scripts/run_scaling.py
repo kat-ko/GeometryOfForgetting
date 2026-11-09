@@ -101,7 +101,7 @@ def main() -> None:
             "wall_hours_naive_254": evals * base * scale / 254 / 3600,
         },
     }
-    (ROOT / "results" / "scaling.json").write_text(json.dumps(out, indent=2))
+    (ROOT / "results" / "scaling.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
 
     print(f"\nisolated latency at n_t={N_T}: {base:.2f}s "
           f"(-> {base * scale:.1f}s at n_t=200)")

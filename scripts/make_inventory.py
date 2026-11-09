@@ -62,7 +62,7 @@ def sidecar(manifest: dict, fig_id: str) -> str:
 
 
 def load(path: Path) -> dict:
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def figjson(fig_id: str) -> dict:
@@ -144,7 +144,7 @@ def rows() -> list[dict]:
 
     # --- §5.1, Tier 2: generality, channel signature, and the peak we decline to locate ------
     srct = "results/tier2_backward_transfer.json"
-    t2 = json.loads((ROOT / srct).read_text())
+    t2 = json.loads((ROOT / srct).read_text(encoding="utf-8"))
     g10 = t2["2.2_generality"]["10"]
     add("§5.1", "S-HH gain at matched lag 4, task 0, γ₀=10", 8.7, "α noise floors", srct,
         lambda: g10["position_at_matched_lag_4"]["0"]["floors"],
@@ -545,7 +545,7 @@ def main() -> None:
     for rel in SUBMITTED + (LONG_DRAFT,):
         p = ROOT / rel
         if p.exists():
-            raw = p.read_text()
+            raw = p.read_text(encoding="utf-8")
             sources[rel] = (raw, normalise(raw))
 
     bad, out = [], []
@@ -670,7 +670,7 @@ def main() -> None:
         "its old value.",
         "",
     ]
-    OUT.write_text("\n".join(lines))
+    OUT.write_text("\n".join(lines), encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT)}")
     sys.exit(1 if bad else 0)
 

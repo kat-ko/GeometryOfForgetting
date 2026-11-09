@@ -108,8 +108,8 @@ def apply_rescue(counts: dict) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
-    a28 = json.loads(A28.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
+    a28 = json.loads(A28.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     h = pre["held_fixed"]
     Ks = list(h["K_sequence"])
@@ -149,7 +149,7 @@ def main() -> None:
             "applied_reading": "prefix_mismatch",
             "reading": pre["readings_committed_before_seeing_numbers"]["prefix_mismatch"],
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({"applied_reading": "prefix_mismatch"}, indent=2))
         return
 
@@ -188,7 +188,7 @@ def main() -> None:
             for r in rows
         ],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "cohort_n": out["cohort_n"],
         "cohort_seeds": out["cohort_seeds"],

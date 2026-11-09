@@ -51,7 +51,7 @@ def load(a_zero_only: bool = True, arms_dir: Path | None = None) -> list[dict]:
     registered = arms_dir is None
     recs = []
     for p in sorted((arms_dir or ARMS).glob("*.json")):
-        r = json.loads(p.read_text())
+        r = json.loads(p.read_text(encoding="utf-8"))
         if registered:
             g, n = r["spec"]["gamma_0"], r["spec"].get("N", REGISTERED_N)
             if g not in REGISTERED_GAMMAS or n != REGISTERED_N:

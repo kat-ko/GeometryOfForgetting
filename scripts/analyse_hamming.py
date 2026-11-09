@@ -217,7 +217,7 @@ def cliff_rho(rho, gamma: float, level: str) -> dict:
 
 
 def apply_readings(grid) -> dict:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     g10 = _means(grid, 10.0)
     g1 = _means(grid, 1.0)
     recovered = g10["drift"][1.0] > 0 and g10["jump"][1.0] < 0
@@ -259,12 +259,12 @@ def _fmt_cell(c: dict) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     reserved = reserved_stream_ids()
     paths = sorted(ARMS.glob("*.json"))
-    raw = [json.loads(p.read_text()) for p in paths]
+    raw = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     if len(raw) != 192:
         sys.exit(f"expected 192 arms, found {len(raw)}")
     sids = {r["spec"]["stream_id"] for r in raw}
@@ -367,7 +367,7 @@ def main() -> None:
         "lag4_position": lag4_out,
         "will_not": pre["will_not_do"],
     }
-    OUT.write_text(json.dumps(rec, indent=2) + "\n")
+    OUT.write_text(json.dumps(rec, indent=2) + "\n", encoding="utf-8")
 
     def cap_row(g, level):
         st = structure["capacity"][f"gamma={g:g}|{level}"]
@@ -521,8 +521,8 @@ def main() -> None:
         "streams; see `docs/21-second-learner-ce.md`.",
         "",
     ]
-    MD.write_text("\n".join(lines))
-    print(MD.read_text())
+    MD.write_text("\n".join(lines), encoding="utf-8")
+    print(MD.read_text(encoding="utf-8"))
     print(f"wrote {OUT.relative_to(ROOT)}", flush=True)
 
 

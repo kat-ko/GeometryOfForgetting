@@ -15,7 +15,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-PRE = json.loads((ROOT / "results" / "shh_width_precommit.json").read_text())
+PRE = json.loads((ROOT / "results" / "shh_width_precommit.json").read_text(encoding="utf-8"))
 DIR = ROOT / "results" / "shh_width"
 OUT = ROOT / "results" / "shh_width.json"
 
@@ -101,7 +101,7 @@ def verdict(cells: dict) -> dict:
 
 
 def main() -> None:
-    recs = [json.loads(p.read_text()) for p in sorted(DIR.glob("N*.json"))]
+    recs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(DIR.glob("N*.json"))]
     if not recs:
         raise SystemExit(f"no arms in {DIR}")
     arms = [summarise(r) for r in recs]
@@ -123,7 +123,7 @@ def main() -> None:
             "split_breaks → sequel paragraph, then more arrangements, not a GLUE grid."
         ),
     }
-    OUT.write_text(json.dumps(payload, indent=2))
+    OUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps({"verdict": v, "cells": {
         k: {kk: vv for kk, vv in cell.items() if kk != "per_seed"}
         for k, cell in cells_out.items()

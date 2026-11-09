@@ -100,10 +100,10 @@ def _paired_delta(rows, g) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     reserved = reserved_stream_ids()
     paths = sorted(ARMS.glob("*.json"))
-    raw = [json.loads(p.read_text()) for p in paths]
+    raw = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     sids = {r["spec"]["stream_id"] for r in raw}
     if sids != set(reserved):
         sys.exit(f"stream ids {sorted(sids)} are not the reserved set")
@@ -130,7 +130,7 @@ def main() -> None:
                 "all_four": _cell(rows, g, k, ("S-HH",) + FORGETTING),
             }
 
-    nottuned = json.loads(NOTTUNED.read_text())
+    nottuned = json.loads(NOTTUNED.read_text(encoding="utf-8"))
     nt10 = nottuned["cells"]["10"]["three_corner"]["utility_share_mean"]
     k1_10 = cells["10:1"]["three_corner"].get("utility_share_mean")
     recovery_ok = (
@@ -179,7 +179,7 @@ def main() -> None:
             "operationalization": pre["operationalization"],
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n_files": out["n_files"],
         "n_usable": out["n_usable"],

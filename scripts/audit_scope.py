@@ -96,7 +96,7 @@ class Audit:
 
 
 def load_arms() -> list[dict]:
-    return [json.loads(p.read_text()) for p in sorted(ARMS.glob("*.json"))]
+    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(ARMS.glob("*.json"))]
 
 
 # --- 1. configs are C1/C2 only, and homogeneous -------------------------------
@@ -181,7 +181,7 @@ def _identifiers(path: Path) -> set[str]:
     import ast
 
     names: set[str] = set()
-    tree = ast.parse(path.read_text())
+    tree = ast.parse(path.read_text(encoding="utf-8"))
     for node in ast.walk(tree):
         if isinstance(node, ast.Name):
             names.add(node.id)
@@ -249,7 +249,7 @@ def audit_no_a1b2(a: Audit) -> None:
             + (f"HITS: {dict(hits)}" if hits else "no routing / task-conditioned heads / "
                "task-ID input / comms / gating / a1b2 config names"))
 
-    net = (ROOT / "src" / "models" / "network.py").read_text()
+    net = (ROOT / "src" / "models" / "network.py").read_text(encoding="utf-8")
     n_readouts = len(re.findall(r"self\.u\[", net))
     a.check("u: dict" in net or "u\[m\]" in net or n_readouts > 0,
             "single shared readout per module, no task conditioning",
@@ -471,7 +471,7 @@ def main() -> None:
            "rho_coverage": cov, "richness_separation": sep,
            "timing_by_gamma": comp["timing"],
            "non_converged": [k for k, _ in comp["unusable"]]}
-    (ROOT / args.json).write_text(json.dumps(out, indent=2))
+    (ROOT / args.json).write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(f"\nwrote {args.json}")
     sys.exit(0 if ok else 1)
 

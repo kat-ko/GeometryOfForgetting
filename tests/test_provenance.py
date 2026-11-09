@@ -28,7 +28,7 @@ def fake_module(tmp_path, monkeypatch):
     import src.pipeline  # noqa: F401
 
     path = tmp_path / "estimator_stub.py"
-    path.write_text("VERSION = 1\n")
+    path.write_text("VERSION = 1\n", encoding="utf-8")
     monkeypatch.setattr(provenance, "_AT_IMPORT", dict(provenance._AT_IMPORT))
     digest = provenance.register(str(path))
     return path, digest
@@ -44,7 +44,7 @@ def test_clean_tree_reports_no_staleness(fake_module):
 def test_editing_a_registered_module_is_detected(fake_module):
     """The exact scenario: source changes after import, memory still holds the old."""
     path, digest = fake_module
-    path.write_text("VERSION = 2\n")
+    path.write_text("VERSION = 2\n", encoding="utf-8")
 
     stale = provenance.stale_modules()
     assert "estimator_stub" in stale
@@ -65,7 +65,7 @@ def test_hash_is_captured_at_import_not_recomputed(fake_module):
     digest must not track later edits.
     """
     path, digest = fake_module
-    path.write_text("VERSION = 3\n")
+    path.write_text("VERSION = 3\n", encoding="utf-8")
     assert provenance._AT_IMPORT["estimator_stub"][1] == digest
 
 
@@ -77,7 +77,7 @@ def _child_reports_stale(q):
 def test_a_forked_child_inherits_the_stale_stamp(fake_module):
     """End to end: edit, fork, and the child must report itself stale."""
     path, digest = fake_module
-    path.write_text("VERSION = 4\n")
+    path.write_text("VERSION = 4\n", encoding="utf-8")
 
     ctx = mp.get_context("fork")
     q = ctx.Queue()

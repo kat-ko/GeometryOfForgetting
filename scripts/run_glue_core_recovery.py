@@ -154,7 +154,7 @@ def main() -> None:
                 print(f"  {cells}   {err*100:5.1f}%   [{tag}]")
 
     path = Path(__file__).resolve().parents[1] / "results" / "glue_core_recovery.json"
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {path}  ({out['elapsed_s']}s)")
 
 

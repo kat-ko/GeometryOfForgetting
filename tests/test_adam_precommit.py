@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_adam_precommit_is_written_before_running():
-    pre = json.loads((ROOT / "results" / "adam_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "adam_precommit.json").read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["written_before_running_applies_to"] == "192-arm Adam Hamming first slice"
     assert pre["not_in_phase1"] is True
@@ -40,7 +40,7 @@ def test_adam_precommit_is_written_before_running():
     assert "192 before the richness gate" in will_not
     assert pre["one_arm_first"]["governs"] is False
     assert pre["one_arm_first"]["reached_target"] is True
-    one = json.loads((ROOT / "results" / "adam_one_arm.json").read_text())
+    one = json.loads((ROOT / "results" / "adam_one_arm.json").read_text(encoding="utf-8"))
     assert one["reached_target"] is True
     assert one["governs"] is False
     assert one["n_tasks_missed"] == 0
@@ -48,7 +48,7 @@ def test_adam_precommit_is_written_before_running():
 
 
 def test_adam_hamming_precommit_is_written_before_the_96():
-    pre = json.loads((ROOT / "results" / "adam_hamming_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "adam_hamming_precommit.json").read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["written_before_running_applies_to"] == "96-arm Adam Hamming-only at γ=10"
     assert pre["not_the_192"] is True

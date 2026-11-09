@@ -131,7 +131,7 @@ def main() -> None:
         ],
         "runs": runs,
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "by_K_mean_stop": by_mean,
         "by_K_worst_stop": by_worst,

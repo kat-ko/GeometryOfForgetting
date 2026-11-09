@@ -105,7 +105,7 @@ def run_cell(gamma: float, target_loss: float) -> dict:
 def _band() -> dict:
     if not FOUR.exists():
         sys.exit(f"missing {FOUR.name}; run measure_mse_stop_margin.py --four-streams")
-    four = json.loads(FOUR.read_text())
+    four = json.loads(FOUR.read_text(encoding="utf-8"))
     s = four["summary"]
     if not s.get("all_steps_match"):
         sys.exit("four-stream identity failed; not a tolerance")
@@ -154,7 +154,7 @@ def main() -> None:
                 "Run geometry.",
             ],
         }
-        OUT_ONE.write_text(json.dumps(payload, indent=2))
+        OUT_ONE.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         print(json.dumps({
             "path": str(OUT_ONE.relative_to(ROOT)),
             "wall_seconds": payload["wall_seconds"],
@@ -169,7 +169,7 @@ def main() -> None:
     band = _band()
     if not OUT_ONE.exists():
         sys.exit("run --one-arm first (AGENTS §5)")
-    one = json.loads(OUT_ONE.read_text())
+    one = json.loads(OUT_ONE.read_text(encoding="utf-8"))
     probe_L = float(one["probe_target_loss"])
     probe_m = float(one["cell"]["mean_margin_over_tasks"])
     print(f"bce bisect band=[{band['lo']:.4f}, {band['hi']:.4f}] "
@@ -258,7 +258,7 @@ def main() -> None:
             "point. Report and stop. Do not run the slice."
         ),
     }
-    OUT_BISECT.write_text(json.dumps(payload, indent=2))
+    OUT_BISECT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps({
         "path": str(OUT_BISECT.relative_to(ROOT)),
         "reading": reading,

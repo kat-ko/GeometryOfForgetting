@@ -32,7 +32,7 @@ def test_slice_is_64_reserved_quadratic_unconstrained():
 
 def test_one_arm_is_the_precommit_cell():
     spec = one_arm()
-    pre = json.loads((ROOT / "results" / "isotropic_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "isotropic_precommit.json").read_text(encoding="utf-8"))
     assert spec.gamma_0 == 10.0
     assert spec.condition == "S-HL"
     assert spec.stream_id == min(reserved_stream_ids())

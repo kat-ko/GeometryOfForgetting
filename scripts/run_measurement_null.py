@@ -115,7 +115,7 @@ def main() -> None:
                                "n_seeds": args.seeds, "condition": "S-HL, a=0, seed 0",
                                "measured_at": "final boundary, both modules",
                                "code": provenance.code_stamp(),
-                               "per_gamma": summary}, indent=2))
+                               "per_gamma": summary}, indent=2), encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT)}\n")
 
     print("coefficient of variation over measurement seeds, module A generic:")

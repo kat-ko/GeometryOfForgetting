@@ -39,7 +39,7 @@ def channel_movement(t: GeometryTrajectory, channel: str) -> float:
 
 
 def main() -> None:
-    data = json.loads((ROOT / "results" / "timewarp.json").read_text())
+    data = json.loads((ROOT / "results" / "timewarp.json").read_text(encoding="utf-8"))
     trajs = [GeometryTrajectory.from_dict(t) for t in data["trajectories"]]
     gammas = sorted({t.gamma for t in trajs})
 
@@ -50,7 +50,7 @@ def main() -> None:
                      **{f"movement_{c}": channel_movement(t, c) for c in CHANNELS}})
 
     out_csv = ROOT / "results" / "fig_gamma_excursion.csv"
-    with out_csv.open("w", newline="") as fh:
+    with out_csv.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)

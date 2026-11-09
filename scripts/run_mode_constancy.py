@@ -182,7 +182,7 @@ def main() -> None:
                            "full_P mandatory for Tier-2; pairwise for comparability only"),
            "raw": raw}
     path = Path(__file__).resolve().parents[1] / "results" / "mode_constancy.json"
-    path.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    path.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"\nwrote {path}")
 
 

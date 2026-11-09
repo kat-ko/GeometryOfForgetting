@@ -33,7 +33,7 @@ TASK = 0
 
 def _load() -> list[dict]:
     paths = sorted(ARMS.glob("*.json"))
-    return [json.loads(p.read_text()) for p in paths]
+    return [json.loads(p.read_text(encoding="utf-8")) for p in paths]
 
 
 def _spec(rec: dict) -> dict:
@@ -253,7 +253,7 @@ def _control_check(idx: dict) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     reserved = reserved_stream_ids()
     raw = _load()
     if not raw:
@@ -338,7 +338,7 @@ def main() -> None:
             "operationalization": pre["operationalization"],
         },
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "n_files": out["n_files"],
         "n_usable": out["n_usable"],

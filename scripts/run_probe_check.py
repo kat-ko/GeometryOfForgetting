@@ -91,7 +91,7 @@ def main() -> None:
     path = ROOT / "results" / "probe_check.json"
 
     if reanalyze:
-        runs = json.loads(path.read_text())["runs"]
+        runs = json.loads(path.read_text(encoding="utf-8"))["runs"]
         gammas = sorted({r["gamma"] for r in runs}, reverse=True)
     else:
         gammas = [float(g) for g in (args or [10.0, 1.0, 0.03])]
@@ -100,7 +100,7 @@ def main() -> None:
     v = verdict(runs, gammas)
     usable = [k for k in MEASURES if v[k]["usable"]]
     path.write_text(json.dumps({"runs": runs, "verdict": v,
-                                "usable_for_figure_3": usable}, indent=2))
+                                "usable_for_figure_3": usable}, indent=2), encoding="utf-8")
 
     hdr = "  ".join(f"g={g:<7g}" for g in gammas)
     print(f"{'measure':28s} {hdr}  {'signal':>7} {'noise':>7} {'snr':>5}  sign  usable")

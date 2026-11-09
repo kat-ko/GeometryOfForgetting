@@ -50,7 +50,7 @@ class RankSpec(pl.Phase1Spec):
 
 
 def _pre() -> dict:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     if pre.get("written_before_running_applies_to") != "288-arm first slice":
@@ -120,7 +120,7 @@ def _job(spec: RankSpec) -> dict:
     provenance.assert_current()
     path = _path(spec)
     if path.exists():
-        stored = json.loads(path.read_text()).get("spec")
+        stored = json.loads(path.read_text(encoding="utf-8")).get("spec")
         if stored == _norm(spec):
             return {"key": spec.key, "path": str(path), "skipped": True}
         sys.exit(
@@ -128,7 +128,7 @@ def _job(spec: RankSpec) -> dict:
             "(un-nested one-arm must not sit in the slice directory)"
         )
     rec = pl.run_arm(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     n_miss = sum(1 for t in rec["tasks"] if not t["converged"])
     return {
         "key": rec["key"], "path": str(path), "skipped": False,

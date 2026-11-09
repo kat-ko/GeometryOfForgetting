@@ -47,7 +47,7 @@ class NottunedSpec(pl.Phase1Spec):
 
 
 def _pre() -> dict:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     if pre.get("written_before_running_applies_to") != "192-arm not-tuned reserved duplicate":
@@ -105,12 +105,12 @@ def _job(spec: NottunedSpec) -> dict:
     provenance.assert_current()
     path = _path(spec)
     if path.exists():
-        stored = json.loads(path.read_text()).get("spec")
+        stored = json.loads(path.read_text(encoding="utf-8")).get("spec")
         if stored == _norm(spec):
             return {"key": spec.key, "path": str(path), "skipped": True}
         sys.exit(f"refusing to overwrite {path.name}: stored spec does not match")
     rec = pl.run_arm(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     n_miss = sum(1 for t in rec["tasks"] if not t["converged"])
     return {
         "key": rec["key"], "path": str(path), "skipped": False,

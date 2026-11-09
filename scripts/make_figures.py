@@ -87,7 +87,7 @@ def main() -> None:
     if args.check:
         if not manifest_path.exists():
             sys.exit("no manifest — run without --check first")
-        man = json.loads(manifest_path.read_text())
+        man = json.loads(manifest_path.read_text(encoding="utf-8"))
         bad = []
         for fig_id, entry in man["figures"].items():
             for name, digest in entry["outputs"].items():
@@ -126,7 +126,7 @@ def main() -> None:
         if not produced:
             sys.exit(f"{fig_id}: {script} wrote nothing")
         keep |= {p.name for p in produced}
-        meta = next((json.loads(p.read_text()) for p in produced if p.suffix == ".json"), {})
+        meta = next((json.loads(p.read_text(encoding="utf-8")) for p in produced if p.suffix == ".json"), {})
         figures[fig_id] = {
             "caption": caption,
             "script": script,
@@ -154,7 +154,7 @@ def main() -> None:
         "module_hashes": provenance.code_stamp()["modules"],
         "figures": figures,
         "moved_to_superseded": moved,
-    }, indent=2) + "\n")
+    }, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {manifest_path.relative_to(ROOT)}"
           f"{f'; moved {len(moved)} superseded file(s)' if moved else ''}")
 

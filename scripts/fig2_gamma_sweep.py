@@ -325,7 +325,7 @@ def main() -> None:
          "only_task": args.task,
          "min_floors": MIN_FLOORS, "resolved_gammas": resolved,
          "marginal_gammas": marginal, "floor_rel_se": FLOOR_REL_SE,
-         "coverage_note": G.coverage_note(recs), "data": data}, indent=2))
+         "coverage_note": G.coverage_note(recs), "data": data}, indent=2), encoding="utf-8")
     print(f"wrote figures/{stem}.{{pdf,png,json}}\n")
 
     print(f"{'γ':>6}  {'floors':>7}  {'Δlogα':>9}  {'uti':>8} {'dim':>8} {'rad':>8}  "

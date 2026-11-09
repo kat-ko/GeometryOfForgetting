@@ -249,7 +249,7 @@ def main() -> None:
     out["n_status_changes"] = sum(1 for c in changes if c.get("changed"))
 
     dest = ROOT / "results" / "unique_n8.json"
-    dest.write_text(json.dumps(out, indent=2) + "\n")
+    dest.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {dest.relative_to(ROOT)}")
     print(f"  {n_files} files -> {n_unique} unique ({copies:.2f} copies)")
     print(f"  {out['n_status_changes']} status changes of {len(changes)} quantities\n")

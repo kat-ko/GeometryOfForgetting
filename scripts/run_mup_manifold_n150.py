@@ -100,8 +100,8 @@ def prefix_ok(rows: list[dict], a30: dict) -> bool:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
-    a30 = json.loads(A30.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
+    a30 = json.loads(A30.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     h = pre["held_fixed"]
     P, M, d, D, R = h["P"], h["M"], h["d"], h["D"], h["R"]
@@ -131,7 +131,7 @@ def main() -> None:
             "applied_reading": "prefix_mismatch",
             "reading": pre["readings_committed_before_seeing_numbers"]["prefix_mismatch"],
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({"applied_reading": "prefix_mismatch"}, indent=2))
         return
 
@@ -163,7 +163,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": pre["readings_committed_before_seeing_numbers"][key],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "L2": l2,
         "L3": l3,

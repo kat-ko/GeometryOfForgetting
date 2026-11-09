@@ -139,7 +139,7 @@ def main() -> None:
     out["elapsed_s"] = round(time.perf_counter() - t0, 1)
 
     path = Path(__file__).resolve().parents[1] / "results" / "scale_compression.json"
-    path.write_text(json.dumps(out, indent=2) + "\n")
+    path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {path}  ({out['elapsed_s']}s)")
 
 

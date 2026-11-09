@@ -52,7 +52,7 @@ def _miss_rate(paths: list[Path]) -> dict:
     n_tasks = 0
     by_g: dict[float, dict] = {g: {"n": 0, "n_miss": 0} for g in GAMMAS}
     for p in paths:
-        rec = json.loads(p.read_text())
+        rec = json.loads(p.read_text(encoding="utf-8"))
         g = float(rec["spec"]["gamma_0"])
         by_g[g]["n"] += 1
         tasks = rec.get("tasks") or []
@@ -198,7 +198,7 @@ def _changed(cell: dict, ctrl: dict) -> bool:
 
 
 def _reading(miss: dict, paired_three: dict) -> dict:
-    pre = json.loads(PRECOMMIT.read_text())["readings_committed_before_seeing_numbers"]
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))["readings_committed_before_seeing_numbers"]
     ctrl = paired_three[1.0]
     lazy = any(_changed(paired_three[g], ctrl) for g in (0.03, 0.1, 0.3))
     rich = any(_changed(paired_three[g], ctrl) for g in (3.0, 10.0))
@@ -242,7 +242,7 @@ def _reading(miss: dict, paired_three: dict) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
 
@@ -251,7 +251,7 @@ def main() -> None:
         sys.exit(f"expected 192 corrected-LR files, got {len(paths)}")
     reserved = reserved_stream_ids()
     for p in paths:
-        sid = json.loads(p.read_text())["spec"]["stream_id"]
+        sid = json.loads(p.read_text(encoding="utf-8"))["spec"]["stream_id"]
         if sid in reserved:
             sys.exit(f"reserved stream id {sid} in {p.name}")
 
@@ -335,7 +335,7 @@ def main() -> None:
         },
         "reading": reading,
     }
-    OUT.write_text(json.dumps(out, indent=2, allow_nan=False))
+    OUT.write_text(json.dumps(out, indent=2, allow_nan=False), encoding="utf-8")
     print(json.dumps({
         "n": len(corr_recs),
         "arm_miss_rate": miss["arm_miss_rate"],

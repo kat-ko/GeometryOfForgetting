@@ -60,7 +60,7 @@ def finding3_recovered(grid, gamma: float = GAMMA) -> bool:
 
 
 def apply_readings(grid) -> dict:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     recovered = finding3_recovered(grid)
     held_map = {
         "cliff": cliff_holds(grid),
@@ -91,14 +91,14 @@ def apply_readings(grid) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRECOMMIT.read_text())
+    pre = json.loads(PRECOMMIT.read_text(encoding="utf-8"))
     if not pre.get("written_before_running"):
         sys.exit("pre-commit missing")
     if pre.get("written_before_running_applies_to") != "96-arm Adam Hamming-only at γ=10":
         sys.exit("this analyser governs the 96; check adam_hamming_precommit.json")
     reserved = reserved_stream_ids()
     paths = sorted(ARMS.glob("*.json"))
-    raw_all = [json.loads(p.read_text()) for p in paths]
+    raw_all = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     raw = []
     for r in raw_all:
         sp = r.get("spec") or {}
@@ -197,7 +197,7 @@ def main() -> None:
         "will_not": pre["will_not_do"],
         "cannot_speak_to": pre["cannot_speak_to"],
     }
-    OUT.write_text(json.dumps(rec, indent=2) + "\n")
+    OUT.write_text(json.dumps(rec, indent=2) + "\n", encoding="utf-8")
 
     def cap_row(level):
         st = structure["capacity"][f"gamma={GAMMA:g}|{level}"]
@@ -278,7 +278,7 @@ def main() -> None:
         "Pre-commit: `results/adam_hamming_precommit.json`.",
         "",
     ]
-    MD.write_text("\n".join(lines))
+    MD.write_text("\n".join(lines), encoding="utf-8")
     print(json.dumps({
         "n_arms": len(raw),
         "n_usable": n_usable,

@@ -412,7 +412,7 @@ def main() -> None:
                             "resolved_gains": resolved_gains,
                             "resolved_gains_outside_benign": other}
 
-    OUT.write_text(json.dumps(report, indent=2, default=str))
+    OUT.write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
     print(f"\nwrote {OUT.relative_to(ROOT)}")
 
 

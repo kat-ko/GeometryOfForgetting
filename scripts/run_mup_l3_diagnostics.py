@@ -202,7 +202,7 @@ def check_C(h: dict, X: np.ndarray, y: np.ndarray) -> dict:
 
 
 def main() -> None:
-    h = json.loads(HYP.read_text())
+    h = json.loads(HYP.read_text(encoding="utf-8"))
     assert h["written_before_running"] is True
     assert h["governs_stream_arms"] is False
     g2 = h["gates"]["2"]["shared"]
@@ -221,7 +221,7 @@ def main() -> None:
             "overall_pass": False,
             "reading": "Gate 1 failed. Stop. Do not proceed to Gate 2. Do not sign Verification 2.",
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps(out, indent=2))
         return
 
@@ -259,7 +259,7 @@ def main() -> None:
         "overall_pass": overall,
         "reading": reading,
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "gate1_pass": g1["pass"],
         "check_A_pass": a["pass"],

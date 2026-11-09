@@ -113,7 +113,7 @@ def replay(spec: HammingSpec) -> dict:
     stored = _stored_path(spec)
     identity = {"stored_path": str(stored.relative_to(ROOT)), "present": stored.exists()}
     if stored.exists():
-        prev = json.loads(stored.read_text())["tasks"]
+        prev = json.loads(stored.read_text(encoding="utf-8"))["tasks"]
         replay_steps = [t["steps_taken"] for t in tasks]
         stored_steps = [t["steps_taken"] for t in prev]
         identity["steps_match"] = replay_steps == stored_steps
@@ -228,7 +228,7 @@ def main() -> None:
         "cells": rows,
         "will_not_do": will_not,
     }
-    out.write_text(json.dumps(payload, indent=2))
+    out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps({
         "path": str(out.relative_to(ROOT)),
         "wall_seconds": payload["wall_seconds"],

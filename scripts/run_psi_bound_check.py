@@ -108,7 +108,7 @@ def real_arm(args) -> dict:
     """Train one real γ=10 arm to its first boundary and cross-check α at fixed `y`."""
     cands = []
     for f in glob.glob("results/phase1/*.json"):
-        rec = json.load(open(f))
+        rec = json.load(open(f, encoding="utf-8"))
         if rec["spec"]["gamma_0"] == args.gamma and rec["spec"]["a"] == 0.0:
             over = [g for g in rec["geometry"]
                     if g["ensemble"] == "retained" and g["task"] == g["boundary"]
@@ -189,7 +189,7 @@ def main() -> None:
     if both or args.real:
         out["checks"].append(real_arm(args))
 
-    with open(args.out, "w") as fh:
+    with open(args.out, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=2, default=str)
     print(f"\nwrote {args.out}")
 

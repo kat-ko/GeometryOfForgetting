@@ -199,7 +199,7 @@ def main() -> None:
            "n300_full_grid_check": {f"g{g:g}": {"dlog_alpha": full[(300, g)]["dlog_alpha"],
                                                 "shares": full[(300, g)]["shares"],
                                                 "n": full[(300, g)]["n"]} for g in GAMMAS}}
-    (FIGDIR / f"{stem}.json").write_text(json.dumps(out, indent=2))
+    (FIGDIR / f"{stem}.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(f"wrote figures/{stem}.{{pdf,png,json}}\n")
 
     print(f"{'N':>5} {'γ':>6} {'floors':>7} {'uti':>7} {'rad':>7} {'dim':>7} {'rad+dim':>8} "

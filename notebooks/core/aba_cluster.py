@@ -50,7 +50,7 @@ def calibrate(cfg: L.ABAConfig) -> None:
     out = L.REPO / "results" / "aba" / f"calibration_{L.lib_hash()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"target": TARGET_ACC, "chosen_n": best, "table": table,
-                               "stamp": L.git_stamp(), "config": cfg.key_fields()}, indent=1))
+                               "stamp": L.git_stamp(), "config": cfg.key_fields()}, indent=1), encoding="utf-8")
     print(f"chosen n = {best}; written to {out}")
 
 

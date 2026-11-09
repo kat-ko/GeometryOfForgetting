@@ -141,7 +141,7 @@ def summarize_ratios(rows: list[dict], depth: str) -> dict:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     held = pre["held_fixed"]
     seeds = list(held["seeds"])
@@ -179,7 +179,7 @@ def main() -> None:
             "reading": pre["readings_committed_before_seeing_numbers"]["seed0_mismatch"],
             "per_seed": rows,
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({"applied_reading": "seed0_mismatch"}, indent=2))
         return
 
@@ -203,7 +203,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": pre["readings_committed_before_seeing_numbers"][key],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "seed0_matches_a24": True,
         "n_L2_present": n_l2,

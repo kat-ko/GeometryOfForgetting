@@ -98,7 +98,7 @@ def main() -> None:
                         "previous_bracket_factor": round(10.0 / 3.0, 3)}
     out["S-HL_series"] = {f"{g:g}": v for g, v in ordered}
 
-    dest.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    dest.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
 
     print("Δρ_c by corner (generic ensemble, first to last boundary):\n")
     hdr = f"{'γ₀':>6}  " + "  ".join(f"{c:>9}" for c in CORNERS) + "   n/corner"

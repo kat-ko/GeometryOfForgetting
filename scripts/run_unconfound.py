@@ -61,14 +61,14 @@ def _job(payload: tuple[pl.Phase1Spec, str]) -> dict:
     path = _path(spec, Path(out_s))
     if path.exists():
         try:
-            stored = json.loads(path.read_text())["spec"]
+            stored = json.loads(path.read_text(encoding="utf-8"))["spec"]
         except (json.JSONDecodeError, KeyError):
             stored = None
         if stored == json.loads(json.dumps(asdict(spec))):
             return {"key": spec.key, "skipped": True}
     t0 = time.time()
     rec = pl.run_arm(spec)
-    path.write_text(json.dumps(rec))
+    path.write_text(json.dumps(rec), encoding="utf-8")
     return {"key": spec.key, "skipped": False, "usable": rec["usable"],
             "wall_seconds": time.time() - t0}
 

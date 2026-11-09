@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_order_precommit_is_written_before_running():
-    pre = json.loads((ROOT / "results" / "order_precommit.json").read_text())
+    pre = json.loads((ROOT / "results" / "order_precommit.json").read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["written_before_running_applies_to"] == "64-arm order first slice"
     assert pre["second_learner_line"] == "closed"

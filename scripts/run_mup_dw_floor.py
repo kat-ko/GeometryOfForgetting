@@ -153,7 +153,7 @@ def apply_reading(l2_present: bool, l3_present: bool) -> str:
 
 
 def main() -> None:
-    pre = json.loads(PRE.read_text())
+    pre = json.loads(PRE.read_text(encoding="utf-8"))
     assert pre["written_before_running"] is True
     assert pre["governs_stream_arms"] is False
     held = pre["held_fixed"]
@@ -190,7 +190,7 @@ def main() -> None:
             "applied_reading": "search_failed",
             "reading": pre["readings_committed_before_seeing_numbers"]["search_failed"],
         }
-        OUT.write_text(json.dumps(out, indent=2))
+        OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
         print(json.dumps({
             "applied_reading": "search_failed",
             "max_weight_change_mup_N64": max(
@@ -222,7 +222,7 @@ def main() -> None:
         "l2_mup_N64_at_freeze": freeze_row,
         "named_lr0": lr0,
     }
-    FROZEN.write_text(json.dumps(frozen_body, indent=2))
+    FROZEN.write_text(json.dumps(frozen_body, indent=2), encoding="utf-8")
 
     cells = {"L2": {}, "L3": {}}
     for depth, n_hidden in (("L2", 1), ("L3", 2)):
@@ -257,7 +257,7 @@ def main() -> None:
         "applied_reading": key,
         "reading": pre["readings_committed_before_seeing_numbers"][key],
     }
-    OUT.write_text(json.dumps(out, indent=2))
+    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps({
         "frozen_K": frozen_K,
         "l2_mup_N64_weight_change": freeze_row["weight_change_W"],

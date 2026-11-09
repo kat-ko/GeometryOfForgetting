@@ -39,7 +39,7 @@ from src.analysis import grid as G  # noqa: E402
 
 OUT_W = ROOT / "results" / "width_g10_n40.json"
 OUT_K = ROOT / "results" / "unconfound_k3.json"
-PRE = json.loads((ROOT / "results" / "unconfound_k3_precommit.json").read_text())
+PRE = json.loads((ROOT / "results" / "unconfound_k3_precommit.json").read_text(encoding="utf-8"))
 
 
 def _shares(p: dict) -> dict:
@@ -228,7 +228,7 @@ def analyse_k3() -> dict:
 def main() -> None:
     print("=== width γ=10 genuine n=40 ===\n")
     w = analyse_width()
-    OUT_W.write_text(json.dumps(w, indent=2, default=float) + "\n")
+    OUT_W.write_text(json.dumps(w, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"wrote {OUT_W.relative_to(ROOT)}  ({w['n_usable']}/{w['n_files']} usable)")
     for n in ("150", "600"):
         t = w["by_N"][n]["three"]
@@ -245,7 +245,7 @@ def main() -> None:
 
     print("\n=== K=3 unconfound (against precommit) ===\n")
     k = analyse_k3()
-    OUT_K.write_text(json.dumps(k, indent=2, default=float) + "\n")
+    OUT_K.write_text(json.dumps(k, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"wrote {OUT_K.relative_to(ROOT)}  ({k['n_usable']}/{k['n_files']} usable)")
     for s, b in k["by_arrangement"].items():
         cr = b["channel_reorg"]

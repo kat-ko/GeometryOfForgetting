@@ -250,7 +250,7 @@ def main() -> None:
           f"{'agree' if out['estimation_mode']['all_agree'] else 'DIVERGE - report both'}")
 
     path = Path(__file__).resolve().parents[1] / "results" / "phase0.json"
-    path.write_text(json.dumps(out, indent=2, default=float) + "\n")
+    path.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
     print(f"\nwrote {path}")
 
 
