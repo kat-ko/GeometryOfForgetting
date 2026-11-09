@@ -399,35 +399,41 @@ def readings(A, seeds, FL) -> list[dict]:
                 assert all(abs(gain(A[s, g, h, sf]) - v) < 1e-12 for s, v in zip(seeds, gs))
         gain_res[g] = res_sign(ci(gs), FL[g]) > 0
     for sf in (1.0, 0.9):
-        t = ci([frac_removed(A[s, G2, 4, sf]) - frac_removed(A[s, G0, 4, sf]) for s in seeds])
+        v = [frac_removed(A[s, G2, 4, sf]) - frac_removed(A[s, G0, 4, sf]) for s in seeds]
+        t = ci(v)
         read = gain_res[G0] and gain_res[G2]
         sg = int(np.sign(t[0])) if excl0(t) else 0
         out.append({"hyp": "H1", "stratum": f"h 4, s_f {sf:g} ({SF_NAME[sf]})",
                     "stat": "d = f(10) − f(0.1) = " + fci(t, 3),
-                    "mean": t[0], "sign": sg, "reading": dir_reading(sg) if read else "not read"})
+                    "mean": t[0], "sign": sg, "reading": dir_reading(sg) if read else "not read",
+                    "vals": v, "sesoi": 0.10, "centre": 0.0})
     gg = {g: [gain(A[s, g, 0, 1.0]) for s in seeds] for g in GAMMAS}
     for (ga, gb), name in (((G1, G0), "d₁ = g(1) − g(0.1)"), ((G2, G1), "d₂ = g(10) − g(1)")):
-        t = ci(np.subtract(gg[ga], gg[gb]))
+        v = list(np.subtract(gg[ga], gg[gb]))
+        t = ci(v)
         sg = res_sign(t, max(FL[ga], FL[gb]))
         out.append({"hyp": "H2", "stratum": name, "stat": fci(t, 3), "mean": t[0], "sign": sg,
-                    "reading": dir_reading(sg)})
+                    "reading": dir_reading(sg), "vals": v, "sesoi": 0.05, "centre": 0.0})
     for h in (4, 8):
         for sf in (1.0, 0.9):
             tot = ci([A[s, G2, h, sf]["backward"]["A1_to_B"]["total"] for s in seeds])
             read = res_sign(tot, FL[G2]) != 0
-            t = ci([share(A[s, G2, h, sf], "utility") + share(A[s, G2, h, sf], "dimension") for s in seeds])
+            v = [share(A[s, G2, h, sf], "utility") + share(A[s, G2, h, sf], "dimension") for s in seeds]
+            t = ci(v)
             r = "held" if t[1] >= 0.8 else "not held" if t[2] < 0.8 else "unresolved at floor"
             out.append({"hyp": "H5a", "stratum": f"γ0 10, h {h}, s_f {sf:g} ({SF_NAME[sf]})",
                         "stat": "u + d share " + fci(t, 3), "mean": t[0], "sign": None,
-                        "reading": r if read else "not read"})
+                        "reading": r if read else "not read", "vals": v, "sesoi": 0.10, "centre": 0.8})
     for g in GAMMAS:
         for h in (4, 8):
             for sf in (1.0, 0.9):
-                t = ci([restoration(A[s, g, h, sf]) for s in seeds])
+                v = [restoration(A[s, g, h, sf]) for s in seeds]
+                t = ci(v)
                 r = "held" if t[1] >= 0.9 else "not held" if t[2] < 0.9 else "unresolved at floor"
                 out.append({"hyp": "H6", "stratum": f"γ0 {g:g}, h {h}, s_f {sf:g} ({SF_NAME[sf]})",
                             "stat": "ρ = " + fci(t, 3), "mean": t[0], "sign": None,
-                            "reading": r if gain_res[g] else "not read"})
+                            "reading": r if gain_res[g] else "not read", "vals": v, "sesoi": 0.10,
+                            "centre": 0.9})
     return out
 
 
@@ -467,6 +473,36 @@ def compare(crit: dict, fix: dict) -> str:
     return "same reading" if fix["reading"] == crit["reading"] else "unresolved"
 
 
+T4 = stats.t.ppf(1 - 0.05 / 8, 7)          # docs/29 S0: 98.75% two-sided (family of four), df 7
+
+
+def category(vals, sesoi: float, centre: float = 0.0, direction: int = +1) -> str:
+    """Kati's four categories (Lakens), on the 98.75% t-interval of (vals − centre); the
+    predicted direction is `direction`. Descriptive column in docs/31, the reading in docs/29."""
+    x = np.asarray(vals, float) - centre
+    m, se = x.mean(), x.std(ddof=1) / math.sqrt(len(x))
+    lo, hi = m - T4 * se, m + T4 * se
+    if (direction > 0 and lo > sesoi) or (direction < 0 and hi < -sesoi):
+        return "meaningful"
+    if (direction > 0 and hi < -sesoi) or (direction < 0 and lo > sesoi):
+        return "meaningful, opposite"
+    if -sesoi < lo and hi < sesoi:
+        return "equivalent"
+    if lo > 0 or hi < 0:
+        return "nonzero, possibly trivial"
+    return "inconclusive"
+
+
+def _check_category() -> None:
+    base = np.array([-1.0, 1.0] * 4) * 0.01
+    assert category(1.0 + base, 0.1) == "meaningful"
+    assert category(-1.0 + base, 0.1) == "meaningful, opposite"
+    assert category(base, 0.1) == "equivalent"
+    assert category(0.1 + base, 0.1) == "nonzero, possibly trivial"
+    assert category(np.array([-1.0, 1.0] * 4), 0.1) == "inconclusive"
+    assert category(0.9 + 1.0 + base, 0.1, centre=0.9) == "meaningful"
+
+
 def load_fixed(path: Path, seeds) -> dict:
     by = {}
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -490,14 +526,19 @@ def ablation_tables(data, fixed_path: Path, floors_path: Path) -> str:
     fix = readings(F, seeds, FLF)
     out = [f"Fixed budget (A1, B, A2) = {tuple(budget)}; fresh B takes the B budget. Seeds 8–15. "
            f"Fixed-run checkpoint `{fixed_path.name}`, floors `{floors_path.name}`.", "",
-           "**Readings per stratum** (docs/28 rules; 99.17% t-intervals, n = 8).", "",
+           "**Readings per stratum.** Statistic and reading: docs/28 rules, 99.17% t-intervals, n = 8 (the "
+           "pre-committed reading). Category: Kati's four categories (docs/29 S0) on the **98.75%** t-interval, "
+           "descriptive here; SESOI 0.10 for H1 (d_f), 0.05 for H2 (Δlog α), and 0.10 around the threshold for "
+           "H5a (u + d share − 0.8) and H6 (ρ − 0.9), predicted direction > 0.", "",
            "| hypothesis | stratum | criterion: statistic | criterion reading | fixed budget: statistic "
-           "| fixed reading | docs/31 reading |",
-           "|---|---|---|---|---|---|---|"]
+           "| fixed reading | docs/31 reading | category, criterion | category, fixed |",
+           "|---|---|---|---|---|---|---|---|---|"]
     for c, f in zip(crit, fix):
         assert (c["hyp"], c["stratum"]) == (f["hyp"], f["stratum"])
+        cc = category(c["vals"], c["sesoi"], c["centre"])
+        cf = category(f["vals"], f["sesoi"], f["centre"])
         out.append(f"| {c['hyp']} | {c['stratum']} | {c['stat']} | {c['reading']} | {f['stat']} "
-                   f"| {f['reading']} | {compare(c, f)} |")
+                   f"| {f['reading']} | {compare(c, f)} | {cc} | {cf} |")
     out += ["", "**Floors** (SD of log α_A over K = 8 estimator seeds, seed 8, representation after A).", "",
             "| γ0 | criterion (docs/28 §9.2) | fixed budget |", "|---|---|---|"]
     out += [f"| {g:g} | {FLOORS_928[run][g]:.4f} | {FLF[g]:.4f} |" for g in GAMMAS]
@@ -524,6 +565,7 @@ def main() -> None:
     data = load()
     check_93(data)
     check_readings(data)
+    _check_category()
     if a.check:
         return
     if a.ablation:

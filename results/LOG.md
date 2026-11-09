@@ -4780,3 +4780,44 @@ Kati accepted the analysis of the FULL grid (job 4349) and decided the following
 - Kati confirms the error-registry coverage.
 - E16: `rng_dichotomies` on by default before the stream grid.
 - I12 and I13 are open.
+
+## 2026-11-09 (evening) — Kati's review items 1–11: docs/30, stopping-rule ablation, docs/29 redraft, infrastructure
+
+**docs/30** (`bb9ff02`). One-page A–B–A summary, written per configuration:
+- the replication (seeds 8–15) is the confirmatory set;
+- H3 is positive in both runs, below resolution in the replication;
+- H5b is not replicated;
+- setting cards cover realised s_r and ρ_in per seed, and exposure per γ0;
+- five figures.
+
+`notebooks/core/aba_summary.py` re-derives all 64 docs/28 §9.3 statistics from the checkpoints. **E18:**
+the replication computed one seed-0 timing arm, from a hard-coded seed in the notebook timing cell. No reading
+used it, and it is fixed.
+
+**Stopping-rule ablation (docs/31).**
+- **Setup.** `aba_lib` gained a fixed-budget option (`2245806`). Check job 4453 confirmed that a criterion arm
+  is bit-identical to job 4349. The pre-commit is `2ea0f16`, and the grid ran as grime job 4458: seeds 8–15,
+  A1/B/A2 = 2300/2400/2000 updates, 219/219 usable, grid 5213 s.
+- **Pre-committed reading.** No sign flip in any stratum. H1 at h 4 drift: same sign (d +0.333 → +0.184).
+  H1 at h 4 frozen: **unresolved** (+0.332 → +0.100 [−0.076, +0.277]). H2, H5a and H6: same.
+- **Expected direction.** The expectation that exposure works against the γ0 effect was **not met**.
+  f(0.1) rose (0.39 → 0.48 at h 4 frozen) and f(10) fell (0.72 → 0.58) under the equal budget.
+- **Fit.** The rich learners end at loss ~1e-6, the lazy ones at ≤ 0.04.
+- Four-category column added (98.75%). Interpretation in docs/31 §8.
+
+**docs/29.**
+- First redraft `cb218d2`, with SESOI, K0–K7 and per-(j, t) readings.
+- Kati's decisions in the second pass:
+  - S0: the four-category reading at 98.75%;
+  - K8: p = 8;
+  - K2a: task 0 after the stream;
+  - T5/T6: descriptive, leaving a family of four, T1–T4.
+
+**Infrastructure** (`2bf0629`):
+- E16: separate dichotomy generator by default, with 4 tests.
+- I12: won't-fix (v3 retired).
+- I13: placeholder sbatch scripts removed.
+- Registry: coverage table against Kati's list.
+
+**Backlog (Kati, 2026-11-09).** After the stream grid, move `aba_lib` + `stream_lib` into `src` as one
+package, with one implementation and one bit-for-bit check. Mark the 2M paths legacy.
