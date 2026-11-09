@@ -129,3 +129,16 @@ These were considered and left out on purpose, so the omission is visible.
   such call and is unchanged (hash `4e110835b8fc2863`). Guard:
   `tests/test_encoding.py::test_every_text_io_call_names_its_encoding`. Before the fix, the suite had
   29 failures without `PYTHONUTF8=1`. After it: 287 passed, 1 skipped, without the variable.
+- **2026-11-09, E18 (new): replication timing cell hard-coded seed 0.**
+  - **Error.** `aba_controlled.ipynb` cell 17, the timing display, built `ArmSpec(0, …)`. The
+    `seed_offset` change (`80044e4`) replaced seed 0 in cells 5, 6, 13, 14, 19 and 31, but missed
+    this one.
+  - **Found.** 2026-11-09, by `notebooks/core/aba_summary.py`: the replication checkpoint
+    `FULL_4e110835b8fc2863.jsonl` holds 220 rows, one of them seed 0, γ0 0.1, h 8, jump, stamped
+    `8407a7d`.
+  - **Affects.** No reading. The readings cell filters on the run's spec keys (`WANT`), and docs/28
+    §9.3 re-derives exactly from seeds 8–15 alone (`aba_summary.py --check`). The only effect: the
+    replication *computed* one seed-0 arm, and the notebook printed it as the timing arm.
+  - **Fixed.** 2026-11-09: `ArmSpec(S0, …)`. The notebook is not hashed, so the lib hash is
+    unchanged.
+  - **Test.** None. Notebook cells are not under `tests/` (coverage gap).
