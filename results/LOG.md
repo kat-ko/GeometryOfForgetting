@@ -4729,3 +4729,54 @@ deleted) in docs/24, docs/25, docs/26 and AGENTS.md:
 Pending: the error registry, the choices register and the confirmatory-test
 draft (docs/25 §8 steps 4–6). No stream grid runs before Kati signs docs/26
 and the grid.
+
+## 2026-11-09 — A–B–A FULL: erratum, held-out replication, observations; backlog items 1–4
+
+Kati accepted the analysis of the FULL grid (job 4349) and decided the following. All of it is done.
+
+**1. Erratum to `docs/28` §5 (`a86a2e4`, C12).**
+- The quoted t ≈ 4.03 is the 99.75% quantile. The signed rule gives 3.636, which the code used.
+- H5b held at the margin (upper bound 0.4992 vs 0.5). It would have been unresolved at 4.03.
+
+**2. Held-out replication on seeds 8–15, same signed rules (`docs/28` §8, C13).**
+- `ABAConfig.seed_offset` (`80044e4`) changed the lib hash to `4e110835b8fc2863`.
+- Grime job 4395 reproduced the seed-0 arm γ0 = 10, H8, s_f 0.1 **bit for bit** against job 4349.
+- The amendment was committed before submission (`8407a7d`).
+- Job 4396 ran 219/219 usable arms on a clean tree. The grid took 2545 s on 32 workers and the
+  whole job 51 min. All validation checks pass.
+- "Seed 0" was read as the first seed of the run, so the floor was computed on seed 8.
+
+**Results (`docs/28` §9), not pooled:**
+
+| | H1 | H2 | H3 | H4 | H5a | H5b | H6 |
+|---|---|---|---|---|---|---|---|
+| seeds 0–7 | held | held | held | held | held | held | held |
+| seeds 8–15 | held | held | unresolved at floor | held | held | unresolved | held |
+
+- **H3:** positive with CIs excluding 0, but only 1.91 and 1.63 floors.
+- **H5b:** the H4 strata have upper bounds of 0.51–0.58.
+- **Floors:** the seed-8 floors are 1.5–2.4× the seed-0 floors. A floor estimated on a single draw
+  decides H3. This is noted for `docs/29` ⟨K7⟩.
+
+**3. Observations.**
+- The FULL observations cell has been added, with the replication checked observation by observation.
+  Both run records are committed under `notebooks/core/runs/`.
+- Both runs show the lazy restoration overshoot (ρ 1.08–1.20).
+- Both runs show the H4-vs-H8 dose: expectation 4 is not held in all six frozen and drift strata.
+- `docs/24` C2 and the §5 "dose" row are amended (`faa9f5b`). The cliff is scoped to the stream at
+  long lags, pending a rerun.
+
+**4. Backlog.**
+- **Stopping semantics in `src`** (`8bc9a49`): no update at criterion, with 6 tests.
+- **Error registry** (`dc8a2ee`): 17 code and 14 infrastructure rows. The 2026-11-06 list that
+  `docs/25` §5 refers to is not in the repo, so Kati needs to confirm the coverage.
+- **Confirmatory-test spec DRAFT** for the stream grid (`docs/29`, `351fb43`): six tests, Holm, with
+  decisions K0–K7 for Kati.
+- **Encoding fixes** (`1888334`): 309 call sites, plus the guard `tests/test_encoding.py`. The suite
+  passes without `PYTHONUTF8` (287 passed, 1 skipped).
+
+**Pending:**
+- Kati signs `docs/29`, or amends it.
+- Kati confirms the error-registry coverage.
+- E16: `rng_dichotomies` on by default before the stream grid.
+- I12 and I13 are open.

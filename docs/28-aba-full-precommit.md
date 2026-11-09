@@ -237,3 +237,104 @@ The readings cell (notebook §8) is the same code.
   replication (seeds 8–15).
 - They are **not pooled**, and no combined reading is computed.
 - Each run is read by §3–§4 on its own.
+
+## 9. Results (2026-11-09): original and replication, side by side
+
+Every value below is parsed from the §8 output of the two executed notebooks, by a script, not
+retyped. Each run is read by §3–§4 on its own. The runs are **not pooled** and no combined reading
+exists (§8 amendment).
+
+**Runs:**
+- **Original:** seeds 0–7, grime job 4349, commit `a7f0398`, lib `2528909f2feaf3f3`. Run record:
+  `notebooks/core/runs/aba_full_seeds0-7_job4349.ipynb`.
+- **Replication:** seeds 8–15, grime job 4396, commit `8407a7d`, lib `4e110835b8fc2863`. Run record:
+  `notebooks/core/runs/aba_full_seeds8-15_job4396.ipynb`.
+
+**Checks in both runs:**
+- all validation checks pass;
+- 219 of 219 arms are usable, on a clean tree;
+- t = 3.636 (df = 7; §5 erratum);
+- the floor is computed on the first seed of the run (seed 0 and seed 8 respectively; §8).
+
+### 9.1 Summary
+
+| hypothesis | reading, seeds 0–7 | read strata | reading, seeds 8–15 | read strata |
+|---|---|---|---|---|
+| H1 | **held** | 2/2 | **held** | 2/2 |
+| H2 | **held** | 2/2 | **held** | 2/2 |
+| H3 | **held** | 2/2 | **unresolved at floor** | 2/2 |
+| H4 | **held** | 1/1 | **held** | 1/1 |
+| H5a | **held** | 4/4 | **held** | 4/4 |
+| H5b | **held** | 4/4 | **unresolved at floor** | 4/4 |
+| H6 | **held** | 12/12 | **held** | 12/12 |
+
+**What did not replicate.** Neither case is a sign reversal; both are resolution or width failures.
+- **H3 is unresolved at floor in the replication, in both strata.** Both means are positive and both
+  intervals exclude 0:
+  - +0.048 [+0.033, +0.062] at γ0 = 0.1;
+  - +0.070 [+0.049, +0.090] at γ0 = 10.
+
+  They fall short of the 2-floor criterion, at 1.91 and 1.63 floors. The seed-8 floors are 2.4×
+  (γ0 = 0.1) and 1.5× (γ0 = 10) the seed-0 floors, while the means are similar or larger. The
+  original run already sat at the margin at γ0 = 10 (+2.26 floors).
+- **H5b is unresolved in the replication,** because of its two H4 strata:
+  - H4 frozen: the upper bounds are radius 0.51 and dimension 0.48.
+  - H4 drift: the upper bounds are radius 0.58 and dimension 0.51.
+
+  Both H8 strata hold again. In the original, H5b held at the margin (upper bound 0.4992 vs 0.5;
+  §5 erratum), and it would have been unresolved at t = 4.03.
+
+**What replicated.** H1, H2, H4, H5a and H6 hold again, in every read stratum.
+
+**Floors (observation, not a reading).** The floor is SD(log α_A) over K = 8 estimator seeds on
+**one** trained draw. It differed 1.5–2.4× between seed 0 and seed 8 (table 9.2). Since the 2-floor
+rule decides H3, a floor estimated on a single draw is a weak point of this design. This is
+recorded for the next pre-commit (`docs/29`, ⟨K7⟩); it does not change either reading here.
+
+### 9.2 Floors and the init→A gain (denominators)
+
+| γ0 | floor, seeds 0–7 | floor, seeds 8–15 | init→A gain, seeds 0–7 | init→A gain, seeds 8–15 |
+|---|---|---|---|---|
+| 0.1 | 0.0103 | 0.0248 | +0.225 [+0.212, +0.239] | +0.254 [+0.215, +0.294] |
+| 1 | 0.0169 | 0.0354 | +1.085 [+1.066, +1.104] | +1.116 [+1.049, +1.182] |
+| 10 | 0.0293 | 0.0428 | +2.062 [+1.988, +2.137] | +2.059 [+1.960, +2.158] |
+
+### 9.3 Every stratum
+
+Statistics are means with [99.17% CI] over 8 seeds. Strata at γ0 = 1 in H3 and H5 are reported, not
+read (§4).
+
+| hypothesis | stratum | seeds 0–7: statistic [99.17% CI] | reading | seeds 8–15: statistic [99.17% CI] | reading |
+|---|---|---|---|---|---|
+| H1 | H4, s_f 1 | d = f(10) − f(0.1) = +0.277 [+0.154, +0.400] | held | d = f(10) − f(0.1) = +0.332 [+0.229, +0.436] | held |
+| H1 | H4, s_f 0.9 | d = f(10) − f(0.1) = +0.313 [+0.225, +0.401] | held | d = f(10) − f(0.1) = +0.333 [+0.233, +0.434] | held |
+| H2 | d₁ = g(1) − g(0.1) | +0.859 [+0.837, +0.882] | held | +0.861 [+0.828, +0.894] | held |
+| H2 | d₂ = g(10) − g(1) | +0.977 [+0.912, +1.043] | held | +0.944 [+0.878, +1.009] | held |
+| H3 | γ0 0.1, H0, s_f 0.9 | +0.0347 [+0.0150, +0.0545] (+3.37 floors) | held | +0.0475 [+0.0328, +0.0621] (+1.91 floors) | unresolved at floor |
+| H3 | γ0 1, H0, s_f 0.9 (reported, not read) | +0.0685 [+0.0424, +0.0946] (+4.04 floors) | not read (γ0 = 1) | +0.0783 [+0.0635, +0.0931] (+2.21 floors) | not read (γ0 = 1) |
+| H3 | γ0 10, H0, s_f 0.9 | +0.0662 [+0.0412, +0.0912] (+2.26 floors) | held | +0.0696 [+0.0490, +0.0901] (+1.63 floors) | unresolved at floor |
+| H4 | γ0 10, H8, s_f 1 | FT_beh_spec = -0.417 [-0.606, -0.229] | held | FT_beh_spec = -0.459 [-0.591, -0.328] | held |
+| H5a | H4, s_f 1 | u + d share +0.944 [+0.915, +0.973] | held | u + d share +0.924 [+0.897, +0.950] | held |
+| H5a | H4, s_f 0.9 | u + d share +0.952 [+0.923, +0.980] | held | u + d share +0.933 [+0.889, +0.976] | held |
+| H5a | H8, s_f 1 | u + d share +0.935 [+0.901, +0.969] | held | u + d share +0.920 [+0.902, +0.938] | held |
+| H5a | H8, s_f 0.9 | u + d share +0.936 [+0.905, +0.966] | held | u + d share +0.929 [+0.904, +0.954] | held |
+| H5b | H4, s_f 1 | u +0.22 [+0.12, +0.32]; r +0.36 [+0.27, +0.45]; d +0.42 [+0.36, +0.48] | held | u +0.18 [+0.07, +0.29]; r +0.38 [+0.26, +0.51]; d +0.44 [+0.40, +0.48] | unresolved at floor |
+| H5b | H4, s_f 0.9 | u +0.20 [+0.09, +0.32]; r +0.38 [+0.26, +0.50]; d +0.42 [+0.35, +0.48] | held | u +0.15 [-0.03, +0.33]; r +0.40 [+0.22, +0.58]; d +0.45 [+0.40, +0.51] | unresolved at floor |
+| H5b | H8, s_f 1 | u +0.22 [+0.16, +0.28]; r +0.38 [+0.35, +0.40]; d +0.40 [+0.36, +0.45] | held | u +0.18 [+0.12, +0.23]; r +0.40 [+0.37, +0.43]; d +0.42 [+0.39, +0.46] | held |
+| H5b | H8, s_f 0.9 | u +0.21 [+0.15, +0.26]; r +0.38 [+0.35, +0.41]; d +0.41 [+0.36, +0.46] | held | u +0.16 [+0.11, +0.21]; r +0.41 [+0.38, +0.44]; d +0.43 [+0.39, +0.47] | held |
+| H5 (γ0 = 1) | H4, s_f 1 | u +0.43 [+0.39, +0.47]; r +0.16 [+0.12, +0.20]; d +0.41 [+0.39, +0.42] | not read (γ0 = 1) | u +0.41 [+0.37, +0.45]; r +0.18 [+0.13, +0.23]; d +0.41 [+0.39, +0.43] | not read (γ0 = 1) |
+| H5 (γ0 = 1) | H4, s_f 0.9 | u +0.44 [+0.38, +0.49]; r +0.18 [+0.11, +0.24]; d +0.39 [+0.37, +0.41] | not read (γ0 = 1) | u +0.41 [+0.36, +0.46]; r +0.19 [+0.14, +0.25]; d +0.40 [+0.37, +0.42] | not read (γ0 = 1) |
+| H5 (γ0 = 1) | H8, s_f 1 | u +0.42 [+0.39, +0.46]; r +0.17 [+0.13, +0.20]; d +0.41 [+0.40, +0.42] | not read (γ0 = 1) | u +0.39 [+0.37, +0.40]; r +0.20 [+0.19, +0.22]; d +0.41 [+0.40, +0.42] | not read (γ0 = 1) |
+| H5 (γ0 = 1) | H8, s_f 0.9 | u +0.41 [+0.38, +0.45]; r +0.17 [+0.14, +0.20]; d +0.41 [+0.40, +0.43] | not read (γ0 = 1) | u +0.38 [+0.35, +0.41]; r +0.20 [+0.18, +0.23]; d +0.42 [+0.40, +0.43] | not read (γ0 = 1) |
+| H6 | γ0 0.1, H4, s_f 1 | ρ = +1.198 [+1.149, +1.246] | held | ρ = +1.173 [+1.136, +1.209] | held |
+| H6 | γ0 0.1, H4, s_f 0.9 | ρ = +1.197 [+1.157, +1.237] | held | ρ = +1.164 [+1.126, +1.202] | held |
+| H6 | γ0 0.1, H8, s_f 1 | ρ = +1.127 [+1.097, +1.157] | held | ρ = +1.125 [+1.095, +1.154] | held |
+| H6 | γ0 0.1, H8, s_f 0.9 | ρ = +1.099 [+1.079, +1.119] | held | ρ = +1.079 [+1.045, +1.113] | held |
+| H6 | γ0 1, H4, s_f 1 | ρ = +1.005 [+0.982, +1.029] | held | ρ = +1.017 [+0.991, +1.044] | held |
+| H6 | γ0 1, H4, s_f 0.9 | ρ = +0.991 [+0.969, +1.013] | held | ρ = +1.006 [+0.977, +1.034] | held |
+| H6 | γ0 1, H8, s_f 1 | ρ = +1.011 [+0.989, +1.033] | held | ρ = +1.016 [+0.994, +1.038] | held |
+| H6 | γ0 1, H8, s_f 0.9 | ρ = +0.966 [+0.942, +0.989] | held | ρ = +0.969 [+0.944, +0.993] | held |
+| H6 | γ0 10, H4, s_f 1 | ρ = +0.963 [+0.937, +0.989] | held | ρ = +0.978 [+0.924, +1.033] | held |
+| H6 | γ0 10, H4, s_f 0.9 | ρ = +0.963 [+0.934, +0.992] | held | ρ = +0.978 [+0.930, +1.027] | held |
+| H6 | γ0 10, H8, s_f 1 | ρ = +0.967 [+0.932, +1.002] | held | ρ = +0.975 [+0.927, +1.023] | held |
+| H6 | γ0 10, H8, s_f 0.9 | ρ = +0.953 [+0.931, +0.976] | held | ρ = +0.959 [+0.916, +1.001] | held |
