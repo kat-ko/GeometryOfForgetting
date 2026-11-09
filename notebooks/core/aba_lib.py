@@ -109,6 +109,11 @@ class ABAConfig:
     hammings: tuple = (0, 4, 8)
     s_fs: tuple = (1.0, 0.9, 0.1)
     n_seeds: int = 3
+    seed_offset: int = 0            # seeds are range(seed_offset, seed_offset + n_seeds); 8 = held-out replication
+
+    @property
+    def seeds(self) -> range:
+        return range(self.seed_offset, self.seed_offset + self.n_seeds)
 
     @classmethod
     def make(cls, quick: bool) -> "ABAConfig":
@@ -119,7 +124,7 @@ class ABAConfig:
     def key_fields(self) -> dict:
         """Everything that changes an arm's result (the design lists do not)."""
         d = asdict(self)
-        for k in ("quick", "gammas", "hammings", "s_fs", "n_seeds"):
+        for k in ("quick", "gammas", "hammings", "s_fs", "n_seeds", "seed_offset"):
             d.pop(k)
         return d
 
@@ -1067,11 +1072,11 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
 
 def all_specs(cfg: ABAConfig) -> list[ArmSpec]:
-    """The design grid plus the fresh-noise identity check (Hamming 0, s_f 1.0, seed 0)."""
+    """The design grid plus the fresh-noise identity check (Hamming 0, s_f 1.0, first seed of the run)."""
     grid = [ArmSpec(s, float(g), int(h), float(f))
-            for s in range(cfg.n_seeds) for g in cfg.gammas
+            for s in cfg.seeds for g in cfg.gammas
             for h in cfg.hammings for f in cfg.s_fs]
-    fresh = [ArmSpec(0, float(g), 0, 1.0, "fresh") for g in cfg.gammas]   # one per γ0
+    fresh = [ArmSpec(cfg.seeds[0], float(g), 0, 1.0, "fresh") for g in cfg.gammas]   # one per γ0
     return grid + fresh
 
 
