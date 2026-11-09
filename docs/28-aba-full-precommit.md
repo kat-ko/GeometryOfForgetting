@@ -196,3 +196,44 @@ nothing in `aba_lib.py` changes, and any change voids the run.
    `ABA_MODE=full` (floors at K = 8).
 4. Readings are computed by the notebook's pre-commit cell, which implements §3–§4 verbatim, and
    are reported as computed.
+
+## 8. Amendment 2026-11-09: replication on seeds 8–15, same rules
+
+Decided by Kati on 2026-11-09, after the FULL results (job 4349) existed. Recorded here before the
+replication was submitted.
+
+**Why.** FULL seeds 0–2 share their `seed_base` draws with the QUICK seeds (n = 3) whose signal
+shaped H1–H6 and their thresholds. So 3 of the 8 units are not independent of the hypotheses. The
+signed rules are therefore run again, unchanged, on fresh seeds 8–15.
+
+**What is the same.** Everything in §2–§6, including the §5 erratum (t = 3.636, df = 7). That
+covers:
+- the design and the 219-arm grid;
+- the floors (K = 8, n_t = 200);
+- the resolution, ratio and not-read rules;
+- the hypotheses, strata and thresholds;
+- the 99.17% intervals.
+
+The readings cell (notebook §8) is the same code.
+
+**What changes.**
+- **Seeds.** `ABAConfig.seed_offset = 8` puts the grid on seeds 8–15.
+- **First seed of the run.** Wherever §3 and the notebook say "seed 0", this means the first seed of
+  the run, so **seed 8** here. That covers the trained floor, the fresh-noise identity arms and the
+  manifold display. The replication then shares no draw with the original run.
+- **Code.**
+  - `seed_offset` (commit `80044e4`) changes the `aba_lib` hash from `2528909f2feaf3f3` to
+    `4e110835b8fc2863`.
+  - §7 says any lib change voids the run. That rule is met by a check: grime job 4395 reran the
+    FULL arm seed 0, γ0 = 10, H8, s_f 0.1 under the new hash. It is **bit-identical** to job
+    4349's row in every field except `lib_hash`, `stamp` and `timing`.
+  - At offset 0, `all_specs` gives job 4349's 219 keys in the same order, and `key_fields()` is
+    unchanged.
+- **Job.** `sbatch/aba_full_rep.sh` runs the grid with `--seed-offset 8` and the notebook with
+  `ABA_SEED_OFFSET=8`.
+
+**Reporting.**
+- The two runs are reported **side by side** (§9): original (seeds 0–7, job 4349) and
+  replication (seeds 8–15).
+- They are **not pooled**, and no combined reading is computed.
+- Each run is read by §3–§4 on its own.
