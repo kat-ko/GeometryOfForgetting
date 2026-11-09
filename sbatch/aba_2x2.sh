@@ -3,8 +3,9 @@
 # then the §2 integrity check on every (Cr,Cr) and (Fx,Fx) row. Submit ONLY after
 # sbatch/aba_2x2_timing.sh has passed and Kati has given the go.
 # Readings are computed locally: aba_summary.py --twobytwo FULL_<hash>.jsonl FULL_<hash>_fixed.jsonl.
-# Sizing (to be replaced by the timing job): ≤ 184 s per arm sequential × 4 (parallel slowdown) ≈ 12 min per
-# cell of 32 arms on 32 workers; 4 cells ≈ 50 min. --time 3 h for margin.
+# Sizing (grime job 4533, lib 635c4e3bf8cc6b96, sequential): (Cr,Cr) 57 s, (Fx,Fx) 178 s, (Fx,Cr) 149 s,
+# peak RSS 124 MB. × 4 (parallel slowdown) ≈ 4 / 12 / 10 / ≤ 12 min per cell of 32 arms on 32 workers,
+# ≈ 40 min in all. --time 3 h for margin.
 #SBATCH --job-name=aba-2x2
 #SBATCH --partition=main
 #SBATCH --nodelist=grime

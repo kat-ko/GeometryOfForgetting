@@ -141,6 +141,17 @@ not account for the docs/31 shrinkage of f(10), and the change in f(10) belongs 
 **Relation to the stream spec.** This change touches `aba_lib`, so it changes `stream_hash` (docs/29 §8).
 The stream timing job and the stream grid run on the same commit, at or after this code commit.
 
+**Step 1 done (grime job 4533, commit `3a17d7d`, lib 635c4e3bf8cc6b96, 2026-11-09).**
+- **Integrity check.** (Cr,Cr) seed 8, γ0 10, h 4 drift is bit-identical to job 4396. (Fx,Fx) seed 8, γ0 0.1,
+  h 4 frozen is bit-identical to job 4458.
+- **Timing.** The (Fx,Cr) arm (seed 8, γ0 0.1, h 4 frozen) took 149 s sequential: train 87 s, GLUE 60 s,
+  peak RSS 124 MB.
+  - Status: A1 fixed, B converged, A2 fixed, fresh B converged.
+  - Steps: A1 2300, B 1238, A2 2000, fresh B 1672.
+  - Final loss: A1 0.036, B 0.050.
+  - (Cr,Cr) took 57 s and (Fx,Fx) 178 s.
+- **Projection** for the 128 arms on 32 workers: about 40 min.
+
 ## 7. Results
 
 <!-- BEGIN GENERATED: 2x2 results -->

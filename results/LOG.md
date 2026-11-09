@@ -4863,3 +4863,7 @@ package, with one implementation and one bit-for-bit check. Mark the 2M paths le
 - Local check: old vs new `aba_lib` give bit-identical QUICK rows (criterion and fixed). A FULL laptop arm
   differs from the grime row of job 4396 in the last digits (cross-platform BLAS), so the integrity check
   runs on grime.
+- **docs/32 timing (grime job 4533, `3a17d7d`).**
+  - Both integrity arms are bit-identical: (Cr,Cr) against job 4396 and (Fx,Fx) against job 4458.
+  - The (Fx,Cr) arm took 149 s sequential; A1 fixed, B converged at 1238 steps.
+  - The 128-arm job is projected at about 40 min. `sbatch/aba_2x2.sh` is not submitted; it waits for Kati's go.
