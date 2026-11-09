@@ -1,9 +1,10 @@
-# 28 — A–B–A FULL run: pre-commit (DRAFT, unsigned)
+# 28 — A–B–A FULL run: pre-commit (SIGNED)
 
-**Status: DRAFT 2026-11-09, written by the agent for Kati to sign. Not binding until signed.**
-Items marked **[K]** are Kati's to decide. No FULL arm runs before the signature.
+**Status: SIGNED 2026-11-09.** Drafted by the agent 2026-11-09 and amended per Kati's review the
+same day (amendments 1–6, plus the not-read clarification in §3, approved in session). Binding
+for the FULL grid.
 
-Signed: ____________________ date: __________
+Signed: __Kati__________________ date: _09.11.2026_________
 
 ## 1. What this commits to
 
@@ -24,7 +25,7 @@ observation.
 | arms | 8 × 3 × 9 + 3 = 219 |
 | capacity | retained (fixed-y) GLUE, full_P, n_t = 200, center_policy "all" |
 | probes | bottleneck probe, n = 16 (calibrated, C9), budget 2000 steps (C8); neutral y*_k, K = 4 (C6) |
-| provenance | every arm carries commit, dirty = False and the `aba_lib` hash; one commit for the whole grid |
+| provenance | every arm carries commit, dirty = False and the `aba_lib` hash (`2528909f2feaf3f3`); one commit for the whole grid |
 
 The arms are valid only if every validation check in the notebook passes. If any check fails,
 nothing below is read.
@@ -37,20 +38,28 @@ nothing below is read.
 - **Floor per γ0** is SD(log α_A) over K = 8 estimator seeds, on the representation after A,
   seed 0, at FULL n_t. It is computed in the run itself (`trained_floor`). A contrast between
   two γ0 uses the larger of the two floors.
-- **Resolved** means the 95% t-interval over the 8 seeds excludes 0 **and** |mean| ≥ 2 floors.
-  Seeds are the unit; a contrast is paired per seed.
-- **Ratios.** Fraction removed, channel shares and restoration are dimensionless, so the floor
-  rule applies to their parts.
-  - A ratio is read only if its numerator and its denominator Δlog α are each resolved.
-  - The ratio, or the ratio contrast, is then read on its own 95% t-interval as stated per
+- **Intervals.** Every interval in §3–§4 is a two-sided t-interval over the 8 seeds at
+  1 − 0.05/6 ≈ 99.17% (§5), with df = n − 1. This includes the resolution checks, the
+  denominator checks, the threshold bounds of H5/H6 and the equivalence (null) checks. Seeds are
+  the unit; a contrast is paired per seed.
+- **Resolved** means the interval excludes 0 **and** |mean| ≥ 2 floors.
+- **Ratios.** Fraction removed (H1), channel shares (H5) and restoration (H6) are read when
+  their **denominator** is resolved:
+  - H1 and H6: the init→A gain is resolved at the γ0 in question (for H1, at both γ0 of the
+    contrast);
+  - H5: Δ_total(A1→B) of the cell is resolved.
+  - The numerator need not be resolved, because a ratio near 0 is a legitimate value.
+  - The ratio, or the ratio contrast, is then judged on its own interval as stated per
     hypothesis.
-  - **[K]** Confirm this rule, or set a floor in ratio units.
 - **Readings.**
-  - **held**: the stated direction is resolved.
+  - **held**: the stated direction is resolved, or the threshold is cleared as stated.
   - **not held**: the opposite is resolved, or the threshold is excluded the other way.
   - **unresolved at floor**: everything else.
   - Strata are read one by one, never pooled. A hypothesis with several primary strata holds
-    only if it holds in each of them (intersection–union).
+    only if it holds in each read stratum (intersection–union).
+  - A stratum whose denominator is unresolved is reported as **not read**. It is left out of the
+    intersection–union. A hypothesis needs at least one read stratum; if none is read, it is
+    unresolved. The number of read strata is always reported.
 - **Null.** Each hypothesis states the null and the result that would support it. "Unresolved"
   does not support the null.
 
@@ -66,14 +75,13 @@ not evidence.
   f = (log α_A(A1) − log α_A(B)) / (log α_A(A1) − log α_A(init)), and the paired difference
   d = f(γ0 = 10) − f(γ0 = 0.1).
 - **Primary strata.** H4 frozen (s_f 1) and H4 drift (s_f 0.9). Two readings.
-- **Preconditions.** In each stratum, the init→A gain and the A→B change are resolved at both
-  γ0.
+- **Read if** the init→A gain is resolved at both γ0 (§3).
 - **Rule.**
-  - held: the 95% CI of d excludes 0 and d > 0;
-  - not held: the CI excludes 0 and d < 0;
+  - held: the interval of d excludes 0 and d > 0;
+  - not held: the interval excludes 0 and d < 0;
   - otherwise unresolved.
-- **Null.** The fraction removed does not depend on γ0. It is supported if the 95% CI of d lies
-  inside ±0.1 **[K: equivalence band]**.
+- **Null.** The fraction removed does not depend on γ0. It is supported if the interval of d lies
+  inside ±0.1.
 - **Prior signal.** H4 frozen: 0.76 vs 0.39. H4 drift: 0.65 vs 0.31.
 
 ### H2 — The gain from learning A increases monotonically with γ0
@@ -84,20 +92,19 @@ not evidence.
   - held: d₁ and d₂ are both resolved > 0, each with the larger floor of its pair;
   - not held: either is resolved < 0;
   - otherwise unresolved.
-- **Null.** There is no increase at one step or both. A step's null is supported if its CI lies
-  inside ±2 floors.
+- **Null.** There is no increase at one step or both. A step's null is supported if its interval
+  lies inside ±2 floors.
 - **Prior signal.** g(0.1) = +0.22, g(10) = +2.02. γ0 = 1 has not been run.
 
 ### H3 — Learning B under drift with the same labels (H0, s_f 0.9) increases A's capacity
 
 - **Statistic.** Δlog α_A(A1→B) at H0, s_f 0.9.
-- **Primary strata.** γ0 = 0.1 and γ0 = 10, two readings. γ0 = 1 is reported but is not part of
-  H3 **[K: include?]**.
+- **Primary strata.** γ0 = 0.1 and γ0 = 10, two readings. γ0 = 1 is reported, not read.
 - **Rule.**
   - held: resolved > 0;
   - not held: resolved < 0;
   - otherwise unresolved.
-- **Null.** No change. Supported if the CI lies inside ±2 floors.
+- **Null.** No change. Supported if the interval lies inside ±2 floors.
 - **Prior signal.** +0.021 (0.5 floors) and +0.045 (0.5 floors). At QUICK both are below
   1 floor. The FULL floor is expected to be smaller (n_t 200 vs 50), but the effect may still not
   reach 2 floors.
@@ -107,28 +114,27 @@ not evidence.
 - **Statistic.** Per seed, FT_beh_spec = FT_beh(H8, s_f 1) − FT_beh(H8, s_f 0.1), with
   FT_beh = log((1 + steps fresh B)/(1 + steps B)) (C4, C7).
 - **Primary stratum.** γ0 = 10, one reading.
-- **Rule.**
-  - held: the 95% CI excludes 0, the mean is < 0, and |mean| ≥ 2 × the behavioural floor;
-  - not held: the CI excludes 0 and the mean is > 0;
+- **Rule.** No floor: training is deterministic given the seed, so the seed SD is already in the
+  interval.
+  - held: the interval excludes 0, the mean is < 0, and |mean| ≥ log(1.25) ≈ 0.223;
+  - not held: the interval excludes 0 and the mean is > 0;
   - otherwise unresolved.
-- **Behavioural floor [K].** Capacity floors do not apply here. Proposal: the SD over the
-  8 seeds of FT_beh in the baseline cell (H8, s_f 0.1, γ0 = 10).
-- **Null.** No specific transfer. Supported if the CI lies inside ±2 behavioural floors.
-- **Prior signal.** −0.47 [−0.61, −0.33].
+- **Null.** No specific transfer. Supported if the interval lies inside ±log(1.25).
+- **Prior signal.** −0.47 [−0.61, −0.33] (95%, n = 3).
 
 ### H5 — Channel shares of the A→B loss
 
 - **Statistic.** Per seed, the share of channel c = Δ_c(A1→B) / Δ_total(A1→B), with the exact
   identity total = utility + radius + dimension. Shares can lie outside [0, 1] when channels
   have opposite signs.
-- **Primary strata.** H ∈ {4, 8} × s_f ∈ {1, 0.9}: 4 cells per γ0. Each cell is read only if its
-  Δ_total is resolved.
+- **Primary strata.** H ∈ {4, 8} × s_f ∈ {1, 0.9}: 4 cells at γ0 = 10 (H5a) and 4 at γ0 = 0.1
+  (H5b). Each cell is read only if its Δ_total is resolved. γ0 = 1 is reported, not read.
 - **H5a, γ0 = 10.** Utility + dimension share ≥ 0.8.
-  - held: the lower 95% bound is ≥ 0.8;
+  - held: the lower bound is ≥ 0.8;
   - not held: the upper bound is < 0.8;
   - otherwise unresolved.
 - **H5b, γ0 = 0.1.** No channel's share is above 0.5.
-  - held: every channel's upper 95% bound is ≤ 0.5;
+  - held: every channel's upper bound is ≤ 0.5;
   - not held: some channel's lower bound is > 0.5;
   - otherwise unresolved.
 - **Null.**
@@ -144,24 +150,24 @@ not evidence.
 - **Statistic.** Per seed, the restoration
   ρ = (log α_A(A2) − log α_A(init)) / (log α_A(A1) − log α_A(init)).
 - **Primary strata.** H ∈ {4, 8} × s_f ∈ {1, 0.9}, per γ0: 12 readings. Each is read only if the
-  init→A gain and the A→B change are resolved. Other cells are reported but not read.
+  init→A gain is resolved at that γ0.
 - **Rule.**
-  - held: the lower 95% bound of ρ is ≥ 0.9;
+  - held: the lower bound of ρ is ≥ 0.9;
   - not held: the upper bound is < 0.9;
   - otherwise unresolved.
 - **Null.** Restoration is < 0.9, supported by "not held".
 - **Prior signal.** γ0 = 10: log α_A(A2) is 0.91–0.94 against A1 = 1.00 and init = −1.02, so ρ is
   about 0.96. γ0 = 0.1: A2 is at or above A1.
 
-## 5. Multiplicity [K]
+## 5. Multiplicity
 
-There are 6 hypotheses with 2 + 2 + 2 + 1 + 8 + 12 primary readings. Within a hypothesis,
-intersection–union applies, and it needs no correction. Across the 6 hypotheses Kati chooses one
-of:
-- (a) no correction; each hypothesis is reported on its own;
-- (b) Bonferroni-adjusted intervals at 1 − 0.05/6 ≈ 99.2% in place of 95%;
-- (c) Holm over the 6, using the per-hypothesis minimum p-value of the paired t-test, alongside
-  the floor rule.
+There are 6 hypotheses with 2 + 2 + 2 + 1 + (4 + 4) + 12 primary readings. Within a hypothesis,
+intersection–union applies and needs no correction. Under intersection–union the
+hypothesis-level p-value would be the **max** over strata, not the min.
+
+Across the 6 hypotheses: Bonferroni. Every primary interval is a t-interval at
+1 − 0.05/6 ≈ 99.17% (with n = 8, t(1 − 0.05/12; df 7) ≈ 4.03) in place of 95%. This applies to
+every interval named in §3–§4, including the H5/H6 bounds and the equivalence checks.
 
 ## 6. What is not confirmatory
 
@@ -170,7 +176,7 @@ All other tables and figures in the notebook are observations. That includes:
 - phase-to-phase kernel change;
 - ρ_c;
 - forward transfer outside H4;
-- γ0 = 1 outside H2.
+- γ0 = 1 outside H2 and H6.
 
 ## 7. Execution
 
@@ -178,7 +184,7 @@ The run happens only after this document is signed. All code changes land first.
 nothing in `aba_lib.py` changes, and any change voids the run.
 
 1. Done: bottleneck n = 16 is calibrated on grime (job 4316), entered into C9 and `ABAConfig`, committed and pushed.
-2. Timing on grime sizes the job.
+2. Done: timing on grime (job 4316) sized the job (`sbatch/aba_full.sh`).
 3. One sbatch job, `sbatch/aba_full.sh`, runs the 219 arms, then executes the notebook with
    `ABA_MODE=full` (floors at K = 8).
 4. Readings are computed by the notebook's pre-commit cell, which implements §3–§4 verbatim, and
