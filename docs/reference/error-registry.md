@@ -142,3 +142,48 @@ These were considered and left out on purpose, so the omission is visible.
   - **Fixed.** 2026-11-09: `ArmSpec(S0, …)`. The notebook is not hashed, so the lib hash is
     unchanged.
   - **Test.** None. Notebook cells are not under `tests/` (coverage gap).
+- **2026-11-09, E16 fixed: separate dichotomy generator by default.**
+  - **Change.** `make_stream` now draws dichotomies from a child generator, `rng.spawn(1)[0]`, when no
+    `rng_dichotomies` is passed. The spawn consumes no draws from `rng`, so the arrangements no longer
+    depend on the Hamming distance, and task 0 (arrangement and labels) is paired across every s_r at a
+    fixed seed.
+  - **Unchanged.** An explicit `rng_dichotomies` (as `v3_lib` passes) behaves as before.
+  - **Old streams.** `legacy_shared_rng=True` reproduces the pre-E16 default, for reproducing old streams
+    only.
+  - **Affects.** Every default-path stream built after this commit differs from the one the same seed
+    built before (`src/pipeline.build_stream`, the recurrence tests). Old results are not rerun (policy
+    above). Caches keyed on the `src` digest are invalidated by the edit, as intended.
+  - **Tests.** In `tests/test_manifolds_dichotomies.py`:
+    - `::test_default_pairs_task0_across_readout_similarity`;
+    - `::test_default_dichotomies_do_not_depend_on_geometry` (d, M, D, s_f);
+    - `::test_default_stream_deterministic_per_seed`;
+    - `::test_legacy_shared_rng_draws_dichotomies_from_rng_first`.
+
+    These replace `::test_default_stream_unchanged_by_dichotomy_rng_option`, whose premise (the default is
+    unchanged) no longer holds. Full suite: 290 passed, 1 skipped, without `PYTHONUTF8`.
+- **2026-11-09, I12 won't-fix (v3 retired).** v3 is a robustness configuration, not paper numbers
+  (`docs/25` §1), and its notebook moves to archive (`docs/24` §5). Changing `time.time` in
+  `notebooks/v3_lib.py` would change the v3 cache digest (`CLAUDE.md`) for no measured value. Its
+  `wall_seconds` must not be quoted as compute cost. Every live driver (`aba_lib`, `aba_cluster`)
+  uses `perf_counter`.
+- **2026-11-09, I13 closed.** `sbatch/run.sh` and `sbatch/timing.sh` are deleted. They were superseded
+  by `sbatch/aba_*.sh`, and nothing referenced them except this registry and LOG 4659.
+- **2026-11-09, coverage confirmed against Kati's list (`docs/25` §5 seed table and the 11-06 review,
+  section C).** Each item maps to a row:
+
+  | source item | row |
+  |---|---|
+  | stopping on accuracy, spec said matched loss | E1 |
+  | `rho_c` clip: the `rho_c_glue` calibration (its own row) | E7 |
+  | `\|ρ_c\|` absolute-value convention (its own row) | E8 |
+  | `stream_id` stored, never read, with the corrected "affects" (960-arm grid; γ = 5 n16, 4 × 4; 2×2 width, 2 unique; n = 40 sets are post-fix reruns) | E15 and the list below it |
+  | `abs(Δlog α)` in plotting | E12 |
+  | pairing across `s_r` assumed, not true | E16 (fixed above) |
+  | dirty-tree stamps (all 270 v3 arms) | I11 |
+  | forgetting formula a_{i,i} instead of the running max | E17 |
+  | stale-fork workers | E6 |
+  | BLAS environment set after the NumPy import | I9 |
+  | C5 stopping (one update past criterion), found after the review | E2 |
+  | replication timing cell, seed 0 | E18 |
+
+  Open: none of the listed items. The coverage gaps (no test) remain at E3, E10, E12, E14 and E18.

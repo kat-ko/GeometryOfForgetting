@@ -76,12 +76,54 @@ def test_stream_reproducible():
     assert np.array_equal(s1.probe, s2.probe)
 
 
-def test_default_stream_unchanged_by_dichotomy_rng_option():
+def test_legacy_shared_rng_draws_dichotomies_from_rng_first():
+    """Pre-E16 behaviour, kept only to reproduce old streams: dichotomies come
+    from `rng` itself, before the arrangements."""
     cfg = StreamConfig(stream_id=7, condition="S-HL", T=8, d=40, M=20, D=2)
-    s1 = make_stream(cfg, np.random.default_rng(100))
-    s2 = make_stream(cfg, np.random.default_rng(100), rng_dichotomies=None)
-    assert np.array_equal(s1.dichotomies, s2.dichotomies)
-    assert np.array_equal(s1.arrangements[3].points, s2.arrangements[3].points)
+    s_legacy = make_stream(cfg, np.random.default_rng(100), legacy_shared_rng=True)
+    rng = np.random.default_rng(100)
+    y0 = sample_balanced(cfg.P, rng)
+    assert np.array_equal(s_legacy.dichotomies[0], y0)
+    s_new = make_stream(cfg, np.random.default_rng(100))
+    assert not np.array_equal(s_legacy.arrangements[0].points, s_new.arrangements[0].points)
+    with pytest.raises(ValueError):
+        make_stream(cfg, np.random.default_rng(100), legacy_shared_rng=True,
+                    rng_dichotomies=np.random.default_rng(1))
+
+
+def _cell(h, s_f=0.9, d=40, M=20, D=2, P=16, T=6):
+    return StreamConfig(stream_id=0, condition="x", T=T, P=P, d=d, M=M, D=D,
+                        feature_similarity=s_f, readout_similarity=1 - 2 * h / P)
+
+
+def test_default_pairs_task0_across_readout_similarity():
+    """E16: with no rng_dichotomies passed, task 0 (arrangement and labels) is
+    identical across every Hamming level at a fixed seed."""
+    task0 = []
+    for h in (0, 2, 4, 6, 8):
+        s = make_stream(_cell(h), np.random.default_rng(5))
+        for t in range(1, 6):
+            assert int(np.sum(s.dichotomies[t] != s.dichotomies[t - 1])) == h
+        task0.append((s.arrangements[0].points, s.dichotomies[0]))
+    for pts, y0 in task0[1:]:
+        assert np.array_equal(pts, task0[0][0])
+        assert np.array_equal(y0, task0[0][1])
+
+
+def test_default_dichotomies_do_not_depend_on_geometry():
+    """E16: the label sequence depends on the seed and h only, not on d, M, D or s_f."""
+    ref = make_stream(_cell(4), np.random.default_rng(21)).dichotomies
+    for kw in ({"d": 60}, {"M": 35}, {"D": 3}, {"s_f": 0.1}, {"s_f": 1.0}):
+        assert np.array_equal(make_stream(_cell(4, **kw), np.random.default_rng(21)).dichotomies, ref), kw
+
+
+def test_default_stream_deterministic_per_seed():
+    a = make_stream(_cell(4), np.random.default_rng(33))
+    b = make_stream(_cell(4), np.random.default_rng(33))
+    c = make_stream(_cell(4), np.random.default_rng(34))
+    assert np.array_equal(a.dichotomies, b.dichotomies)
+    assert np.array_equal(a.arrangements[2].points, b.arrangements[2].points)
+    assert not np.array_equal(a.arrangements[0].points, c.arrangements[0].points)
 
 
 def test_separate_dichotomy_rng_pairs_task0_across_readout_similarity():

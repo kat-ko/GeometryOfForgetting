@@ -92,6 +92,7 @@ def make_stream(
     rng: np.random.Generator,
     *,
     rng_dichotomies: np.random.Generator | None = None,
+    legacy_shared_rng: bool = False,
 ) -> Stream:
     """Build a stream with controlled s_f(t,t−1) and s_r(t,t−1).
 
@@ -99,17 +100,29 @@ def make_stream(
     recorded as covariates. The probe y* is sampled once and verified not to
     appear (up to sign) among training dichotomies.
 
-    With ``rng_dichotomies=None`` dichotomies are drawn from ``rng`` before the
-    arrangements, so the number of draws they consume depends on the Hamming
-    distance and task 0's arrangement differs across ``s_r`` at a fixed
-    ``rng`` seed. Passing a separate generator makes the arrangements
-    independent of ``s_r``: task 0's arrangement is then paired across all
-    ``(s_f, s_r)`` cells.
+    Dichotomies and arrangements come from separate generators by default
+    (error registry E16, 2026-11-09), so task 0's arrangement is paired across
+    all ``(s_f, s_r)`` cells at a fixed ``rng`` seed:
+
+    - ``rng_dichotomies`` given: dichotomies are drawn from it.
+    - ``rng_dichotomies=None`` (default): a child generator is spawned from
+      ``rng`` (``Generator.spawn``; consumes no draws from ``rng``), so the
+      arrangement draws do not depend on the Hamming distance.
+    - ``legacy_shared_rng=True``: the pre-E16 behaviour, dichotomies drawn
+      from ``rng`` before the arrangements. Only for reproducing old streams;
+      task 0's arrangement then differs across ``s_r``.
     """
     s_f, s_r = _resolve_similarities(cfg)
     labeling = make_labeling(cfg.P)
     h = hamming_for_readout_similarity(cfg.P, s_r)
-    rng_y = rng if rng_dichotomies is None else rng_dichotomies
+    if legacy_shared_rng:
+        if rng_dichotomies is not None:
+            raise ValueError("legacy_shared_rng excludes rng_dichotomies")
+        rng_y = rng
+    elif rng_dichotomies is not None:
+        rng_y = rng_dichotomies
+    else:
+        rng_y = rng.spawn(1)[0]
 
     # --- dichotomies ---
     ys = np.zeros((cfg.T, cfg.P), dtype=np.int8)
