@@ -4821,3 +4821,17 @@ used it, and it is fixed.
 
 **Backlog (Kati, 2026-11-09).** After the stream grid, move `aba_lib` + `stream_lib` into `src` as one
 package, with one implementation and one bit-for-bit check. Mark the 2M paths legacy.
+
+**Stream driver (docs/29 §8, Kati's conditions).**
+- `notebooks/core/stream_lib.py` imports from `aba_lib` only, plus `src` `make_stream`. `stream_hash`
+  covers `aba_lib`, `stream_lib`, `streams.py`, `generator.py` and `dichotomies.py`.
+  `notebooks/core/stream_cluster.py` has the `parity` and `arm` modes.
+- **Parity.** An A–B–A arm's A and B, run as a T = 2 stream, is bit-identical to `aba_lib.run_arm` in all
+  35 shared quantities:
+  - QUICK seed 0, γ0 10, h 8, jump;
+  - QUICK seed 1, γ0 0.1, h 4, drift;
+  - toy scale, in tests.
+- `tests/test_stream_lib.py`: 11 tests. The full suite passes, 301 passed and 1 skipped.
+- **QUICK T = 16 dry run** (γ0 10, h 8, jump): 287 GLUE calls, 510 s locally, usable.
+- `sbatch/stream_timing.sh` (FULL parity, then one design-scale arm) is committed and **not submitted**. It
+  waits for Kati to sign docs/26 and docs/29.
