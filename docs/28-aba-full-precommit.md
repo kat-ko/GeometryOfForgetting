@@ -166,8 +166,15 @@ intersection–union applies and needs no correction. Under intersection–union
 hypothesis-level p-value would be the **max** over strata, not the min.
 
 Across the 6 hypotheses: Bonferroni. Every primary interval is a t-interval at
-1 − 0.05/6 ≈ 99.17% (with n = 8, t(1 − 0.05/12; df 7) ≈ 4.03) in place of 95%. This applies to
+1 − 0.05/6 ≈ 99.17% ~~(with n = 8, t(1 − 0.05/12; df 7) ≈ 4.03)~~ in place of 95%. This applies to
 every interval named in §3–§4, including the H5/H6 bounds and the equivalence checks.
+
+> **Erratum 2026-11-09.** §5 stated t ≈ 4.03, which is the 99.75% quantile. The signed rule
+> (two-sided 1 − 0.05/6, df = 7) gives t = 3.636, which the readings cell used. Found after the
+> FULL results existed. The rule governs.
+>
+> Consequence: H5b is reported as "held, at the margin (upper bound 0.4992 vs 0.5); would be
+> unresolved at 4.03".
 
 ## 6. What is not confirmatory
 
