@@ -81,7 +81,7 @@ activations at boundaries are retained) or title the paper
 |---|---|---|---|
 | M | Forgetting/transfer decomposes **exactly** into three geometric channels; the estimator recovers ground truth | done | identity residual at machine precision; `glue_core_recovery.json`, Gate 2a |
 | C1 | **Learner sets magnitude and channel.** Richness increases forgetting and shifts it from radius to alignment/utility | Tier A | `14` §4 A1–A2; rank arm: driver is optimisation dynamics, not dimension |
-| C2 | **Stream sets sign.** Transfer appears only when the task repeats under slowly drifting input. Task change acts as a cliff, graded only under drift. **[Amended 2026-11-06]** Scoped to full-batch gradient descent; the Adam null (§6.1) leaves other optimisers open | Tier A (cliff, S-HH gain); learner-specific? see §6.1 | `14` A3; `hamming_slice.md` |
+| C2 | **Stream sets sign.** Transfer appears only when the task repeats under slowly drifting input. ~~Task change acts as a cliff, graded only under drift.~~ **[Amended 2026-11-06]** Scoped to full-batch gradient descent; the Adam null (§6.1) leaves other optimisers open. **[Amended 2026-11-09, Kati]** "Cliff, not dose" is **not supported at lag 1**: in the A–B–A FULL grid (job 4349, n = 8), Δlog α_A differs resolvedly between Hamming 4 and 8 under frozen and drifting input at every γ0 (expectation 4 not held, 6/6 strata; unresolved under jump). The cliff is scoped to the stream at long lags, pending a rerun on the 1M core | Tier A (S-HH gain); cliff: stream at long lags only, rerun pending; learner-specific? see §6.1 | `14` A3; `hamming_slice.md`; A–B–A: `notebooks/core/runs/aba_full_seeds0-7_job4349.ipynb` §7 |
 | C3 | **Centre geometry dissociates from capacity.** Input change drives centre convergence; task change drives graded divergence while capacity steps | Tier A (sign, ordering); magnitudes soft across arrangements | `14` A4–A5; `20` §1 |
 
 C1 is an interaction, not a main effect (`interaction_gamma_condition.json`):
@@ -132,7 +132,7 @@ stream comes second.
 | it is capacity load | width N=150…600 | invariant within a bound | done (Tier B) |
 | **[Amended 2026-11-06]** it is the chosen width | width N ∈ {150, 600} on the 1M core (moved here from §6.1) | — | not started |
 | **[Amended 2026-11-06]** it is the stopping rule | fixed step budget per task, the usual CL protocol (`docs/26` A1) | — | not started |
-| "similarity" is a dose | Hamming grading | cliff, not dose | done |
+| "similarity" is a dose | Hamming grading | cliff, not dose (stream) | ~~done~~ **[Amended 2026-11-09]** scoped: the A–B–A lag-1 grid shows a dose (H4 vs H8 resolved at frozen/drift input, every γ0); stream rerun at long lags pending |
 | task boundaries are given, not chosen | scope / partition | forgetting differs by partition | done |
 | geometric surplus implies savings | recurrence | no behavioural difference | done (null) |
 | it is task position, not composition | order | — | pre-committed (`23`) |
