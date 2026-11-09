@@ -10,6 +10,9 @@ Status:  DRAFT, unsigned. First draft 2026-11-09 (docs/25 §8 step 6).
          Amended 2026-11-09 (Kati): K9 decided (matched-loss stopping;
          every γ₀ claim scoped "at matched current-task fit"); T1(a)
          moved from h 4 frozen to h 4 drift.
+         Amended 2026-11-10 (Kati): T1(c) moved to h 4 drift; h 4
+         frozen kept as its secondary reading (reported, not in the
+         family). Written before any stream result exists.
 Slot:    docs/24 §4 core (the stream paradigm, second after A–B–A).
 Binds:   the grid of docs/25 §1 (1M, N = 300, M = 150, n_t = 200, n = 8).
 Gate:    no stream grid runs before Kati signs docs/26 and this document
@@ -173,13 +176,21 @@ All other positions and lags are reported descriptively per (j, t), each with it
   - **(b) channel interaction.** q = the radius share of Δlog α_7(7 → 8), and
     `I = [q(0.1) − q(10)]_frozen − [q(0.1) − q(10)]_jump`, at h 4. SESOI 0.10.
   - **(c) utility-share contrast** (from A–B–A H5b). u = the utility share of Δlog α_7(7 → 8), and
-    d_u = u(10) − u(0.1), at h 4 frozen. SESOI 0.10.
+    d_u = u(10) − u(0.1), at **h 4 drift (s_f 0.9)**. SESOI 0.10.
+    **[Amended 2026-11-10, Kati, before any stream result exists]** ~~at h 4 frozen~~. The reason is the
+    same as for (a): h 4 frozen is protocol-fragile (docs/31), and T1's primary cells now sit in one
+    configuration.
+    - **Secondary reading at h 4 frozen.** d_u at h 4 frozen is reported beside the primary, with its own
+      98.75% interval and category.
+    - It does not enter the "held" criterion or the Bonferroni family, so the family stays at four tests at
+      98.75%.
 - **Read if** Δlog α_7(7 → 8) is meaningful in every cell that enters a ratio.
 - **Held** if (a), (b) and (c) are each meaningful. **Not held** if any is meaningful the opposite way.
 - **Null.** (a), (b) and (c) are each equivalent.
 - **Prior signal (A–B–A replication, lag 1 at p = 1).**
   - d_f = +0.333 at h 4 drift, and +0.184 under the fixed budget (same sign, docs/31).
   - d_f = +0.332 at h 4 frozen, and +0.100 [−0.076, +0.277] under the fixed budget (unresolved).
+  - At h 4 drift, the utility share is 0.150 at γ₀ 0.1 and 0.510 at γ₀ 10 (seed means, `aba_summary.share`).
   - At h 4 frozen, the utility share is 0.18 at γ₀ 0.1 and 0.50 at γ₀ 10.
   - The radius share is 0.38–0.41 vs 0.07–0.08 (h 4 and h 8, frozen and drift).
 
@@ -238,6 +249,8 @@ Reported per configuration and per (j, t), never averaged over lags or positions
 - **T5 and T6, the richness-axis agreements.** C1 and the fraction-removed contrast are recomputed against
   ΔK_u instead of γ₀. Descriptive within one learner (§1), and reserved for the multi-learner extension.
 - T1(a) at h 4 frozen, d_f at (7, 8) (reported, not read; amended 2026-11-09);
+- T1(c) at h 4 frozen, d_u at (7, 8): the secondary reading, reported with its interval and category, outside
+  the family (amended 2026-11-10);
 - every (j, t) other than the named cells: all positions, all lags;
 - T2's lag 1 at p = 8 and its jump control;
 - the long-lag cliff `Δ(h 2) − Δ(h 8)` at long lags;
@@ -270,6 +283,7 @@ Reported per configuration and per (j, t), never averaged over lags or positions
 | FT | Forward measured against init, with neutral probes at s_r(·, y_t) = 0 (§2b). |
 | K9 | Matched-loss stopping stays: no stratum flipped in the docs/31 ablation (job 4458), per its pre-committed rule. Every γ₀ claim is scoped "at matched current-task fit". Exposure is on every card. The disentangling 2×2 is docs/32. |
 | T1(a) | The primary cell is h 4 drift, not h 4 frozen (protocol-fragile under docs/31). h 4 frozen is reported, not read. |
+| T1(c) | (2026-11-10) The primary cell is h 4 drift. h 4 frozen is a secondary reading, reported with its category, outside the family. |
 
 Nothing is open for decision.
 
