@@ -372,13 +372,164 @@ def write_generated(doc: Path, tag: str, body: str) -> None:
     doc.write_text(f"{pre}{a}\n{body}\n{b}{post}", encoding="utf-8")
 
 
+# --------------------------------------------------------------------------- readings (port of notebook cell 43)
+# H1, H2, H5a and H6 only (the docs/31 ablation reads these). Same rules as docs/28 §3–§4.
+
+def excl0(t):
+    return t[1] > 0 or t[2] < 0
+
+
+def res_sign(t, floor):
+    return int(np.sign(t[0])) if excl0(t) and abs(t[0]) >= 2 * floor else 0
+
+
+def dir_reading(sg, want=+1):
+    return "held" if sg == want else "not held" if sg == -want else "unresolved at floor"
+
+
+def readings(A, seeds, FL) -> list[dict]:
+    """Per stratum: hypothesis, stratum, statistic string, mean, sign (resolved, H1/H2), reading."""
+    G0, G1, G2 = GAMMAS
+    out = []
+    gain_res = {}
+    for g in GAMMAS:
+        gs = [gain(A[s, g, 0, 1.0]) for s in seeds]
+        for h in HS:
+            for sf in SFS:
+                assert all(abs(gain(A[s, g, h, sf]) - v) < 1e-12 for s, v in zip(seeds, gs))
+        gain_res[g] = res_sign(ci(gs), FL[g]) > 0
+    for sf in (1.0, 0.9):
+        t = ci([frac_removed(A[s, G2, 4, sf]) - frac_removed(A[s, G0, 4, sf]) for s in seeds])
+        read = gain_res[G0] and gain_res[G2]
+        sg = int(np.sign(t[0])) if excl0(t) else 0
+        out.append({"hyp": "H1", "stratum": f"h 4, s_f {sf:g} ({SF_NAME[sf]})",
+                    "stat": "d = f(10) − f(0.1) = " + fci(t, 3),
+                    "mean": t[0], "sign": sg, "reading": dir_reading(sg) if read else "not read"})
+    gg = {g: [gain(A[s, g, 0, 1.0]) for s in seeds] for g in GAMMAS}
+    for (ga, gb), name in (((G1, G0), "d₁ = g(1) − g(0.1)"), ((G2, G1), "d₂ = g(10) − g(1)")):
+        t = ci(np.subtract(gg[ga], gg[gb]))
+        sg = res_sign(t, max(FL[ga], FL[gb]))
+        out.append({"hyp": "H2", "stratum": name, "stat": fci(t, 3), "mean": t[0], "sign": sg,
+                    "reading": dir_reading(sg)})
+    for h in (4, 8):
+        for sf in (1.0, 0.9):
+            tot = ci([A[s, G2, h, sf]["backward"]["A1_to_B"]["total"] for s in seeds])
+            read = res_sign(tot, FL[G2]) != 0
+            t = ci([share(A[s, G2, h, sf], "utility") + share(A[s, G2, h, sf], "dimension") for s in seeds])
+            r = "held" if t[1] >= 0.8 else "not held" if t[2] < 0.8 else "unresolved at floor"
+            out.append({"hyp": "H5a", "stratum": f"γ0 10, h {h}, s_f {sf:g} ({SF_NAME[sf]})",
+                        "stat": "u + d share " + fci(t, 3), "mean": t[0], "sign": None,
+                        "reading": r if read else "not read"})
+    for g in GAMMAS:
+        for h in (4, 8):
+            for sf in (1.0, 0.9):
+                t = ci([restoration(A[s, g, h, sf]) for s in seeds])
+                r = "held" if t[1] >= 0.9 else "not held" if t[2] < 0.9 else "unresolved at floor"
+                out.append({"hyp": "H6", "stratum": f"γ0 {g:g}, h {h}, s_f {sf:g} ({SF_NAME[sf]})",
+                            "stat": "ρ = " + fci(t, 3), "mean": t[0], "sign": None,
+                            "reading": r if gain_res[g] else "not read"})
+    return out
+
+
+# docs/28 §9.2 floors (printed to 4 decimals by each run's notebook, cell 14)
+FLOORS_928 = {"seeds 0–7": {0.1: 0.0103, 1.0: 0.0169, 10.0: 0.0293},
+              "seeds 8–15": {0.1: 0.0248, 1.0: 0.0354, 10.0: 0.0428}}
+
+
+def check_readings(data) -> None:
+    """The port must give docs/28 §9.3's readings for H1, H2, H5a, H6 in both criterion runs."""
+    text = (REPO / "docs/28-aba-full-precommit.md").read_text(encoding="utf-8")
+    rows = [ln for ln in text.split("### 9.3 Every stratum", 1)[1].splitlines() if ln.startswith("| H")]
+    doc = [[c.strip() for c in ln.split("|")[1:-1]] for ln in rows]
+    want = {k: [r for r in doc if r[0] == k] for k in ("H1", "H2", "H5a", "H6")}
+    for run, col in (("seeds 0–7", 3), ("seeds 8–15", 5)):
+        got = readings(data[run], seeds_of(run), FLOORS_928[run])
+        for hyp, drows in want.items():
+            mine = [r["reading"] for r in got if r["hyp"] == hyp]
+            theirs = [r[col] for r in drows]
+            assert mine == theirs, (run, hyp, mine, theirs)
+    print("readings port reproduces docs/28 §9.3 for H1, H2, H5a, H6 in both runs "
+          f"({sum(len(v) for v in want.values())} strata × 2)")
+
+
+def compare(crit: dict, fix: dict) -> str:
+    """docs/31 pre-committed reading of one stratum."""
+    if fix["reading"] == "not read" or crit["reading"] == "not read":
+        return "not read"
+    if crit["sign"] is not None:                       # H1, H2: resolved sign of the contrast
+        if fix["sign"] == 0:
+            return "unresolved"
+        return "same sign" if fix["sign"] == crit["sign"] else "**sign flip**"
+    if fix["reading"] == "unresolved at floor":        # H5a, H6: side of the threshold
+        return "unresolved"
+    if {fix["reading"], crit["reading"]} == {"held", "not held"}:
+        return "**flip**"
+    return "same reading" if fix["reading"] == crit["reading"] else "unresolved"
+
+
+def load_fixed(path: Path, seeds) -> dict:
+    by = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        r = json.loads(line)
+        s = r["spec"]
+        if s["seed"] in seeds and s.get("noise", "copy") == "copy":
+            assert r["usable"] and r["behaviour"].get("stopping") == "fixed", r["key"]
+            by[(s["seed"], s["gamma"], s["hamming"], s["s_f"])] = r
+    assert len(by) == 8 * 27, len(by)
+    return by
+
+
+def ablation_tables(data, fixed_path: Path, floors_path: Path) -> str:
+    run = "seeds 8–15"
+    seeds = seeds_of(run)
+    F = load_fixed(fixed_path, seeds)
+    fj = json.loads(floors_path.read_text(encoding="utf-8"))
+    FLF = {float(g): v["floor"] for g, v in fj["floors"].items()}
+    budget = next(iter(F.values()))["config"]["fixed_steps"]
+    crit = readings(data[run], seeds, FLOORS_928[run])
+    fix = readings(F, seeds, FLF)
+    out = [f"Fixed budget (A1, B, A2) = {tuple(budget)}; fresh B takes the B budget. Seeds 8–15. "
+           f"Fixed-run checkpoint `{fixed_path.name}`, floors `{floors_path.name}`.", "",
+           "**Readings per stratum** (docs/28 rules; 99.17% t-intervals, n = 8).", "",
+           "| hypothesis | stratum | criterion: statistic | criterion reading | fixed budget: statistic "
+           "| fixed reading | docs/31 reading |",
+           "|---|---|---|---|---|---|---|"]
+    for c, f in zip(crit, fix):
+        assert (c["hyp"], c["stratum"]) == (f["hyp"], f["stratum"])
+        out.append(f"| {c['hyp']} | {c['stratum']} | {c['stat']} | {c['reading']} | {f['stat']} "
+                   f"| {f['reading']} | {compare(c, f)} |")
+    out += ["", "**Floors** (SD of log α_A over K = 8 estimator seeds, seed 8, representation after A).", "",
+            "| γ0 | criterion (docs/28 §9.2) | fixed budget |", "|---|---|---|"]
+    out += [f"| {g:g} | {FLOORS_928[run][g]:.4f} | {FLF[g]:.4f} |" for g in GAMMAS]
+    out += ["", "**Final training loss per phase** under the fixed budget (criterion target 0.05; "
+            "median [min, max] over seeds). Exposure is matched; fit is not.", "",
+            "| configuration | γ0 | A1 | B | A2 | fresh B |", "|---|---|---|---|---|---|"]
+    for h in HS:
+        for sf in SFS:
+            for g in GAMMAS:
+                cells = []
+                for ph in ("A1", "B", "A2", "freshB"):
+                    v = [F[s, g, h, sf]["behaviour"]["final_loss"][ph] for s in seeds]
+                    cells.append(f"{np.median(v):.2e} [{min(v):.1e}, {max(v):.1e}]")
+                out.append(f"| h {h}, s_f {sf:g} ({SF_NAME[sf]}) | {g:g} | " + " | ".join(cells) + " |")
+    return "\n".join(out)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--ablation", nargs=2, metavar=("FIXED_JSONL", "FLOORS_JSON"),
+                    help="docs/31: write the ablation results into docs/31")
     a = ap.parse_args()
     data = load()
     check_93(data)
+    check_readings(data)
     if a.check:
+        return
+    if a.ablation:
+        doc = REPO / "docs" / "31-aba-stopping-ablation-precommit.md"
+        write_generated(doc, "ablation results", ablation_tables(data, Path(a.ablation[0]), Path(a.ablation[1])))
+        print("ablation results written into", doc)
         return
     import matplotlib
     matplotlib.use("Agg")

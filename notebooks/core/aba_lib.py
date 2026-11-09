@@ -110,6 +110,10 @@ class ABAConfig:
     s_fs: tuple = (1.0, 0.9, 0.1)
     n_seeds: int = 3
     seed_offset: int = 0            # seeds are range(seed_offset, seed_offset + n_seeds); 8 = held-out replication
+    # stopping: "criterion" (matched loss, docs/28) or "fixed" (exactly fixed_steps = (A1, B, A2) updates;
+    # fresh B takes the B budget). docs/31 stopping-rule ablation.
+    stopping: str = "criterion"
+    fixed_steps: tuple = ()
 
     @property
     def seeds(self) -> range:
@@ -126,6 +130,11 @@ class ABAConfig:
         d = asdict(self)
         for k in ("quick", "gammas", "hammings", "s_fs", "n_seeds", "seed_offset"):
             d.pop(k)
+        if self.stopping == "criterion":         # criterion rows keep job 4349's config dict
+            d.pop("stopping")
+            d.pop("fixed_steps")
+        else:
+            d["fixed_steps"] = list(self.fixed_steps)   # as stored after JSON
         return d
 
 
@@ -415,9 +424,15 @@ def ntk_fd_check(net: OneModuleNet, Xp: np.ndarray, rng: np.random.Generator,
 # ==========================================================================
 
 
+_PHASE_BUDGET = {"A1": 0, "B": 1, "freshB": 1, "A2": 2}
+
+
 def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABAConfig,
-                       monitors: dict | None = None) -> dict:
+                       monitors: dict | None = None, phase: str | None = None) -> dict:
     """Full-batch GD until loss ≤ target, the loss checked BEFORE each update.
+
+    With cfg.stopping == "fixed": exactly the phase's budget of updates, whatever the loss
+    (status "fixed"; usable when the loss stays finite). `phase` selects the budget.
 
     Records train loss and each monitor's (loss, sign accuracy) every `record_every`
     updates and at the final state. `first_loss` is the zero-shot loss on this task.
@@ -434,6 +449,11 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
             row[f"{name}_acc"] = float(np.mean(np.sign(f) == ym))
         recs.append(row)
 
+    fixed = cfg.stopping == "fixed"
+    if fixed:
+        budget = cfg.fixed_steps[_PHASE_BUDGET[phase]]
+    elif cfg.stopping != "criterion":
+        raise ValueError(f"unknown stopping {cfg.stopping!r}")
     steps, first_loss, status = 0, None, "cap"
     while True:
         loss, gW, gu = net.loss_grads(X, y)
@@ -443,11 +463,16 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
             status = "diverged"
             record(steps, loss)
             break
-        if loss <= cfg.target_loss:
+        if fixed:
+            if steps >= budget:
+                status = "fixed"
+                record(steps, loss)
+                break
+        elif loss <= cfg.target_loss:
             status = "converged"
             record(steps, loss)
             break
-        if steps >= cfg.max_steps:
+        elif steps >= cfg.max_steps:
             record(steps, loss)
             break
         if steps % cfg.record_every == 0:
@@ -455,7 +480,7 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
         net.W -= net.lr * gW
         net.u -= net.lr * gu
         steps += 1
-    return {"steps": steps, "status": status, "converged": status == "converged",
+    return {"steps": steps, "status": status, "converged": status in ("converged", "fixed"),
             "first_loss": float(first_loss), "final_loss": float(loss),
             "r_t": float(np.linalg.norm(net.W - W_start) / np.linalg.norm(W_start)),
             "records": recs}
@@ -977,9 +1002,9 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
         timing["refit_s"] += time.perf_counter() - t0
         return out, bot
 
-    def train(model, X, y, mons):
+    def train(model, X, y, mons, phase):
         t0 = time.perf_counter()
-        out = train_to_criterion(model, X, y, cfg, mons)
+        out = train_to_criterion(model, X, y, cfg, mons, phase)
         timing["train_s"] += time.perf_counter() - t0
         return out
 
@@ -995,7 +1020,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     for k, yk in enumerate(neutral):
         g[f"B_ystarN{k}@init"] = geo("B*N", B.points, yk)
 
-    ph["A1"] = train(net, XA, yA, monitors)
+    ph["A1"] = train(net, XA, yA, monitors, "A1")
     r["A1"] = rich()
     rf["A1"], bn["A1"] = refit()
     g["A@A1"] = geo("A", A.points, y_A)
@@ -1004,18 +1029,18 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     for k, yk in enumerate(neutral):
         g[f"B_ystarN{k}@A1"] = geo("B*N", B.points, yk)
 
-    ph["B"] = train(net, XB, yB, monitors)
+    ph["B"] = train(net, XB, yB, monitors, "B")
     r["B"] = rich()
     rf["B"], bn["B"] = refit()
     g["A@B"] = geo("A", A.points, y_A)
 
-    ph["A2"] = train(net, XA, yA, monitors)
+    ph["A2"] = train(net, XA, yA, monitors, "A2")
     r["A2"] = rich()
     rf["A2"], bn["A2"] = refit()
     g["A@A2"] = geo("A", A.points, y_A)
 
     fresh = OneModuleNet(base.W0, spec.gamma, cfg)
-    ph["freshB"] = train(fresh, XB, yB, None)
+    ph["freshB"] = train(fresh, XB, yB, None, "freshB")
 
     ft_total = channels(g["B_yB@init"], g["B_yB@A1"])
     ft_anch = math.log(g["B_ystar@A1"]["alpha"] / g["B_ystar@init"]["alpha"])
@@ -1061,6 +1086,11 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
                      "r_t": {k: ph[k]["r_t"] for k in ("A1", "B", "A2")}},
         "trajectory": {k: ph[k]["records"] for k in ("A1", "B", "A2")},
     }
+    if cfg.stopping != "criterion":
+        # Fixed budget: fit is no longer matched, so the final loss is part of the result.
+        # FT_beh and savings are step ratios of equal budgets here and are not read (docs/31).
+        out["behaviour"]["stopping"] = cfg.stopping
+        out["behaviour"]["final_loss"] = {k: v["final_loss"] for k, v in ph.items()}
     timing["wall_s"] = time.perf_counter() - t_start
     out["timing"] = timing
     return out
@@ -1086,7 +1116,7 @@ def trained_floor(cfg: ABAConfig, gamma: float, seed: int = 0, K: int = 6) -> di
     base = seed_base(cfg, seed)
     net = OneModuleNet(base.W0, gamma, cfg)
     X, y = flatten(base.A.points, base.y_A)
-    train_to_criterion(net, X, y, cfg)
+    train_to_criterion(net, X, y, cfg, phase="A1")
     logs = [math.log(rep_capacity(net, base.A.points, base.y_A, cfg, [SALT, seed, 2000 + k])["alpha"])
             for k in range(K)]
     return {"gamma": gamma, "seed": seed, "K": K, "n_t": cfg.n_t,
@@ -1148,7 +1178,8 @@ def check_schema(row: dict) -> list[str]:
 
 
 def cache_path(cfg: ABAConfig) -> Path:
-    return REPO / "results" / "aba" / f"{'QUICK' if cfg.quick else 'FULL'}_{lib_hash()}.jsonl"
+    tag = "" if cfg.stopping == "criterion" else f"_{cfg.stopping}"
+    return REPO / "results" / "aba" / f"{'QUICK' if cfg.quick else 'FULL'}_{lib_hash()}{tag}.jsonl"
 
 
 def load_results(cfg: ABAConfig) -> list[dict]:

@@ -5,6 +5,12 @@
     python notebooks/core/aba_cluster.py grid --workers 32    # FULL grid into results/aba/FULL_<hash>.jsonl
     python notebooks/core/aba_cluster.py grid --seed-offset 8 # held-out replication, seeds 8-15 (docs/28 amendment)
     python notebooks/core/aba_cluster.py reproduce            # one FULL seed-0 arm vs job 4349, bit for bit
+    python notebooks/core/aba_cluster.py arm --spec 8,0.1,8,1 --stopping fixed --budget 2300,2400,2000
+                                                              # one arm, sequential, timed (timing file only)
+    python notebooks/core/aba_cluster.py grid --seed-offset 8 --stopping fixed --budget 2300,2400,2000
+                                                              # docs/31 stopping-rule ablation
+    python notebooks/core/aba_cluster.py floors --seed-offset 8 [--stopping fixed --budget ...]
+                                                              # trained floors per γ0 on the run's first seed, K = 8
 
 Timing arms go to results/aba/timing_<hash>.jsonl, never into the grid checkpoint.
 """
@@ -70,6 +76,37 @@ def timing(cfg: L.ABAConfig) -> None:
             fh.write(json.dumps(res) + "\n")
 
 
+def arm(cfg: L.ABAConfig, spec: L.ArmSpec) -> None:
+    out = L.REPO / "results" / "aba" / f"timing_{L.lib_hash()}.jsonl"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    t0 = time.perf_counter()
+    res = L.run_arm(cfg, spec)
+    wall = time.perf_counter() - t0
+    tm = res["timing"]
+    print(f"{spec.key} ({cfg.stopping}): wall {wall:.0f}s (train {tm['train_s']:.0f}, GLUE {tm['glue_s']:.0f}, "
+          f"NTK {tm['ntk_s']:.0f}, probes {tm['refit_s']:.0f}); steps {res['behaviour']['steps']}; "
+          f"status {res['status']}; final loss {res['behaviour'].get('final_loss')}; "
+          f"usable {res['usable']}; peak RSS {peak_rss_mb():.0f} MB", flush=True)
+    with out.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(res) + "\n")
+
+
+K_FLOOR = 8   # docs/28 §3: K = 8 estimator seeds
+
+
+def floors(cfg: L.ABAConfig) -> None:
+    t0 = time.perf_counter()
+    fl = {f"{g:g}": L.trained_floor(cfg, g, seed=cfg.seeds[0], K=K_FLOOR) for g in cfg.gammas}
+    tag = "" if cfg.stopping == "criterion" else f"_{cfg.stopping}"
+    out = L.REPO / "results" / "aba" / f"floors_{L.lib_hash()}{tag}_seed{cfg.seeds[0]}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"floors": fl, "stamp": L.git_stamp(), "lib_hash": L.lib_hash(),
+                               "config": cfg.key_fields()}, indent=1), encoding="utf-8")
+    for g, f in fl.items():
+        print(f"γ0 {g}: floor {f['floor']:.4f} (K {f['K']}, mean log α_A after A {f['mean_log_alpha']:+.3f})")
+    print(f"written to {out}; {time.perf_counter() - t0:.0f}s")
+
+
 def grid(cfg: L.ABAConfig, workers: int) -> None:
     t0 = time.perf_counter()
     rows = L.run_grid(cfg, L.all_specs(cfg), workers=workers, progress=lambda m: print(m, flush=True))
@@ -120,13 +157,24 @@ def reproduce(cfg: L.ABAConfig) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("calibrate", "timing", "grid", "reproduce"))
+    ap.add_argument("mode", choices=("calibrate", "timing", "grid", "reproduce", "arm", "floors"))
     ap.add_argument("--quick", action="store_true", help="QUICK config instead of FULL")
     ap.add_argument("--workers", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "4")))
     ap.add_argument("--seed-offset", type=int, default=0, help="first seed of the run (8: replication)")
+    ap.add_argument("--stopping", choices=("criterion", "fixed"), default="criterion")
+    ap.add_argument("--budget", default="", help="fixed budgets A1,B,A2 (with --stopping fixed)")
+    ap.add_argument("--spec", default="", help="arm mode: seed,gamma,hamming,s_f")
     a = ap.parse_args()
-    cfg = dataclasses.replace(L.ABAConfig.make(a.quick), seed_offset=a.seed_offset)
+    budget = tuple(int(x) for x in a.budget.split(",")) if a.budget else ()
+    if (a.stopping == "fixed") != (len(budget) == 3):
+        sys.exit("--stopping fixed needs --budget A1,B,A2 (and only then)")
+    cfg = dataclasses.replace(L.ABAConfig.make(a.quick), seed_offset=a.seed_offset,
+                              stopping=a.stopping, fixed_steps=budget)
     print(f"mode {a.mode}  {'QUICK' if a.quick else 'FULL'}  lib {L.lib_hash()}  stamp {L.git_stamp()}  "
-          f"bottleneck_n {cfg.bottleneck_n}  seeds {cfg.seeds.start}..{cfg.seeds.stop - 1}", flush=True)
+          f"bottleneck_n {cfg.bottleneck_n}  seeds {cfg.seeds.start}..{cfg.seeds.stop - 1}  "
+          f"stopping {cfg.stopping} {cfg.fixed_steps or ''}", flush=True)
     {"calibrate": lambda: calibrate(cfg), "timing": lambda: timing(cfg),
-     "grid": lambda: grid(cfg, a.workers), "reproduce": lambda: reproduce(cfg)}[a.mode]()
+     "grid": lambda: grid(cfg, a.workers), "reproduce": lambda: reproduce(cfg),
+     "floors": lambda: floors(cfg),
+     "arm": lambda: arm(cfg, L.ArmSpec(int(a.spec.split(",")[0]), float(a.spec.split(",")[1]),
+                                       int(a.spec.split(",")[2]), float(a.spec.split(",")[3])))}[a.mode]()
