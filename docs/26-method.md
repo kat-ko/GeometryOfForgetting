@@ -159,14 +159,26 @@ mean relation over intervening tasks. The cliff becomes an exact statement
 - **Estimator convention.** `full_P` throughout. State that `D_eff` and
   `Ψ_eff` differ by 20–25% from the pairwise convention used in prior GLUE
   work, so numbers are not directly comparable.
-- **Units.** Report effects in `log α`, with 95% intervals over the sampling
+- **Units.** ~~Report effects in `log α`, with 95% intervals over the sampling
   unit. Floors become the **resolution criterion** (resolved when the
   interval excludes 0 and `|effect| ≥ 2` floors), not the reporting unit.
-  Reviewers read log-ratios. Floors are internal.
+  Reviewers read log-ratios. Floors are internal.~~
+  **[Amended 2026-11-09, Kati]** Report effects in `log α` with t-intervals
+  over the sampling unit. A pre-set **SESOI** (smallest effect size of
+  interest: log α 0.05, ρ_c 0.02, FT_beh log 1.25, shares and fractions
+  0.10) replaces the floor as the resolution criterion. The reading uses
+  four categories: meaningful, nonzero but possibly trivial, equivalent, and
+  inconclusive. Floors are a diagnostic only, pooled over the draws. Details
+  in `docs/29` §3.
 - **Inference.** Sampling unit: unique (arrangement, init) draw. Paired
-  design across γ₀ and conditions. A **confirmatory set** of six tests:
+  design across γ₀ and conditions. ~~A **confirmatory set** of six tests:
   C1, C2, C3, the forward-transfer primary, and the two richness-axis
-  agreements. Holm correction across the set. Everything else is
+  agreements. Holm correction across the set.~~ **[Amended 2026-11-09, Kati]**
+  A **confirmatory set of four tests**: C1, C2, C3 and the forward-transfer
+  primary, with Bonferroni 98.75% t-intervals and a sign count reported.
+  The two richness-axis agreements are descriptive within one learner,
+  because ΔK_u orders as γ₀ by construction. They are reserved for the
+  multi-learner extension (`docs/29` §1). Everything else is
   exploratory and labelled in the caption. `n = 8` by default; ~~`n = 16`
   only where a magnitude of `Δρ_c` is claimed (between-arrangement variance
   is 5–10× within, `docs/14` §5).~~ **[Amended 2026-11-06, Kati]** No n = 16.
@@ -175,9 +187,11 @@ mean relation over intervening tasks. The cliff becomes an exact statement
   Kati signs).** For each of the six tests:
   - the primary cell;
   - the paired contrast per unit;
-  - the statistic: a sign count plus a bootstrap CI over unique draws;
+  - the statistic: a sign count plus ~~a bootstrap CI~~ a t-interval over unique draws **[2026-11-09]**;
   - the criterion;
-  - Holm correction across the six.
+  - ~~Holm correction across the six~~ Bonferroni across the four **[2026-11-09]**.
+
+  **[2026-11-09]** The specification is `docs/29`.
 
   C1 is an interaction contrast. The richness-axis agreements need a **positive
   agreement criterion**: same sign, with the CI excluding 0 on both axes, and
@@ -295,7 +309,13 @@ whether the within-learner contrasts keep their sign.
 
 **Inference.** The sampling unit is a unique (arrangement, initialisation)
 draw, `n = 8`. **[Amended 2026-11-06]** C2 (stream sets sign) is scoped to
-full-batch gradient descent. Effects are reported in `log α` with 95% intervals and called
+full-batch gradient descent. ~~Effects are reported in `log α` with 95% intervals and called
 resolved when the interval excludes zero and the effect exceeds twice the
 measurement floor. Six confirmatory tests, Holm-corrected; all else is
-exploratory and labelled as such.
+exploratory and labelled as such.~~ **[Amended 2026-11-09]** Effects are
+reported in `log α` with t-intervals over draws. Each is read against a
+pre-set smallest effect size of interest. The four categories are
+meaningful, nonzero but possibly trivial, equivalent, and inconclusive.
+Four confirmatory tests use Bonferroni 98.75% intervals. Every reading is
+per configuration and per (task, boundary), never averaged over lags or
+positions. All else is descriptive and labelled as such.
