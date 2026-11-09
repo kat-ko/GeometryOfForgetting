@@ -4835,3 +4835,31 @@ package, with one implementation and one bit-for-bit check. Mark the 2M paths le
 - **QUICK T = 16 dry run** (γ0 10, h 8, jump): 287 GLUE calls, 510 s locally, usable.
 - `sbatch/stream_timing.sh` (FULL parity, then one design-scale arm) is committed and **not submitted**. It
   waits for Kati to sign docs/26 and docs/29.
+
+### 2026-11-09 (late): K9 decided; T1(a) to h 4 drift; docs/32 2×2 pre-committed
+
+**Kati's decisions:**
+- **K9.** Matched-loss stopping stays (no flip in docs/31). Every γ0 claim is scoped "at matched current-task
+  fit".
+- **docs/30 §2b.** The ablation is a finding: the H1 difference depends on the exposure protocol, and the
+  pre-committed expected direction was wrong because it ignored over-training of A.
+- **docs/29 T1(a).** The primary cell moved from h 4 frozen to h 4 drift (dated amendment). h 4 frozen is
+  reported, not read. Docs commit: `82220f9`.
+
+**docs/32** (pre-commit `f03573f`) is the A–B–A stopping 2×2:
+- A {criterion, fixed 2300} × B {criterion, fixed 2400};
+- h 4 frozen and drift, γ0 0.1 and 10, seeds 8–15: 128 arms;
+- main effects E_A and E_B at 99.375% in four categories;
+- committed prediction: E_A < 0 at γ0 10;
+- integrity check: (Cr,Cr) and (Fx,Fx) must equal jobs 4396 and 4458 bit for bit.
+
+**Code.**
+- `aba_lib`: a `None` budget means criterion for that phase. lib 0ee97f82b6bee621 → 635c4e3bf8cc6b96, and
+  `stream_hash` → cdde174e87841968.
+- `aba_cluster`: the `cells` and `match` modes.
+- `aba_summary --twobytwo`.
+- `tests/test_aba_lib_stopping.py`: 5 tests.
+- `sbatch/aba_2x2_timing.sh` and `aba_2x2.sh`. The stream timing job now runs on the new hash.
+- Local check: old vs new `aba_lib` give bit-identical QUICK rows (criterion and fixed). A FULL laptop arm
+  differs from the grime row of job 4396 in the last digits (cross-platform BLAS), so the integrity check
+  runs on grime.

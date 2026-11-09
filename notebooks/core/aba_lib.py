@@ -111,7 +111,8 @@ class ABAConfig:
     n_seeds: int = 3
     seed_offset: int = 0            # seeds are range(seed_offset, seed_offset + n_seeds); 8 = held-out replication
     # stopping: "criterion" (matched loss, docs/28) or "fixed" (exactly fixed_steps = (A1, B, A2) updates;
-    # fresh B takes the B budget). docs/31 stopping-rule ablation.
+    # fresh B takes the B budget). docs/31 stopping-rule ablation. A None entry in fixed_steps means
+    # criterion stopping for that phase (docs/32 2x2).
     stopping: str = "criterion"
     fixed_steps: tuple = ()
 
@@ -432,7 +433,8 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
     """Full-batch GD until loss ≤ target, the loss checked BEFORE each update.
 
     With cfg.stopping == "fixed": exactly the phase's budget of updates, whatever the loss
-    (status "fixed"; usable when the loss stays finite). `phase` selects the budget.
+    (status "fixed"; usable when the loss stays finite). `phase` selects the budget; a None
+    budget means criterion stopping for that phase (docs/32).
 
     Records train loss and each monitor's (loss, sign accuracy) every `record_every`
     updates and at the final state. `first_loss` is the zero-shot loss on this task.
@@ -452,6 +454,7 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
     fixed = cfg.stopping == "fixed"
     if fixed:
         budget = cfg.fixed_steps[_PHASE_BUDGET[phase]]
+        fixed = budget is not None
     elif cfg.stopping != "criterion":
         raise ValueError(f"unknown stopping {cfg.stopping!r}")
     steps, first_loss, status = 0, None, "cap"

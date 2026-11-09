@@ -43,6 +43,12 @@ per-phase stopping rule.
 Each comparison is bit for bit after JSON, ignoring only `lib_hash`, `stamp` and `timing`. On any difference
 no reading is computed, and the difference is reported to Kati.
 
+**[Clarified 2026-11-09, before any cluster run]** The check runs on grime, where the reference rows were
+computed. On the laptop the same arm differs from the grime row in the last digits: for example
+`backward.A1_to_B.total` −1.2876994931091996 vs −1.2876994931092003 (cross-platform BLAS). On the laptop,
+the old and new `aba_lib` gave identical rows for a QUICK criterion arm and a QUICK fixed arm, so the change
+itself leaves those paths untouched.
+
 ## 3. Quantities
 
 Per arm, from the A–B–A row:

@@ -556,17 +556,198 @@ def ablation_tables(data, fixed_path: Path, floors_path: Path) -> str:
     return "\n".join(out)
 
 
+# --------------------------------------------------------------------------- docs/32: stopping 2x2
+
+T8 = stats.t.ppf(1 - 0.05 / 16, 7)          # docs/32 §4: 99.375% two-sided (family of eight), df 7
+CELLS_32 = ("Cr,Cr", "Fx,Cr", "Cr,Fx", "Fx,Fx")
+STRATA_32 = [(1.0, 0.1), (1.0, 10.0), (0.9, 0.1), (0.9, 10.0)]     # (s_f, γ0), all at h 4
+SEEDS_32 = range(8, 16)
+
+
+def ci_at(x, tcrit) -> tuple[float, float, float]:
+    x = np.asarray(x, float)
+    m, se = x.mean(), x.std(ddof=1) / math.sqrt(len(x))
+    return m, m - tcrit * se, m + tcrit * se
+
+
+def category_at(vals, sesoi: float, tcrit: float, direction: int = 0) -> str:
+    """Four categories (docs/29 S0) on the t-interval at `tcrit`. direction 0 = two-sided
+    ("meaningful +" / "meaningful −"); ±1 = predicted direction ("meaningful" / "meaningful, opposite")."""
+    _, lo, hi = ci_at(vals, tcrit)
+    if lo > sesoi or hi < -sesoi:
+        if direction == 0:
+            return "meaningful +" if lo > sesoi else "meaningful −"
+        return "meaningful" if (lo > sesoi) == (direction > 0) else "meaningful, opposite"
+    if -sesoi < lo and hi < sesoi:
+        return "equivalent"
+    if lo > 0 or hi < 0:
+        return "nonzero, possibly trivial"
+    return "inconclusive"
+
+
+def _check_category_at() -> None:
+    base = np.array([-1.0, 1.0] * 4) * 0.01
+    assert category_at(-1.0 + base, 0.1, T8, -1) == "meaningful"
+    assert category_at(1.0 + base, 0.1, T8, -1) == "meaningful, opposite"
+    assert category_at(1.0 + base, 0.1, T8) == "meaningful +"
+    assert category_at(-1.0 + base, 0.1, T8) == "meaningful −"
+    assert category_at(base, 0.1, T8) == "equivalent"
+    assert category_at(0.1 + base, 0.1, T8) == "nonzero, possibly trivial"
+    assert category_at(np.array([-1.0, 1.0] * 4), 0.1, T8) == "inconclusive"
+    for v in (1.0 + base, -1.0 + base, base, 0.1 + base, np.array([-1.0, 1.0] * 4)):
+        assert category_at(v, 0.1, T4, +1) == category(v, 0.1)    # docs/31's helper at the same t
+
+
+def load_2x2(crit_path: Path, fixed_path: Path) -> dict:
+    """cell -> {(seed, γ0, s_f): row}, selected by the cell's exact config dict (docs/32 §2)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import aba_cluster as C
+    import aba_lib as L
+    keys = {s.key for s in C.SPECS_2X2}
+    out = {}
+    for cell in CELLS_32:
+        want = json.dumps(C.cell_cfg(L.ABAConfig.make(False), cell).key_fields(), sort_keys=True)
+        path = crit_path if cell == "Cr,Cr" else fixed_path
+        by = {}
+        for line in path.read_text(encoding="utf-8").splitlines():
+            r = json.loads(line)
+            if r["key"] in keys and json.dumps(r["config"], sort_keys=True) == want:
+                assert r["usable"], (cell, r["key"])
+                s = r["spec"]
+                by[(s["seed"], s["gamma"], s["s_f"])] = r
+        assert len(by) == 32, (cell, len(by))
+        out[cell] = by
+    return out
+
+
+def _fmt_ci(v, nd=3) -> str:
+    m, lo, hi = ci_at(v, T8)
+    return f"{m:+.{nd}f} [{lo:+.{nd}f}, {hi:+.{nd}f}]"
+
+
+def twobytwo_tables(cells: dict) -> str:
+    S = list(SEEDS_32)
+
+    def f(cell, g, sf):
+        return np.array([frac_removed(cells[cell][s, g, sf]) for s in S])
+
+    def col(cell, g, sf, fn):
+        return np.array([fn(cells[cell][s, g, sf]) for s in S])
+
+    out = [f"Cells (A rule, B rule): Cr = criterion, Fx = fixed (A1 2300, B 2400; A2 2000 with Fx A). "
+           f"h 4, seeds 8–15, n = 8 per stratum. Intervals: 99.375% t, critical value {T8:.3f} (df 7). "
+           "Category: four categories, SESOI 0.10 (fraction removed), predicted direction only for E_A at "
+           "γ0 10 (< 0); all other tests two-sided.", "",
+           "**Main effects (the family of eight).**", "",
+           "| stratum | effect | mean [99.375%] | seeds < 0 | ratio read | category |",
+           "|---|---|---|---|---|---|"]
+    verdict, accounts = {}, {}
+    for sf, g in STRATA_32:
+        read = all(category_at(col(c, g, sf, gain), 0.05, T8, +1) == "meaningful" for c in CELLS_32)
+        EA = 0.5 * ((f("Fx,Cr", g, sf) - f("Cr,Cr", g, sf)) + (f("Fx,Fx", g, sf) - f("Cr,Fx", g, sf)))
+        EB = 0.5 * ((f("Cr,Fx", g, sf) - f("Cr,Cr", g, sf)) + (f("Fx,Fx", g, sf) - f("Fx,Cr", g, sf)))
+        for name, E, d in (("E_A (over-training A)", EA, -1 if g == 10.0 else 0),
+                           ("E_B (over-exposure B)", EB, 0)):
+            cat = category_at(E, 0.10, T8, d) if read else "not read"
+            verdict[sf, g, name[:3]] = cat
+            out.append(f"| h 4, s_f {sf:g} ({SF_NAME[sf]}), γ0 {g:g} | {name} | {_fmt_ci(E)} "
+                       f"| {int((E < 0).sum())}/8 | {'yes' if read else 'no'} | {cat} |")
+    out += ["", "**Committed prediction (docs/32 §5):** E_A < 0 at γ0 10 in both h 4 strata."]
+    ea10 = [verdict[sf, 10.0, "E_A"] for sf in (1.0, 0.9)]
+    if all(c == "meaningful" for c in ea10):
+        pv = "**held** (meaningful < 0 in both strata)"
+    elif any(c == "meaningful, opposite" for c in ea10):
+        pv = "**not held** (meaningful > 0 in at least one stratum)"
+    elif all(c == "equivalent" for c in ea10):
+        pv = "**null** (equivalent in both strata)"
+    else:
+        pv = "neither held, not held nor null: " + "; ".join(
+            f"{SF_NAME[sf]} {c}" for sf, c in zip((1.0, 0.9), ea10))
+    out.append(f"Reading: {pv}.")
+    out += ["", "**Accounts (docs/32 §5), per h 4 stratum:**", ""]
+    for sf in (1.0, 0.9):
+        ea, eb10, eb01 = verdict[sf, 10.0, "E_A"], verdict[sf, 10.0, "E_B"], verdict[sf, 0.1, "E_B"]
+        if ea == "meaningful" and eb10 != "meaningful −":
+            acc = "consolidation account"
+        elif ea == "equivalent" and (eb10 == "meaningful −" or eb01 == "meaningful +"):
+            acc = "exposure account"
+        else:
+            acc = "other pattern (reported as is)"
+        out.append(f"- s_f {sf:g} ({SF_NAME[sf]}): E_A(10) {ea}; E_B(10) {eb10}; E_B(0.1) {eb01} → {acc}.")
+    out += ["", "**Per cell (descriptive).** f = fraction removed; G = Δlog α_A(init → A1); "
+            "L = Δlog α_A(A1 → B). Mean [99.375%].", "",
+            "| stratum | cell | f | G | L |", "|---|---|---|---|---|"]
+    for sf, g in STRATA_32:
+        for c in CELLS_32:
+            out.append(f"| h 4, s_f {sf:g}, γ0 {g:g} | ({c}) | {_fmt_ci(f(c, g, sf))} "
+                       f"| {_fmt_ci(col(c, g, sf, gain))} "
+                       f"| {_fmt_ci(col(c, g, sf, lambda r: r['backward']['A1_to_B']['total']))} |")
+    out += ["", "**Interaction and simple effects (descriptive).** Interaction = ((Fx,Fx) − (Fx,Cr)) − "
+            "((Cr,Fx) − (Cr,Cr)).", "",
+            "| stratum | A at B Cr | A at B Fx | B at A Cr | B at A Fx | interaction |", "|---|---|---|---|---|---|"]
+    for sf, g in STRATA_32:
+        cc, fc, cf, ff = (f(c, g, sf) for c in CELLS_32)
+        out.append(f"| h 4, s_f {sf:g}, γ0 {g:g} | {_fmt_ci(fc - cc)} | {_fmt_ci(ff - cf)} "
+                   f"| {_fmt_ci(cf - cc)} | {_fmt_ci(ff - fc)} | {_fmt_ci((ff - fc) - (cf - cc))} |")
+    out += ["", "**H1 contrast per cell (descriptive):** d = f(γ0 10) − f(γ0 0.1).", "",
+            "| s_f | " + " | ".join(f"({c})" for c in CELLS_32) + " |", "|---|---|---|---|---|"]
+    for sf in (1.0, 0.9):
+        out.append(f"| {sf:g} ({SF_NAME[sf]}) | " + " | ".join(
+            _fmt_ci(f(c, 10.0, sf) - f(c, 0.1, sf)) for c in CELLS_32) + " |")
+    out += ["", "**Setting card per cell:** steps and final loss per phase, median [min, max] over seeds. "
+            "Final losses are recorded only in the cells with a fixed phase (`behaviour.final_loss`).", "",
+            "| stratum | cell | steps A1 | steps B | final loss A1 | final loss B |", "|---|---|---|---|---|---|"]
+    for sf, g in STRATA_32:
+        for c in CELLS_32:
+            rs = [cells[c][s, g, sf] for s in S]
+
+            def med(v, fmt):
+                return f"{np.median(v):{fmt}} [{min(v):{fmt}}, {max(v):{fmt}}]"
+            st = [med([r["behaviour"]["steps"][p] for r in rs], ".0f") for p in ("A1", "B")]
+            if "final_loss" in rs[0]["behaviour"]:
+                fl = [med([r["behaviour"]["final_loss"][p] for r in rs], ".1e") for p in ("A1", "B")]
+            else:
+                fl = ["≤ 0.05 (criterion)"] * 2
+            out.append(f"| h 4, s_f {sf:g}, γ0 {g:g} | ({c}) | {st[0]} | {st[1]} | {fl[0]} | {fl[1]} |")
+    return "\n".join(out)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--ablation", nargs=2, metavar=("FIXED_JSONL", "FLOORS_JSON"),
                     help="docs/31: write the ablation results into docs/31")
+    ap.add_argument("--twobytwo", nargs=2, metavar=("CRIT_JSONL", "FIXED_JSONL"),
+                    help="docs/32: write the 2x2 results into docs/32")
+    ap.add_argument("--twobytwo-dry", nargs=2, metavar=("CRIT_JSONL", "FIXED_JSONL"),
+                    help="docs/32 format dry run: (Cr,Cr)/(Fx,Fx) from the given files stand in for "
+                         "all four cells; printed, never written")
     a = ap.parse_args()
     data = load()
     check_93(data)
     check_readings(data)
     _check_category()
+    _check_category_at()
     if a.check:
+        return
+    if a.twobytwo:
+        doc = REPO / "docs" / "32-aba-stopping-2x2-precommit.md"
+        write_generated(doc, "2x2 results", twobytwo_tables(load_2x2(Path(a.twobytwo[0]), Path(a.twobytwo[1]))))
+        print("2x2 results written into", doc)
+        return
+    if a.twobytwo_dry:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import aba_cluster as C
+        import aba_lib as L
+        stand = {}
+        for cell, path in (("Cr,Cr", a.twobytwo_dry[0]), ("Fx,Fx", a.twobytwo_dry[1])):
+            want = json.dumps(C.cell_cfg(L.ABAConfig.make(False), cell).key_fields(), sort_keys=True)
+            keys = {s.key for s in C.SPECS_2X2}
+            stand[cell] = {(r["spec"]["seed"], r["spec"]["gamma"], r["spec"]["s_f"]): r
+                           for r in map(json.loads, Path(path).read_text(encoding="utf-8").splitlines())
+                           if r["key"] in keys and json.dumps(r["config"], sort_keys=True) == want}
+        print(twobytwo_tables({"Cr,Cr": stand["Cr,Cr"], "Fx,Cr": stand["Fx,Fx"],
+                               "Cr,Fx": stand["Cr,Cr"], "Fx,Fx": stand["Fx,Fx"]}))
         return
     if a.ablation:
         doc = REPO / "docs" / "31-aba-stopping-ablation-precommit.md"
