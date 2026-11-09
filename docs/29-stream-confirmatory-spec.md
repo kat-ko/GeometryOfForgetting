@@ -6,7 +6,10 @@ Status:  DRAFT, unsigned. First draft 2026-11-09 (docs/25 §8 step 6).
          four-category reading (S0), four confirmatory tests T1–T4 at
          Bonferroni 98.75%, readings per configuration and per (j, t) at
          p = 8 (K8), T2 = task 0 after the stream (K2a), T5/T6 descriptive.
-         K9 (stopping) carries the docs/31 outcome for Kati's decision.
+         K9 (stopping) carried the docs/31 outcome for Kati's decision.
+         Amended 2026-11-09 (Kati): K9 decided (matched-loss stopping;
+         every γ₀ claim scoped "at matched current-task fit"); T1(a)
+         moved from h 4 frozen to h 4 drift.
 Slot:    docs/24 §4 core (the stream paradigm, second after A–B–A).
 Binds:   the grid of docs/25 §1 (1M, N = 300, M = 150, n_t = 200, n = 8).
 Gate:    no stream grid runs before Kati signs docs/26 and this document
@@ -58,7 +61,9 @@ The specific points:
 - **C1.** The γ₀ gap in fraction removed held at h 4 frozen and h 4 drift, and not at h 8. **T1's choice of
   h = 4 was informed by A–B–A.**
 - **Exposure.** Under matched-loss stopping, exposure differs 40–60-fold between γ₀ 0.1 and 10. Under a fixed
-  budget (docs/31), the H1 contrast shrank at h 4 frozen (unresolved) and at h 4 drift (still positive). See K9.
+  budget (docs/31), the H1 contrast shrank at h 4 frozen (unresolved) and at h 4 drift (still positive).
+  Matched-loss stopping stays (K9), so **every γ₀ claim in this document holds at matched current-task fit**,
+  and only there. The A–B–A 2×2 that separates over-training of A from over-exposure on B is `docs/32`.
 
 ## 2. Design (from docs/25 §1)
 
@@ -156,11 +161,15 @@ All other positions and lags are reported descriptively per (j, t), each with it
 
 ### T1 — C1: the learner sets magnitude and channel
 
-- **Claim** (`docs/24` §3). Richness increases forgetting and shifts it from radius to alignment/utility.
+- **Claim** (`docs/24` §3). At matched current-task fit, richness increases forgetting and shifts it from
+  radius to alignment/utility.
 - **Cell (K1).** h = 4, (j, t) = (7, 8), γ₀ = 10 vs γ₀ = 0.1. h = 4 was chosen from A–B–A, where the γ₀ gap
   in fraction removed held at h 4 frozen and h 4 drift, and not at h 8.
 - **Parts.** All are paired per unit, with predicted direction > 0:
-  - **(a) magnitude.** d_f = f_7(8; γ₀ 10) − f_7(8; γ₀ 0.1), at h 4 frozen. SESOI 0.10.
+  - **(a) magnitude.** d_f = f_7(8; γ₀ 10) − f_7(8; γ₀ 0.1), at **h 4 drift (s_f 0.9)**. SESOI 0.10.
+    **[Amended 2026-11-09, Kati]** ~~at h 4 frozen~~. The reason: h 4 frozen is protocol-fragile. Under a
+    fixed budget (docs/31) its contrast fell to +0.100 [−0.076, +0.277], unresolved. h 4 drift kept its
+    sign under both stopping rules (+0.333 → +0.184). d_f at h 4 frozen is reported (§6), not read.
   - **(b) channel interaction.** q = the radius share of Δlog α_7(7 → 8), and
     `I = [q(0.1) − q(10)]_frozen − [q(0.1) − q(10)]_jump`, at h 4. SESOI 0.10.
   - **(c) utility-share contrast** (from A–B–A H5b). u = the utility share of Δlog α_7(7 → 8), and
@@ -169,7 +178,8 @@ All other positions and lags are reported descriptively per (j, t), each with it
 - **Held** if (a), (b) and (c) are each meaningful. **Not held** if any is meaningful the opposite way.
 - **Null.** (a), (b) and (c) are each equivalent.
 - **Prior signal (A–B–A replication, lag 1 at p = 1).**
-  - d_f = +0.332 at h 4 frozen, and +0.100 [−0.076, +0.277] under the fixed budget (docs/31).
+  - d_f = +0.333 at h 4 drift, and +0.184 under the fixed budget (same sign, docs/31).
+  - d_f = +0.332 at h 4 frozen, and +0.100 [−0.076, +0.277] under the fixed budget (unresolved).
   - At h 4 frozen, the utility share is 0.18 at γ₀ 0.1 and 0.50 at γ₀ 10.
   - The radius share is 0.38–0.41 vs 0.07–0.08 (h 4 and h 8, frozen and drift).
 
@@ -227,6 +237,7 @@ All other positions and lags are reported descriptively per (j, t), each with it
 Reported per configuration and per (j, t), never averaged over lags or positions:
 - **T5 and T6, the richness-axis agreements.** C1 and the fraction-removed contrast are recomputed against
   ΔK_u instead of γ₀. Descriptive within one learner (§1), and reserved for the multi-learner extension.
+- T1(a) at h 4 frozen, d_f at (7, 8) (reported, not read; amended 2026-11-09);
 - every (j, t) other than the named cells: all positions, all lags;
 - T2's lag 1 at p = 8 and its jump control;
 - the long-lag cliff `Δ(h 2) − Δ(h 8)` at long lags;
@@ -257,12 +268,10 @@ Reported per configuration and per (j, t), never averaged over lags or positions
 | S0 | The SESOI values in §3; the four-category reading. |
 | T1 | The utility-share contrast (γ₀ 10 vs 0.1) is T1(c). |
 | FT | Forward measured against init, with neutral probes at s_r(·, y_t) = 0 (§2b). |
+| K9 | Matched-loss stopping stays: no stratum flipped in the docs/31 ablation (job 4458), per its pre-committed rule. Every γ₀ claim is scoped "at matched current-task fit". Exposure is on every card. The disentangling 2×2 is docs/32. |
+| T1(a) | The primary cell is h 4 drift, not h 4 frozen (protocol-fragile under docs/31). h 4 frozen is reported, not read. |
 
-**For Kati's decision before signing:**
-
-| # | decision |
-|---|---|
-| K9 | **Stopping.** In the docs/31 ablation (job 4458), no stratum shows a sign flip, so by its pre-committed rule matched-loss stopping can stand, with exposure stated on every card. Weigh beside that rule: (i) H1 at h 4 frozen is unresolved under a fixed budget (+0.100 [−0.076, +0.277]); (ii) its expected direction was not met, because the fixed budget shrank the γ₀ contrast in fraction removed at h 4. The options are matched loss as drafted, a fixed budget, or both reported, with one named as the reading. |
+Nothing is open for decision.
 
 ## 8. Execution (after signing)
 
@@ -280,7 +289,10 @@ Reported per configuration and per (j, t), never averaged over lags or positions
 1. Kati signs docs/26 and this document.
 2. Submit `sbatch/stream_timing.sh`: FULL parity, then ONE design-scale arm with every measurement (γ₀ 0.1,
    h 8, jump), sequential and timed. Size the 288-arm grid from it with the 3–4× parallel slowdown.
-3. One commit, clean tree. The readings and setting cards are computed by code that implements §2–§5
+3. **`aba_lib` freeze.** docs/32 changes `aba_lib` (a per-phase stopping option), which changes
+   `stream_hash`. The stream timing job and the stream grid run on the same commit, at or after the docs/32
+   code commit. No edit to any hashed file may land between them.
+4. One commit, clean tree. The readings and setting cards are computed by code that implements §2–§5
    verbatim, and are reported as computed.
 
 **Backlog (Kati, 2026-11-09).** After the stream grid, move `aba_lib` + `stream_lib` into `src` as one

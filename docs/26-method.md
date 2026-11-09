@@ -183,6 +183,11 @@ mean relation over intervening tasks. The cliff becomes an exact statement
   only where a magnitude of `Δρ_c` is claimed (between-arrangement variance
   is 5–10× within, `docs/14` §5).~~ **[Amended 2026-11-06, Kati]** No n = 16.
   `Δρ_c` magnitudes are exploratory at n = 8.
+- **Stopping.** **[Amended 2026-11-09, Kati]** Matched-loss stopping (K9;
+  no sign flip under the fixed-budget ablation, `docs/31`). Every γ₀ claim
+  holds **at matched current-task fit**, and exposure (updates per task) is
+  on every setting card. The A-phase over-training vs B-phase exposure
+  split is `docs/32`.
 - **[Amended 2026-11-06, Kati] Confirmatory-test specification (to draft, then
   Kati signs).** For each of the six tests:
   - the primary cell;
@@ -319,3 +324,5 @@ meaningful, nonzero but possibly trivial, equivalent, and inconclusive.
 Four confirmatory tests use Bonferroni 98.75% intervals. Every reading is
 per configuration and per (task, boundary), never averaged over lags or
 positions. All else is descriptive and labelled as such.
+**[Amended 2026-11-09, Kati]** Training stops at matched loss (K9). Every
+γ₀ claim is scoped "at matched current-task fit" (`docs/31`, `docs/32`).

@@ -19,6 +19,9 @@ by side and never pooled.
 - h is Hamming(y_A, y_B) out of P = 16.
 - s_f is the input-centre change: 1 is frozen, 0.9 is drift, 0.1 is jump.
 - The realised relations and the exposure of every configuration are in its setting card (§4).
+- **Every γ0 claim holds at matched current-task fit** (Kati, K9, 2026-11-09). Each phase is trained to
+  loss ≤ 0.05, and the learner sets its own exposure. Under a fixed, equal budget, the H1 difference changes
+  (§2b).
 
 ## 1. Confirmatory readings (docs/28 §4), by configuration
 
@@ -70,11 +73,50 @@ by side and never pooled.
 - **Exposure differs 40–60-fold between γ0 0.1 and γ0 10** (setting cards). For
   example, at h 8 frozen in seeds 8–15, B takes 2137 updates at γ0 0.1 and 36 at γ0 10 (median).
   Every γ0 contrast above is therefore also an exposure contrast. The stopping-rule ablation
-  (docs/31) separates the two.
+  (docs/31) holds exposure equal instead; see §2b.
 - **Provenance note.** The replication checkpoint also holds one arm at **seed 0** (γ0 0.1, h 8, jump).
   It was run by the notebook's timing-display cell, which still hard-coded seed 0. The readings code
   filters on the run's spec keys, so no reading uses it. It is registered as E18 and fixed in the
   notebook.
+
+## 2b. Finding: the stopping protocol is part of the H1 result (docs/31, job 4458)
+
+The stopping-rule ablation reran the replication (seeds 8–15) with an equal, fixed budget for every γ0:
+A1 2300, B 2400 and A2 2000 updates. Exposure was matched; fit was not. This is a finding about H1, not
+only a robustness check.
+
+**The H1 difference depends on the exposure protocol.** Both learners moved:
+
+| stratum | f(0.1): criterion → fixed | f(10): criterion → fixed | d = f(10) − f(0.1): criterion → fixed (99.17%) |
+|---|---|---|---|
+| h 4 frozen | 0.387 → 0.480 | 0.719 → 0.580 | +0.332 [+0.229, +0.436] → +0.100 [−0.076, +0.277], **unresolved** |
+| h 4 drift | 0.264 → 0.350 | 0.597 → 0.534 | +0.333 [+0.233, +0.434] → +0.184 [+0.058, +0.310], same sign |
+
+- **γ0 0.1 (lazy).** B ran 2400 updates instead of a median of about 1500, and it removed more of A's gain.
+  The fit ends near the criterion either way (final losses 0.006–0.040).
+- **γ0 10 (rich).** The fixed budget over-trains A to a loss of about 1e-6, against the criterion's 0.05.
+  - The gain after A grows: 2.294 [2.229, 2.360] against 2.059.
+  - B then removes a **smaller share** of that larger gain, even though it ran about 100× more updates
+    (2400 instead of about 21).
+- **No sign flip in any stratum.**
+  - H1 keeps its sign at h 4 drift and is unresolved at h 4 frozen.
+  - H2, H5a and H6 keep their readings.
+  - So, by the pre-committed rule, matched-loss stopping stands (K9). The γ0 claims above are scoped to
+    matched current-task fit.
+  - In the stream spec, h 4 frozen is protocol-fragile, so the T1(a) primary cell moved to h 4 drift
+    (docs/29).
+
+**The pre-committed expected direction was wrong.** Kati's docs/31 §4 expectation was that d keeps its sign
+or grows. The reasoning was that under matched loss the lazy learner already had 60–70× more updates on B
+and still lost a smaller share, so equal budgets, which give the rich learner far more updates on B, should
+widen the gap. **d shrank in both strata.**
+
+The expectation counted only the extra exposure on B. It ignored that a fixed budget also changes A: the
+rich learner is over-trained on A far below the criterion. A representation trained that far is removed
+less, in share, by the same task change. Exposure on B and over-training of A changed together, and docs/31
+cannot separate them.
+
+The 2×2 that does (A phase {criterion, fixed} × B phase {criterion, fixed}) is pre-committed in docs/32.
 
 ## 3. Figures (both runs side by side)
 
