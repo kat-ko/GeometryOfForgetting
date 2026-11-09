@@ -1,0 +1,18 @@
+# Choices register
+
+Each design choice that changes a number is listed here once. Each entry gives the date, the
+choice, the reason, who decided it and where it is implemented. A choice changes only by a new
+dated entry that supersedes the old one. Entries are never edited in place.
+
+| # | date | choice | reason | decided | where |
+|---|---|---|---|---|---|
+| C1 | 2026-11-06 | Core network is **1M** (one module), N = 300. Width is an ablation, N ∈ {150, 600}. | The core claim is about one learner. N = 300 matches the 11-06 decision set (docs/24 §4, §5). | Kati | `ABAConfig.N`; docs/24 §4 |
+| C2 | 2026-11-06 | Stopping criterion ε = 0.1·L(0). With L(0) = 0.5 the target is 0.05. | Gives the same relative criterion at every γ0, because L(0) does not depend on γ0 (u(0) = 0). | Kati | `ABAConfig.target_loss`; docs/26 |
+| C3 | 2026-11-08 | **Frozen = exact copy.** At s_f = 1, B's manifolds are A's points, not a fresh noise draw. | Gives an exact identity control. The fresh-noise arm (one per γ0) measured the difference: Δlog α_A ≤ 0.0001, which is 0.00 floors. | Kati (accepted) | `b_arrangement(noise="copy")`; `all_specs` fresh arms |
+| C4 | 2026-11-08 | **+1 in step ratios:** FT_beh = log((1 + steps fresh B)/(1 + steps B)), savings = log((1 + steps A1)/(1 + steps A2)). | Keeps 0-step phases finite. In the identity cell savings is log(1 + steps A1) by construction, so that cell is excluded from savings summaries (2026-11-09). | Kati (accepted) | `_logratio_steps` |
+| C5 | 2026-11-08 | **No update at criterion.** The loss is checked before each update, and training stops without stepping once loss ≤ ε. | A phase that starts at criterion takes 0 steps (identity control). `src` still takes one update; the mismatch goes to the error registry, and the fix in `src` is on the backlog. | Kati (accepted) | `train_to_criterion` |
+| C6 | 2026-11-09 | **Neutral forward-transfer baseline:** K = 4 balanced probe dichotomies at s_r(y*_k, y_A) = 0, fixed per seed. Specific FT_geo = Δlog α_{y_B} − mean_k Δlog α_{y*_k}. | The old y* was anchored at s_r = +0.5 to y_A, which biased the baseline. The anchored y* is kept as a comparison column. | Kati | `seed_base` (`[SALT, seed, 4]`); `run_arm` |
+| C7 | 2026-11-09 | **Specific FT_beh** = FT_beh(cell) − FT_beh(H8, s_f 0.1), paired per seed within γ0. | Warm-start baseline: the cell where A is least related to B. | Kati | notebook Q3 |
+| C8 | 2026-11-09 | **Probe budget:** a fresh readout is trained by full-batch GD for exactly 2000 steps, with no early stop. This applies to both the full-width refit and the bottleneck probe. μP scaling gives lr·s² = lr0/width, so the step is the same at every γ0 given the features. | A fixed budget makes the probe a property of the representation, not of training time. | Kati | `ABAConfig.refit_steps`; `refit_probe`, `bottleneck_probe` |
+| C9 | 2026-11-09 | **Bottleneck probe width n:** a fixed random projection Q[:n] (`[SALT, seed, 5]`, drawn once per seed) of the hidden layer. n is calibrated once on the FULL init representation (seeds 0–7) to the candidate whose mean test accuracy is closest to 0.75, then frozen. **n = [to be filled from the grime calibration job].** | Full-width refit accuracy saturates (0.998 at init, QUICK 11-09). A bottleneck at about 0.75 leaves room in both directions. | Kati (n: calibration) | `ABAConfig.bottleneck_n`; `aba_cluster.py calibrate` |
+| C10 | 2026-11-09 | **γ0 ∈ {0.1, 1, 10}** in the A–B–A grid. | Three levels allow a monotonicity reading of the gain. | Kati | `ABAConfig.gammas` |

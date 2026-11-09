@@ -49,6 +49,7 @@ LIB_PATH = Path(__file__).resolve()
 REPO = LIB_PATH.parents[2]
 SALT = 20261106
 NOISE_EPS = 1e-2
+Q_MAX = 64                     # largest bottleneck width drawn (calibration candidates ≤ this)
 
 
 # ==========================================================================
@@ -101,9 +102,10 @@ class ABAConfig:
     ntk_per_manifold: int = 20
     probe_hamming: int = 4          # y* anchored at s_r = 0.5 from y_A, as streams._sample_probe
     n_probe_neutral: int = 4        # neutral y*_k at s_r(y*_k, y_A) = 0 (forward-transfer baseline)
-    refit_steps: int = 2000         # fixed GD budget for the refit-readout probe
+    refit_steps: int = 2000         # fixed GD budget for the refit and bottleneck probes
+    bottleneck_n: int = 4           # PROVISIONAL until the FULL init calibration (target acc ≈ 0.75)
     # design
-    gammas: tuple = (0.1, 10.0)
+    gammas: tuple = (0.1, 1.0, 10.0)
     hammings: tuple = (0, 4, 8)
     s_fs: tuple = (1.0, 0.9, 0.1)
     n_seeds: int = 3
@@ -249,6 +251,7 @@ class SeedBase:
     W0: np.ndarray
     ntk_idx: np.ndarray       # (P, k) point indices for the NTK probe set
     y_star_neutral: tuple = ()   # K balanced dichotomies at s_r = 0 from y_A
+    Q: np.ndarray | None = None  # (Q_MAX, N) bottleneck projection; the probe uses the first n rows
 
 
 @functools.lru_cache(maxsize=16)
@@ -273,7 +276,10 @@ def seed_base(cfg: ABAConfig, seed: int) -> SeedBase:
         yk = sample_probe(y_A, others + neutral, cfg.P // 2, r_neu)
         assert s_r(yk, y_A) == 0.0
         neutral.append(yk)
-    return SeedBase(seed, A, y_A, y_Bs, y_star, W0, ntk_idx, tuple(neutral))
+    # Bottleneck projection: drawn once per seed, own stream. Row-major fill makes the
+    # first n rows identical for every n, so calibration and the run share it.
+    Q = np.random.default_rng([SALT, seed, 5]).standard_normal((Q_MAX, cfg.N))
+    return SeedBase(seed, A, y_A, y_Bs, y_star, W0, ntk_idx, tuple(neutral), Q)
 
 
 def b_arrangement(cfg: ABAConfig, base: SeedBase, s_f: float, noise: str = "copy") -> Arr:
@@ -481,6 +487,59 @@ def refit_probe(net: OneModuleNet, X: np.ndarray, y: np.ndarray, X_test: np.ndar
     score("end")
     out["loss"], out["acc"] = out["loss@end"], out["acc@end"]
     return out
+
+
+def bottleneck_probe(net: OneModuleNet, Q: np.ndarray, n: int, X: np.ndarray, y: np.ndarray,
+                     X_test: np.ndarray, y_test: np.ndarray, cfg: ABAConfig) -> dict:
+    """Bottleneck probe: project the frozen hidden layer to `n` units with the fixed
+    per-seed projection Q[:n] (z = H Q_nᵀ / √N), fit a fresh width-n μP readout
+    (s_n = n^-½ / (γ0 √(n/n_base)), lr_n = lr0 γ0² n/n_base, so lr_n s_n² = lr0/n at
+    every γ0) by full-batch GD for exactly `cfg.refit_steps` steps, score on the test
+    points. `n` is calibrated once on the init representation (acc ≈ 0.75). `net` is
+    not modified.
+    """
+    Qn = Q[:n]
+    root = math.sqrt(net.N)
+    Z, Zt = net.hidden(X) @ Qn.T / root, net.hidden(X_test) @ Qn.T / root
+    g = net.gamma
+    s = n ** -0.5 / (g * math.sqrt(n / cfg.n_base))
+    lr = cfg.lr0 * g ** 2 * (n / cfg.n_base)
+    B = y.shape[0]
+    v = np.zeros(n)
+    out = {}
+
+    def score(tag):
+        f = s * (Zt @ v)
+        out[f"loss@{tag}"] = float(0.5 * np.mean((f - y_test) ** 2))
+        out[f"acc@{tag}"] = float(np.mean(np.sign(f) == y_test))
+
+    for t in range(1, cfg.refit_steps + 1):
+        err = s * (Z @ v) - y
+        v -= lr * s * (Z.T @ err) / B
+        if t in REFIT_CHECKPOINTS:
+            score(t)
+    out["train_loss"] = float(0.5 * np.mean((s * (Z @ v) - y) ** 2))
+    score("end")
+    out["loss"], out["acc"] = out["loss@end"], out["acc@end"]
+    return out
+
+
+def calibrate_bottleneck(cfg: ABAConfig, seeds, candidates) -> dict:
+    """Init-representation bottleneck accuracy per candidate n (γ0-independent: W(0) and
+    lr·s² are shared across γ0; γ0 = 1 is used)."""
+    table = {}
+    for n in candidates:
+        accs, losses = [], []
+        for seed in seeds:
+            b = seed_base(cfg, seed)
+            net = OneModuleNet(b.W0, 1.0, cfg)
+            X, y = flatten(b.A.points, b.y_A)
+            Xt, yt = flatten(b.A.test, b.y_A)
+            r = bottleneck_probe(net, b.Q, n, X, y, Xt, yt, cfg)
+            accs.append(r["acc"]); losses.append(r["loss"])
+        table[n] = {"acc_mean": float(np.mean(accs)), "acc_min": float(np.min(accs)),
+                    "acc_max": float(np.max(accs)), "loss_mean": float(np.mean(losses)), "accs": accs}
+    return table
 
 
 # ==========================================================================
@@ -909,8 +968,9 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     def refit():
         t0 = time.perf_counter()
         out = refit_probe(net, XA, yA, XA_test, yA_test, cfg)
+        bot = bottleneck_probe(net, base.Q, cfg.bottleneck_n, XA, yA, XA_test, yA_test, cfg)
         timing["refit_s"] += time.perf_counter() - t0
-        return out
+        return out, bot
 
     def train(model, X, y, mons):
         t0 = time.perf_counter()
@@ -921,9 +981,9 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
     Ku0, KW0 = net.ntk_blocks(probe_A)
     K0 = Ku0 + KW0
     neutral = base.y_star_neutral
-    g, r, ph, rf = {}, {}, {}, {}
+    g, r, ph, rf, bn = {}, {}, {}, {}, {}
     r["init"] = rich()
-    rf["init"] = refit()
+    rf["init"], bn["init"] = refit()
     g["A@init"] = geo("A", A.points, y_A)
     g["B_yB@init"] = geo("B", B.points, y_B)
     g["B_ystar@init"] = geo("B*", B.points, y_star)
@@ -932,7 +992,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
     ph["A1"] = train(net, XA, yA, monitors)
     r["A1"] = rich()
-    rf["A1"] = refit()
+    rf["A1"], bn["A1"] = refit()
     g["A@A1"] = geo("A", A.points, y_A)
     g["B_yB@A1"] = geo("B", B.points, y_B)
     g["B_ystar@A1"] = geo("B*", B.points, y_star)
@@ -941,12 +1001,12 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
     ph["B"] = train(net, XB, yB, monitors)
     r["B"] = rich()
-    rf["B"] = refit()
+    rf["B"], bn["B"] = refit()
     g["A@B"] = geo("A", A.points, y_A)
 
     ph["A2"] = train(net, XA, yA, monitors)
     r["A2"] = rich()
-    rf["A2"] = refit()
+    rf["A2"], bn["A2"] = refit()
     g["A@A2"] = geo("A", A.points, y_A)
 
     fresh = OneModuleNet(base.W0, spec.gamma, cfg)
@@ -982,6 +1042,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
                     "ystar_anchored": ft_anch,
                     "specific_anchored": ft_total["total"] - ft_anch},
         "refit": rf,
+        "bottleneck": {**bn, "n": cfg.bottleneck_n},
         "behaviour": {
             "steps": steps,
             "first_loss": {k: v["first_loss"] for k, v in ph.items()},
@@ -1010,7 +1071,7 @@ def all_specs(cfg: ABAConfig) -> list[ArmSpec]:
     grid = [ArmSpec(s, float(g), int(h), float(f))
             for s in range(cfg.n_seeds) for g in cfg.gammas
             for h in cfg.hammings for f in cfg.s_fs]
-    fresh = [ArmSpec(0, float(g), 0, 1.0, "fresh") for g in cfg.gammas]
+    fresh = [ArmSpec(0, float(g), 0, 1.0, "fresh") for g in cfg.gammas]   # one per γ0
     return grid + fresh
 
 
@@ -1046,6 +1107,9 @@ SCHEMA: dict[str, str] = {
     **{f"relations.s_r_ystar_neutral_{t}.{k}": f"s_r(y*_{k} neutral, y_{t})"
        for t in ("A", "B") for k in ("0", "1", "2", "3")},
     **{f"refit.{ph}.{m}": f"fresh readout on frozen features after {ph}, {m}"
+       for ph in ("init", "A1", "B", "A2")
+       for m in ("loss", "acc", "train_loss", "loss@100", "acc@100", "loss@500", "acc@500")},
+    **{f"bottleneck.{ph}.{m}": f"bottleneck probe (width cfg.bottleneck_n, fixed projection) after {ph}, {m}"
        for ph in ("init", "A1", "B", "A2")
        for m in ("loss", "acc", "train_loss", "loss@100", "acc@100", "loss@500", "acc@500")},
     **{f"richness.{ph}.{k}": f"{k}: kernel change from previous boundary to {ph}"
