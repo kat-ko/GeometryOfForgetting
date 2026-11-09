@@ -167,3 +167,79 @@ def test_accuracy_saturates_at_step_one_so_stopping_must_use_loss():
     assert min(accs) > 0.9
     assert max(accs) - min(accs) < 1e-12      # identical across gamma
     assert min(losses) > 0.05                 # nowhere near converged
+
+
+# --- C5: no update at criterion (stopping-semantics fix, 2026-11-09) --------
+
+
+def _weights(model):
+    return {m: (model.W[m].copy(), model.u[m].copy()) for m in MODULES}
+
+
+def test_task_at_criterion_takes_zero_steps_and_leaves_weights():
+    """Retraining a converged task: the loss is checked before the update, so 0 steps."""
+    model, arr, streams, _ = _setup()
+    tcfg = TrainConfig(steps_per_task=20_000, record_every=100, target_loss=0.1)
+    y = dichotomies.sample_balanced(P, streams["stream"])
+    first = train_task(model, arr.points, y, tcfg, streams["data"])
+    assert first.converged and first.steps_taken > 0
+    before = _weights(model)
+    again = train_task(model, arr.points, y, tcfg, streams["data"])
+    assert again.steps_taken == 0 and again.converged
+    assert again.final_loss == first.final_loss
+    for m in MODULES:
+        assert np.array_equal(model.W[m], before[m][0]) and np.array_equal(model.u[m], before[m][1])
+
+
+def test_final_loss_is_the_loss_of_the_returned_weights():
+    model, arr, streams, _ = _setup()
+    tcfg = TrainConfig(steps_per_task=20_000, record_every=100, target_loss=0.1)
+    y = dichotomies.sample_balanced(P, streams["stream"])
+    rec = train_task(model, arr.points, y, tcfg, streams["data"])
+    X, target = flatten_task(arr.points, y)
+    assert rec.final_loss <= tcfg.target_loss
+    assert rec.final_loss == pytest.approx(float(0.5 * np.mean((model.forward(X) - target) ** 2)), rel=1e-12)
+
+
+def test_stops_at_the_first_update_count_at_target():
+    """steps_taken = the first k with loss(after k updates) ≤ target, replayed by hand."""
+    model, arr, streams, _ = _setup()
+    ref, _, _, _ = _setup()
+    tcfg = TrainConfig(steps_per_task=20_000, record_every=100, target_loss=0.1)
+    y = dichotomies.sample_balanced(P, streams["stream"])
+    rec = train_task(model, arr.points, y, tcfg, streams["data"])
+    X, target = flatten_task(arr.points, y)
+    k = 0
+    while ref.grads(X, target)[2] > tcfg.target_loss:
+        ref.sgd_step(X, target)
+        k += 1
+    assert rec.steps_taken == k
+    for m in MODULES:
+        assert np.array_equal(model.W[m], ref.W[m]) and np.array_equal(model.u[m], ref.u[m])
+
+
+def test_fixed_steps_applies_exactly_that_many_updates():
+    model, arr, streams, _ = _setup()
+    ref, _, _, _ = _setup()
+    y = dichotomies.sample_balanced(P, streams["stream"])
+    rec = train_task(model, arr.points, y,
+                     TrainConfig(steps_per_task=7, stopping="fixed_steps"), streams["data"])
+    X, target = flatten_task(arr.points, y)
+    for _ in range(7):
+        ref.sgd_step(X, target)
+    assert rec.steps_taken == 7 and rec.converged
+    for m in MODULES:
+        assert np.array_equal(model.W[m], ref.W[m])
+
+
+@pytest.mark.parametrize("optimizer", ["sgd", "adam"])
+def test_grads_then_apply_grads_equals_step(optimizer):
+    a, arr, streams, _ = _setup()
+    b, _, _, _ = _setup()
+    X, target = flatten_task(arr.points, dichotomies.sample_balanced(P, streams["stream"]))
+    for _ in range(3):
+        a.step(X, target, optimizer=optimizer)
+        gW, gu, _, gW2 = b.grads(X, target)
+        b.apply_grads(gW, gu, gW2, optimizer=optimizer)
+    for m in MODULES:
+        assert np.array_equal(a.W[m], b.W[m]) and np.array_equal(a.u[m], b.u[m])

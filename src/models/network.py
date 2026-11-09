@@ -278,13 +278,31 @@ class TwoModuleNet:
         exists. L = 3 requires `diagnostic=True`.
         """
         gW, gu, loss_val, gW2 = self.grads(X, y, diagnostic=diagnostic, loss=loss)
+        self._sgd_apply(gW, gu, gW2)
+        return loss_val
+
+    def _sgd_apply(self, gW: dict, gu: dict, gW2: dict) -> None:
         for m in MODULES:
             lr = self.cfg[m].lr
             self.W[m] -= lr * gW[m]
             self.u[m] -= lr * gu[m]
             if m in gW2:
                 self.W2[m] -= lr * gW2[m]
-        return loss_val
+
+    def apply_grads(self, gW: dict, gu: dict, gW2: dict, *, optimizer: str = "sgd",
+                    adam_beta1: float = 0.9, adam_beta2: float = 0.999,
+                    adam_eps: float = 1e-8) -> None:
+        """Apply gradients from `grads` as one update. `grads` + `apply_grads` is
+        exactly `step`; it lets a caller check the pre-update loss and stop
+        WITHOUT updating (C5: no update at criterion)."""
+        if optimizer == "sgd":
+            self._sgd_apply(gW, gu, gW2)
+        elif optimizer == "adam":
+            if adam_eps <= 0:
+                raise ValueError("Adam eps must be positive")
+            self._adam_update(gW, gu, gW2, adam_beta1, adam_beta2, adam_eps)
+        else:
+            raise ValueError(f"unknown optimizer {optimizer!r}")
 
     def adam_step(self, X: np.ndarray, y: np.ndarray, *, diagnostic: bool = False,
                   loss: str = "mse", beta1: float = 0.9, beta2: float = 0.999,
@@ -298,6 +316,11 @@ class TwoModuleNet:
         if eps <= 0:
             raise ValueError("Adam eps must be positive")
         gW, gu, loss_val, gW2 = self.grads(X, y, diagnostic=diagnostic, loss=loss)
+        self._adam_update(gW, gu, gW2, beta1, beta2, eps)
+        return loss_val
+
+    def _adam_update(self, gW: dict, gu: dict, gW2: dict,
+                     beta1: float, beta2: float, eps: float) -> None:
         self._adam_t += 1
         t = self._adam_t
         for m in MODULES:
@@ -306,7 +329,6 @@ class TwoModuleNet:
             self._adam_apply(self.u[m], gu[m], ("u", m), lr, beta1, beta2, eps, t)
             if m in gW2:
                 self._adam_apply(self.W2[m], gW2[m], ("W2", m), lr, beta1, beta2, eps, t)
-        return loss_val
 
     def _adam_apply(self, param: np.ndarray, grad: np.ndarray, key: tuple,
                     lr: float, beta1: float, beta2: float, eps: float, t: int) -> None:

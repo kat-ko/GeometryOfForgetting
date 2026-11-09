@@ -197,6 +197,15 @@ def train_xy(
     """SGD on a (possibly multi-output) batch. ``worst_of_k`` halts when every
     output's ½ mean_b (f_k − y_k)² is at target. For one output that is
     identical to ``matched_loss`` (both use the pre-step prediction).
+
+    **No update at criterion (C5, fixed 2026-11-09).** The loss is computed
+    BEFORE each update, and training stops without updating once it is at
+    target. So a task that starts at criterion takes 0 steps, ``steps_taken``
+    counts updates actually applied, and ``final_loss`` is the loss of the
+    returned weights (on the last batch drawn). Before the fix the update was
+    applied and the pre-update loss then checked, so every task took one
+    update past criterion and ``steps_taken`` was ≥ 1 (error registry).
+    ``fixed_steps`` applies exactly ``steps_per_task`` updates.
     """
     if getattr(model, "n_hidden_layers", 1) != 1:
         raise NotImplementedError(
@@ -212,34 +221,30 @@ def train_xy(
         raise ValueError("worst_of_k is MSE-only")
     n = X.shape[0]
     curve: list[float] = []
-    loss = float("nan")
-    step = 0
-    per = np.array([np.nan])
-    for step in range(1, cfg.steps_per_task + 1):
+    step = 0                                   # updates applied so far
+    while True:
         if cfg.batch_size is None or cfg.batch_size >= n:
             xb, yb = X, target
         else:
             idx = rng.choice(n, size=cfg.batch_size, replace=False)
             xb, yb = X[idx], target[idx]
         per = per_output_mse(model.forward(xb), yb) if cfg.stopping == "worst_of_k" else None
-        loss = model.step(
-            xb, yb, loss=cfg.loss, optimizer=cfg.optimizer,
-            adam_beta1=cfg.adam_beta1, adam_beta2=cfg.adam_beta2,
-            adam_eps=cfg.adam_eps,
-        )
-        if step % cfg.record_every == 0 or step == 1:
+        gW, gu, loss, gW2 = model.grads(xb, yb, loss=cfg.loss)   # loss of the current weights
+        if step % cfg.record_every == 0:
             curve.append(loss)
         hit = (
             (cfg.stopping == "matched_loss" and loss <= cfg.target_loss)
             or (cfg.stopping == "worst_of_k" and float(np.max(per)) <= cfg.target_loss)
         )
-        if hit:
+        if hit or step >= cfg.steps_per_task:
+            if step % cfg.record_every != 0:
+                curve.append(loss)             # final state, always recorded
             break
-    converged = (
-        (loss <= cfg.target_loss) if cfg.stopping == "matched_loss"
-        else (float(np.max(per)) <= cfg.target_loss) if cfg.stopping == "worst_of_k"
-        else True
-    )
+        model.apply_grads(gW, gu, gW2, optimizer=cfg.optimizer,
+                          adam_beta1=cfg.adam_beta1, adam_beta2=cfg.adam_beta2,
+                          adam_eps=cfg.adam_eps)
+        step += 1
+    converged = hit or cfg.stopping == "fixed_steps"
     return TaskRecord(
         task=task_index,
         final_loss=loss,
