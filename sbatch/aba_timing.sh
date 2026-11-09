@@ -7,7 +7,7 @@
 #SBATCH --partition=main
 #SBATCH --nodelist=grime
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=64G
+#SBATCH --mem=18000M   # grime: MemSpecLimit=32768 is not schedulable; check AllocMem before sizing
 #SBATCH --time=03:00:00
 #SBATCH --output=/home/kathrin/logs/%x-%j.out
 #SBATCH --error=/home/kathrin/logs/%x-%j.err

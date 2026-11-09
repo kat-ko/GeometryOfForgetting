@@ -103,7 +103,7 @@ class ABAConfig:
     probe_hamming: int = 4          # y* anchored at s_r = 0.5 from y_A, as streams._sample_probe
     n_probe_neutral: int = 4        # neutral y*_k at s_r(y*_k, y_A) = 0 (forward-transfer baseline)
     refit_steps: int = 2000         # fixed GD budget for the refit and bottleneck probes
-    bottleneck_n: int = 4           # PROVISIONAL until the FULL init calibration (target acc ≈ 0.75)
+    bottleneck_n: int = 16          # calibrated 2026-11-09 (grime job 4316): FULL init acc 0.767 [0.718, 0.806]; frozen
     # design
     gammas: tuple = (0.1, 1.0, 10.0)
     hammings: tuple = (0, 4, 8)

@@ -23,7 +23,7 @@ observation.
 | controls | identity cell (H0, s_f 1, exact copy, C3); one fresh-noise identity arm per γ0 (seed 0) |
 | arms | 8 × 3 × 9 + 3 = 219 |
 | capacity | retained (fixed-y) GLUE, full_P, n_t = 200, center_policy "all" |
-| probes | bottleneck probe, n = [from calibration] (C9), budget 2000 steps (C8); neutral y*_k, K = 4 (C6) |
+| probes | bottleneck probe, n = 16 (calibrated, C9), budget 2000 steps (C8); neutral y*_k, K = 4 (C6) |
 | provenance | every arm carries commit, dirty = False and the `aba_lib` hash; one commit for the whole grid |
 
 The arms are valid only if every validation check in the notebook passes. If any check fails,
@@ -177,7 +177,7 @@ All other tables and figures in the notebook are observations. That includes:
 The run happens only after this document is signed. All code changes land first. After that,
 nothing in `aba_lib.py` changes, and any change voids the run.
 
-1. Bottleneck n is calibrated on grime and entered into C9 and `ABAConfig`. Then commit and push.
+1. Done: bottleneck n = 16 is calibrated on grime (job 4316), entered into C9 and `ABAConfig`, committed and pushed.
 2. Timing on grime sizes the job.
 3. One sbatch job, `sbatch/aba_full.sh`, runs the 219 arms, then executes the notebook with
    `ABA_MODE=full` (floors at K = 8).
