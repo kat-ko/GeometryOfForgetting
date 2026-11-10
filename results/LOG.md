@@ -4882,3 +4882,10 @@ package, with one implementation and one bit-for-bit check. Mark the 2M paths le
 - **At γ0 0.1.** E_A is equivalent and E_B is +0.07 / +0.06 (nonzero, possibly trivial).
 - **Accounts.** "Other pattern" in both strata. Descriptively, the f(10) fall goes with over-training of A
   and the f(0.1) rise with exposure on B.
+- **docs/30 §2c (protocol robustness).**
+  - H1 at h 4 drift keeps its sign in all four stopping combinations (+0.18 to +0.33).
+  - The size of H1 depends on the protocol: over-training A at γ0 10 (E_A −0.08 / −0.14) and extra B updates
+    at γ0 0.1 (E_B +0.06 / +0.07).
+  - "Updates past the criterion barely move a rich learner" is labelled interpretation.
+- **Draft figure set.** F1–F4 (`aba_summary.py --figset`, `docs/figures/aba_F*.png`), listed in docs/30 §3.
+- **docs/33.** One-page results draft, both runs side by side.

@@ -556,6 +556,152 @@ def ablation_tables(data, fixed_path: Path, floors_path: Path) -> str:
     return "\n".join(out)
 
 
+# --------------------------------------------------------------------------- A–B–A figure set (draft, F1–F4)
+
+H_CFGS = [(4, 1.0), (4, 0.9), (8, 1.0), (8, 0.9)]          # the H1/H5/H6 configurations
+CH_COL = {"utility": "#6250d6", "dimension": "#eda100", "radius": "#e87ba4"}   # slots 7, 4, 5 (validated)
+RUNS_32 = (REPO / "results/aba/FULL_635c4e3bf8cc6b96.jsonl", REPO / "results/aba/FULL_635c4e3bf8cc6b96_fixed.jsonl")
+
+
+def figF1(data, plt):
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4.4), gridspec_kw={"width_ratios": [1, 2, 2]})
+    ax = axes[0]
+    _style(ax)
+    for k, gm in enumerate(GAMMAS):
+        for run, A in data.items():
+            filled, off = RUN_STYLE[run]
+            _pt(ax, k + off, [gain(A[s, gm, 0, 1.0]) for s in seeds_of(run)], GCOL[gm], filled, dots=False)
+    ax.set_xticks(range(3), [f"γ0 {g:g}" for g in GAMMAS])
+    ax.set_ylabel("Δlog α_A, init → after A", fontsize=8, color=INK2)
+    ax.set_title("a  Gain (H2)", fontsize=9, color=INK, loc="left")
+    for ax, f, ttl, ylab in ((axes[1], frac_removed, "b  Fraction of the gain removed by B (H1)", "fraction removed"),
+                             (axes[2], restoration, "c  Restoration after relearning A (H6)", "restoration ρ")):
+        _style(ax)
+        for c, (h, sf) in enumerate(H_CFGS):
+            for run, A in data.items():
+                filled, off = RUN_STYLE[run]
+                for k, gm in enumerate(GAMMAS):
+                    _pt(ax, c + off + (k - 1) * 0.07, [f(A[s, gm, h, sf]) for s in seeds_of(run)],
+                        GCOL[gm], filled, dots=False)
+        ax.set_xticks(range(4), [f"h {h}, {SF_NAME[sf]}" for h, sf in H_CFGS], fontsize=8)
+        ax.set_ylabel(ylab, fontsize=8, color=INK2)
+        ax.set_title(ttl, fontsize=9, color=INK, loc="left")
+    axes[2].axhline(0.9, color=INK2, lw=1, ls="--")
+    axes[2].text(3.45, 0.9, "0.9", fontsize=7, color=INK2, va="bottom", ha="right")
+    fig.suptitle("A–B–A at matched current-task fit: mean and 99.17% t-interval, n = 8 per run", fontsize=10,
+                 color=INK)
+    _legend(fig)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    return fig
+
+
+def figF2(data, plt):
+    from matplotlib.patches import Patch
+    fig, axes = plt.subplots(1, 4, figsize=(13, 4.4), sharey=True)
+    w = 0.36
+    for ax, (h, sf) in zip(axes, H_CFGS):
+        _style(ax)
+        for k, gm in enumerate(GAMMAS):
+            for run, A in data.items():
+                filled, off = RUN_STYLE[run]
+                x = k + (w / 2 + 0.02) * (1 if filled else -1)
+                bottom = 0.0
+                for ch, col in CH_COL.items():
+                    v = float(np.mean([share(A[s, gm, h, sf], ch) for s in seeds_of(run)]))
+                    ax.bar(x, v, w, bottom=bottom, color=col if filled else "white", edgecolor=col,
+                           linewidth=1.2, hatch=None if filled else "////")
+                    if v >= 0.12:
+                        ax.text(x, bottom + v / 2, f"{v:.2f}", ha="center", va="center", fontsize=6.5, color=INK)
+                    bottom += v
+        ax.axhline(0.5, color=INK2, lw=1, ls="--")
+        ax.set_xticks(range(3), [f"γ0 {g:g}" for g in GAMMAS])
+        ax.set_title(f"h {h}, {SF_NAME[sf]}", fontsize=9, color=INK)
+    axes[0].set_ylabel("share of Δlog α_A (after A → after B)", fontsize=8, color=INK2)
+    h = [Patch(facecolor=c, edgecolor=c, label=ch) for ch, c in CH_COL.items()]
+    h += [Patch(facecolor="white", edgecolor=INK2, hatch="////", label="left bar: seeds 0–7 (original)"),
+          Patch(facecolor=INK2, edgecolor=INK2, label="right bar: seeds 8–15 (replication)")]
+    fig.legend(handles=h, loc="lower center", ncol=len(h), frameon=False, fontsize=8, labelcolor=INK)
+    fig.suptitle("Channel shares of the loss B causes to A (mean over 8 seeds; residual ≈ 0 not drawn; dashed: 0.5, the H5b bound)",
+                 fontsize=10, color=INK)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    return fig
+
+
+def figF3(data, plt):
+    from matplotlib.lines import Line2D
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4.4), sharex=True, sharey=True)
+    pm = {"init": "D", "A1": "o", "B": "s", "A2": "^"}
+    for ax, h in zip(axes, HS):
+        _style(ax)
+        for run, A in data.items():
+            filled, _ = RUN_STYLE[run]
+            for gm in GAMMAS:
+                for ph, mk in pm.items():
+                    xs = [level(A[s, gm, h, 1.0], ph) for s in seeds_of(run)]
+                    ys = [A[s, gm, h, 1.0]["bottleneck"][ph]["acc"] for s in seeds_of(run)]
+                    ax.scatter(xs, ys, marker=mk, s=18, color=GCOL[gm] if filled else "white",
+                               edgecolors=GCOL[gm], linewidths=0.9, alpha=0.85)
+        ax.set_title(f"h {h}, frozen input (s_f 1)", fontsize=9, color=INK)
+        ax.set_xlabel("log α_A", fontsize=8, color=INK2)
+    axes[0].set_ylabel("bottleneck-probe accuracy on A (n = 16)", fontsize=8, color=INK2)
+    extra = [Line2D([], [], marker=m, ls="", color=INK2, label="init" if p == "init" else f"after {p}")
+             for p, m in pm.items()]
+    fig.suptitle("Accuracy vs capacity at frozen input: one marker per seed and phase (init is the same W(0) for every γ0, so its "
+                 "markers coincide)", fontsize=10, color=INK)
+    _legend(fig, extra)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    return fig
+
+
+def figF4(cells, plt):
+    from matplotlib.lines import Line2D
+    S = list(SEEDS_32)
+
+    def f(c, g, sf):
+        return np.array([frac_removed(cells[c][s, g, sf]) for s in S])
+
+    def pt(ax, x, v, col, filled, mk="o"):
+        m, lo, hi = ci_at(v, T8)
+        ax.plot([x, x], [lo, hi], color=col, lw=2, solid_capstyle="round", zorder=3)
+        ax.scatter([x], [m], marker=mk, s=36, zorder=4, color=col if filled else "white", edgecolors=col,
+                   linewidths=1.6)
+        return m, lo, hi
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.6))
+    ax = axes[0]
+    _style(ax)
+    ax.axhspan(-0.10, 0.10, color=GRID, alpha=0.6, lw=0)
+    ax.axhline(0, color=INK2, lw=1)
+    for c, cell in enumerate(CELLS_32):
+        for sf, off, filled in ((0.9, 0.1, True), (1.0, -0.1, False)):
+            pt(ax, c + off, f(cell, 10.0, sf) - f(cell, 0.1, sf), INK, filled)
+    ax.set_xticks(range(4), [f"A {c.split(',')[0]}, B {c.split(',')[1]}" for c in CELLS_32], fontsize=8)
+    ax.set_ylabel("d = f(γ0 10) − f(γ0 0.1)", fontsize=8, color=INK2)
+    ax.set_title("a  H1 contrast under each stopping combination (h 4)", fontsize=9, color=INK, loc="left")
+    ax.legend(handles=[Line2D([], [], marker="o", ls="", color=INK, label="h 4 drift"),
+                       Line2D([], [], marker="o", ls="", color=INK, markerfacecolor="white", label="h 4 frozen")],
+              frameon=False, fontsize=8, loc="upper right")
+    ax = axes[1]
+    _style(ax)
+    ax.axhspan(-0.10, 0.10, color=GRID, alpha=0.6, lw=0)
+    ax.axhline(0, color=INK2, lw=1)
+    for i, (sf, g) in enumerate(STRATA_32):
+        EA = 0.5 * ((f("Fx,Cr", g, sf) - f("Cr,Cr", g, sf)) + (f("Fx,Fx", g, sf) - f("Cr,Fx", g, sf)))
+        EB = 0.5 * ((f("Cr,Fx", g, sf) - f("Cr,Cr", g, sf)) + (f("Fx,Fx", g, sf) - f("Fx,Cr", g, sf)))
+        for E, off, mk, d in ((EA, -0.15, "o", -1 if g == 10.0 else 0), (EB, 0.15, "s", 0)):
+            m, lo, hi = pt(ax, i + off, E, GCOL[g], True, mk)
+            cat = category_at(E, 0.10, T8, d).replace("nonzero, possibly trivial", "nonzero,\npossibly trivial")
+            ax.text(i + off, hi + 0.012, cat, ha="center", va="bottom", fontsize=6, color=INK2)
+    ax.set_xticks(range(4), [f"γ0 {g:g}, h 4 {SF_NAME[sf]}" for sf, g in STRATA_32], fontsize=8)
+    ax.set_ylabel("main effect on fraction removed", fontsize=8, color=INK2)
+    ax.set_title("b  Over-training A (E_A, ●) and extra B updates (E_B, ■)", fontsize=9, color=INK, loc="left")
+    ax.set_ylim(top=ax.get_ylim()[1] + 0.06)
+    fig.suptitle("Protocol robustness (docs/31–32; seeds 8–15 only): mean and 99.375% t-interval, n = 8; "
+                 "grey band = SESOI ±0.10", fontsize=10, color=INK)
+    fig.tight_layout(rect=(0, 0.0, 1, 0.94))
+    return fig
+
+
 # --------------------------------------------------------------------------- docs/32: stopping 2x2
 
 T8 = stats.t.ppf(1 - 0.05 / 16, 7)          # docs/32 §4: 99.375% two-sided (family of eight), df 7
@@ -722,6 +868,7 @@ def main() -> None:
     ap.add_argument("--twobytwo-dry", nargs=2, metavar=("CRIT_JSONL", "FIXED_JSONL"),
                     help="docs/32 format dry run: (Cr,Cr)/(Fx,Fx) from the given files stand in for "
                          "all four cells; printed, never written")
+    ap.add_argument("--figset", action="store_true", help="draft A–B–A figure set F1–F4 into docs/figures")
     a = ap.parse_args()
     data = load()
     check_93(data)
@@ -734,6 +881,22 @@ def main() -> None:
         doc = REPO / "docs" / "32-aba-stopping-2x2-precommit.md"
         write_generated(doc, "2x2 results", twobytwo_tables(load_2x2(Path(a.twobytwo[0]), Path(a.twobytwo[1]))))
         print("2x2 results written into", doc)
+        return
+    if a.figset:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        plt.rcParams.update({"font.family": "DejaVu Sans", "figure.facecolor": "#fcfcfb",
+                             "axes.facecolor": "#fcfcfb", "savefig.facecolor": "#fcfcfb"})
+        FIG.mkdir(parents=True, exist_ok=True)
+        cells = load_2x2(*RUNS_32)
+        for name, fig in (("aba_F1_gain_removal_restoration", figF1(data, plt)),
+                          ("aba_F2_channel_shares", figF2(data, plt)),
+                          ("aba_F3_accuracy_vs_capacity_frozen", figF3(data, plt)),
+                          ("aba_F4_protocol_robustness", figF4(cells, plt))):
+            fig.savefig(FIG / f"{name}.png", dpi=130)
+            plt.close(fig)
+            print("wrote", FIG / f"{name}.png")
         return
     if a.twobytwo_dry:
         sys.path.insert(0, str(Path(__file__).resolve().parent))

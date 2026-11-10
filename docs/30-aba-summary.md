@@ -116,7 +116,48 @@ rich learner is over-trained on A far below the criterion. A representation trai
 less, in share, by the same task change. Exposure on B and over-training of A changed together, and docs/31
 cannot separate them.
 
-The 2×2 that does (A phase {criterion, fixed} × B phase {criterion, fixed}) is pre-committed in docs/32.
+The 2×2 that does (A phase {criterion, fixed} × B phase {criterion, fixed}) is pre-committed in docs/32. Its
+results are in §2c.
+
+## 2c. Protocol robustness of H1 (docs/31–32; seeds 8–15)
+
+docs/32 (grime job 4538) crossed the A-phase rule {criterion (Cr), fixed 2300 (Fx)} with the B-phase rule
+{Cr, fixed 2400}. Integrity first: every (Cr,Cr) and (Fx,Fx) row reproduced jobs 4396 and 4458 bit for bit
+(64/64). Intervals are 99.375% t-intervals (docs/32 §4) over seeds 8–15. These runs exist for the replication
+only.
+
+**H1 at h 4 drift is sign-robust across all four stopping combinations.** d = f(10) − f(0.1) is positive,
+with the interval excluding 0, in every cell:
+
+| cell (A rule, B rule) | h 4 drift | h 4 frozen |
+|---|---|---|
+| (Cr,Cr) = docs/28 | +0.333 [+0.227, +0.440] | +0.332 [+0.223, +0.442] |
+| (Fx,Cr) | +0.216 [+0.113, +0.319] | +0.161 [+0.004, +0.319] |
+| (Cr,Fx) | +0.278 [+0.167, +0.389] | +0.256 [+0.122, +0.390] |
+| (Fx,Fx) = docs/31 | +0.184 [+0.051, +0.318] | +0.100 [−0.087, +0.288] |
+
+At h 4 frozen, d is positive in every cell, but its interval includes 0 under (Fx,Fx).
+
+**The size of H1 depends on the protocol, through two routes.** These are the docs/32 main effects on
+fraction removed, read in four categories at SESOI 0.10:
+
+| route | effect | h 4 drift | h 4 frozen | category | the other effect at this γ0 |
+|---|---|---|---|---|---|
+| γ0 10: over-training A lowers f(10) | E_A | −0.083 | −0.142 | nonzero, possibly trivial; 8/8 seeds in each | E_B: inconclusive (drift), equivalent (frozen) |
+| γ0 0.1: extra B updates raise f(0.1) | E_B | +0.064 | +0.071 | nonzero, possibly trivial | E_A: equivalent in both |
+
+docs/32's committed prediction (E_A < 0 at γ0 10) is **not held as stated**. The direction is supported in
+every seed; the size is not established beyond the SESOI.
+
+**Interpretation (not a tested claim): updates past the criterion barely move a rich learner.**
+- At γ0 10, about 100× more updates on B (about 21 → 2400) left f(10) unchanged at h 4 frozen (E_B
+  equivalent).
+- At γ0 10, A at 2300 updates instead of about 51 drove A's loss from 0.05 to about 1e-6, and B then removed
+  a smaller share of A's gain.
+- The lazy learner (γ0 0.1) ends each fixed phase at a loss of 0.02–0.05, still near the criterion, so its
+  extra B updates keep removing.
+
+This reading fits the effects above. docs/32 did not test it.
 
 ## 3. Figures (both runs side by side)
 
@@ -133,6 +174,30 @@ t-interval over 8 seeds. Colour codes γ0.
    per γ0.
 5. ![acc](figures/aba_acc_vs_capacity.png) — bottleneck-probe accuracy against log α_A after A, after
    B and after A again, per configuration.
+
+### A–B–A figure set (draft, 2026-11-10; `aba_summary.py --figset`)
+
+All γ0 statements hold at matched current-task fit. Colour codes γ0. Hollow markers (or hatched bars) are
+seeds 0–7, and filled ones are seeds 8–15. The runs are never pooled.
+
+- **F1.** ![F1](figures/aba_F1_gain_removal_restoration.png)
+  - (a) The init→A gain by γ0.
+  - (b) The fraction of the gain removed by B.
+  - (c) Restoration ρ.
+  
+  Panels (b) and (c) are at h 4 and h 8, frozen and drift. Each point is a mean with its 99.17% t-interval,
+  n = 8 per run. The dashed line is the H6 threshold, 0.9.
+- **F2.** ![F2](figures/aba_F2_channel_shares.png)
+  - The channel shares (utility, dimension, radius) of Δlog α_A(A → B), as means over 8 seeds per run.
+  - The residual is about 0 and is not drawn. The dashed line is the H5b bound, 0.5.
+- **F3.** ![F3](figures/aba_F3_accuracy_vs_capacity_frozen.png)
+  - Bottleneck-probe accuracy on A against log α_A at frozen input (h 0, 4, 8).
+  - One marker per seed and phase. Init is the same W(0) for every γ0, so its markers coincide.
+- **F4.** ![F4](figures/aba_F4_protocol_robustness.png)
+  - Protocol robustness, docs/31–32, seeds 8–15 only.
+  - (a) d = f(10) − f(0.1) at h 4 under the four stopping combinations.
+  - (b) The main effects E_A and E_B, each with its docs/32 category.
+  - Intervals are 99.375% t-intervals. The grey band is the SESOI, ±0.10.
 
 ## 4. Setting cards
 
