@@ -4889,3 +4889,14 @@ package, with one implementation and one bit-for-bit check. Mark the 2M paths le
   - "Updates past the criterion barely move a rich learner" is labelled interpretation.
 - **Draft figure set.** F1–F4 (`aba_summary.py --figset`, `docs/figures/aba_F*.png`), listed in docs/30 §3.
 - **docs/33.** One-page results draft, both runs side by side.
+
+### 2026-11-10: docs/34 similarity map — stream parked, Phase 1 submitted
+
+- **Code** (`3650407`). The stream is PARKED (docs/29 status line), and docs/34 carries the dated amendments
+  a–d.
+  - aba_lib: the map levels, `probe_hammings` in the key (y* and the neutral probes depend on the H set), the
+    task-vector similarity, and `phase1_specs` (771 arms).
+  - The notebook `aba_similarity_map` (E1–E7 and the reading rules) was committed before submission.
+- **Check job 4648.** The docs/28 FULL arm reproduced bit for bit under lib e3011fa49aca1994; the taskvec
+  fields are added. The worst map arm (γ0 0.1, H16, s_f 1) took 170 s sequential.
+- **Phase 1:** `sbatch/aba_map_phase1.sh`, 64 CPUs, 32000M.
