@@ -37,7 +37,7 @@ import math
 import subprocess
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from multiprocessing import get_context
 from pathlib import Path
 from typing import Literal, Sequence
@@ -136,7 +136,19 @@ class ABAConfig:
             d.pop("fixed_steps")
         else:
             d["fixed_steps"] = list(self.fixed_steps)   # as stored after JSON
+        # The H levels enter every arm through seed_base (y* and the neutral probes avoid every y_B),
+        # so a non-default level set is part of the key (docs/34). The docs/28 set keeps its dict.
+        if tuple(self.hammings) != DEFAULT_HAMMINGS:
+            d["probe_hammings"] = [int(h) for h in self.hammings]
         return d
+
+
+DEFAULT_HAMMINGS = (0, 4, 8)
+# docs/34 similarity map (amended 2026-11-10): H levels (even, B balanced; 16 = every label flipped)
+# and s_f levels (0.1 keeps the docs/28 jump level).
+MAP_H = (0, 2, 4, 6, 8, 12, 16)
+MAP_SF = (1.0, 0.95, 0.9, 0.8, 0.6, 0.4, 0.2, 0.1)
+MAP_SEED_OFFSET = 16
 
 
 # ==========================================================================
@@ -315,6 +327,16 @@ def b_arrangement(cfg: ABAConfig, base: SeedBase, s_f: float, noise: str = "copy
 def flatten(points: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     P, M, d = points.shape
     return points.reshape(P * M, d), np.repeat(np.asarray(y, np.float64), M)
+
+
+def task_vector(X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Minimum-norm least-squares linear readout w = X⁺y (docs/34 §4)."""
+    return np.linalg.lstsq(X, np.asarray(y, np.float64), rcond=None)[0]
+
+
+def task_vector_cos(XA: np.ndarray, yA: np.ndarray, XB: np.ndarray, yB: np.ndarray) -> float:
+    wA, wB = task_vector(XA, yA), task_vector(XB, yB)
+    return float(wA @ wB / (np.linalg.norm(wA) * np.linalg.norm(wB)))
 
 
 def centre_cosines(c1: np.ndarray, c2: np.ndarray) -> np.ndarray:
@@ -980,6 +1002,10 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
 
     net = OneModuleNet(base.W0, spec.gamma, cfg)
     init_loss = net.loss(XA, yA)
+    # docs/34 §4 task-vector similarity, before any training: on the inputs and on the init
+    # representation h0 (identical across γ0, I6).
+    taskvec = {"taskvec_cos_input": task_vector_cos(XA, yA, XB, yB),
+               "taskvec_cos_h0": task_vector_cos(net.hidden(XA), yA, net.hidden(XB), yB)}
 
     def geo(tag, points, y):
         t0 = time.perf_counter()
@@ -1063,6 +1089,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
             "s_r_ystar_neutral_A": {str(k): s_r(yk, y_A) for k, yk in enumerate(neutral)},
             "s_r_ystar_neutral_B": {str(k): s_r(yk, y_B) for k, yk in enumerate(neutral)},
             "rho_in_AB": float(np.mean(np.diag(centre_cosines(A.centers, B.centers)))),
+            **taskvec,
         },
         "geometry": g,
         "backward": {"init_to_A1": channels(g["A@init"], g["A@A1"]),
@@ -1113,6 +1140,22 @@ def all_specs(cfg: ABAConfig) -> list[ArmSpec]:
     return grid + fresh
 
 
+def map_config(cfg: ABAConfig) -> ABAConfig:
+    """docs/34: the similarity-map config (its H and s_f levels, seeds 16–23)."""
+    return replace(cfg, hammings=MAP_H, s_fs=MAP_SF, seed_offset=MAP_SEED_OFFSET)
+
+
+def phase1_specs(cfg: ABAConfig) -> list[ArmSpec]:
+    """docs/34 Phase 1 (amended 2026-11-10): the H sweep at s_f {1, 0.9} and the s_f sweep at
+    H {0, 4, 8}, deduplicated (32 configurations), every seed and γ0; plus one fresh-noise
+    identity arm per γ0 on the first seed. 768 + 3 arms at n = 8."""
+    cfgs = [(h, sf) for sf in (1.0, 0.9) for h in cfg.hammings]
+    cfgs += [(h, sf) for h in (0, 4, 8) for sf in cfg.s_fs if (h, sf) not in cfgs]
+    grid = [ArmSpec(s, float(g), int(h), float(f)) for s in cfg.seeds for g in cfg.gammas for h, f in cfgs]
+    fresh = [ArmSpec(cfg.seeds[0], float(g), 0, 1.0, "fresh") for g in cfg.gammas]
+    return grid + fresh
+
+
 def trained_floor(cfg: ABAConfig, gamma: float, seed: int = 0, K: int = 6) -> dict:
     """Noise floor on the representation after training on A: SD(log α_A) over K
     estimator seeds, at this config's n_t. The resolution unit for Δlog α at this γ0."""
@@ -1153,6 +1196,8 @@ SCHEMA: dict[str, str] = {
     **{f"richness.{ph}.{k}": f"{k}: kernel change from previous boundary to {ph}"
        for ph in ("A1", "B", "A2") for k in ("dK_full_step", "dK_u_step", "dK_W_step", "align_step")},
     "relations.rho_in_AB": "mean centre cosine A ↔ B (input relation)",
+    "relations.taskvec_cos_input": "cos(w_A, w_B), w = X⁺y min-norm least squares on the input points (docs/34 §4)",
+    "relations.taskvec_cos_h0": "cos(w_A, w_B) on the init representation h0 (docs/34 §4; identical across γ0)",
     "behaviour.FT_beh": "log((1+steps fresh B)/(1+steps B))",
     "behaviour.savings": "log((1+steps A1)/(1+steps A2))",
     **{f"behaviour.steps.{p}": f"raw steps, {p}" for p in ("A1", "B", "A2", "freshB")},

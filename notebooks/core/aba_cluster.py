@@ -16,6 +16,9 @@
     python notebooks/core/aba_cluster.py cells --workers 32   # docs/32 2x2: 4 cells x 32 arms
     python notebooks/core/aba_cluster.py match [--spec ... --stopping ... --budget ...]
                                                               # docs/32 integrity check vs jobs 4396 / 4458
+    python notebooks/core/aba_cluster.py arm --map --spec 16,0.1,16,1
+                                                              # docs/34: one map arm, timed
+    python notebooks/core/aba_cluster.py map1 --workers 32    # docs/34 Phase 1 (771 arms, seeds 16-23)
 
 Timing arms go to results/aba/timing_<hash>.jsonl, never into the grid checkpoint.
 """
@@ -218,6 +221,30 @@ def match(base: L.ABAConfig, spec: L.ArmSpec | None) -> None:
     print("bit-identical")
 
 
+def _only_new(ref: dict, d: str) -> bool:
+    """True if the 'only on one side' path in diff line `d` is absent from the reference."""
+    parts = d.split(" ")[0].lstrip(".").split(".")
+    v = ref
+    for p in parts:
+        if not isinstance(v, dict) or p not in v:
+            return True
+        v = v[p]
+    return False
+
+
+# docs/34 similarity map, Phase 1 (amended 2026-11-10): 768 design arms + 3 fresh-noise identity arms.
+MAP_TIMING_SPEC = L.ArmSpec(16, 0.1, 16, 1.0)     # new H level, lazy learner
+
+
+def map1(base: L.ABAConfig, workers: int) -> None:
+    cfg = L.map_config(base)
+    specs = L.phase1_specs(cfg)
+    t0 = time.perf_counter()
+    rows = L.run_grid(cfg, specs, workers=workers, progress=lambda m: print(m, flush=True))
+    print(f"docs/34 Phase 1: {len(rows)}/{len(specs)} arms in {L.cache_path(cfg).name}; "
+          f"usable {sum(r['usable'] for r in rows)}; wall {time.perf_counter() - t0:.0f}s on {workers} workers")
+
+
 def reproduce(cfg: L.ABAConfig) -> None:
     ref = next((r for r in map(json.loads, REF_JSONL.read_text(encoding="utf-8").splitlines())
                 if r["key"] == REF_SPEC.key), None)
@@ -228,10 +255,14 @@ def reproduce(cfg: L.ABAConfig) -> None:
     new = json.loads(json.dumps(L.run_arm(cfg, REF_SPEC)))
     a = {k: v for k, v in ref.items() if k not in IGNORED}
     b = {k: v for k, v in new.items() if k not in IGNORED}
-    diffs = _diff(a, b)
+    # docs/34: fields added since the reference (relations.taskvec_*) are listed, not compared;
+    # every field the reference has must match bit for bit.
+    added = [d for d in _diff(a, b) if d.endswith("only on one side") and _only_new(a, d)]
+    diffs = [d for d in _diff(a, b) if d not in added]
     print(f"{REF_SPEC.key}: wall {time.perf_counter() - t0:.0f}s; reference lib {ref['lib_hash']} "
           f"stamp {ref['stamp']}; this lib {new['lib_hash']} stamp {new['stamp']}")
-    print(f"compared {len(a)} top-level fields (ignoring {', '.join(IGNORED)})")
+    print(f"compared {len(a)} top-level fields (ignoring {', '.join(IGNORED)}); "
+          f"fields added since the reference: {[d.split(' ')[0] for d in added] or 'none'}")
     if diffs:
         print(f"NOT bit-identical: {len(diffs)} differences")
         for d in diffs[:50]:
@@ -243,7 +274,8 @@ def reproduce(cfg: L.ABAConfig) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=("calibrate", "timing", "grid", "reproduce", "arm", "floors",
-                                       "cells", "match"))
+                                       "cells", "match", "map1"))
+    ap.add_argument("--map", action="store_true", help="arm mode: use the docs/34 map config (seeds 16-23)")
     ap.add_argument("--quick", action="store_true", help="QUICK config instead of FULL")
     ap.add_argument("--workers", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "4")))
     ap.add_argument("--seed-offset", type=int, default=0, help="first seed of the run (8: replication)")
@@ -263,5 +295,6 @@ if __name__ == "__main__":
                       int(a.spec.split(",")[2]), float(a.spec.split(",")[3])) if a.spec else None)
     {"calibrate": lambda: calibrate(cfg), "timing": lambda: timing(cfg),
      "grid": lambda: grid(cfg, a.workers), "reproduce": lambda: reproduce(cfg),
-     "floors": lambda: floors(cfg), "arm": lambda: arm(cfg, spec),
-     "cells": lambda: cells(cfg, a.workers), "match": lambda: match(cfg, spec)}[a.mode]()
+     "floors": lambda: floors(cfg), "arm": lambda: arm(L.map_config(cfg) if a.map else cfg, spec),
+     "cells": lambda: cells(cfg, a.workers), "match": lambda: match(cfg, spec),
+     "map1": lambda: map1(cfg, a.workers)}[a.mode]()

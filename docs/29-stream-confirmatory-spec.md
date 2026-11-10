@@ -13,6 +13,7 @@ Status:  DRAFT, unsigned. First draft 2026-11-09 (docs/25 §8 step 6).
          Amended 2026-11-10 (Kati): T1(c) moved to h 4 drift; h 4
          frozen kept as its secondary reading (reported, not in the
          family). Written before any stream result exists.
+         PARKED 2026-11-10 pending docs/34; to be rewritten as map-predicted vs observed (docs/34 §8).
 Slot:    docs/24 §4 core (the stream paradigm, second after A–B–A).
 Binds:   the grid of docs/25 §1 (1M, N = 300, M = 150, n_t = 200, n = 8).
 Gate:    no stream grid runs before Kati signs docs/26 and this document

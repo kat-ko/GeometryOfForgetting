@@ -1,4 +1,4 @@
-# 33 — A–B–A similarity map: before the stream
+# 34 — A–B–A similarity map: before the stream
 
 ```
 Status:  RATIFIED by Kati, 2026-11-10. Overrides docs/29 §8 and docs/25 §8
@@ -61,16 +61,18 @@ At matched current-task fit, per configuration:
 | learner, data, training, measurement | exactly as docs/28 §2 (1M, N = 300, μP, matched-loss stopping C2/C5, M = 150, n_t = 200, bottleneck probe n = 16, neutral probes K = 4) |
 | γ₀ | 0.1, 1, 10 |
 | label relation H | **0, 2, 4, 6, 8, 12, 16**. Only even values keep B balanced (8 vs 8). s_r = 1 − H/8 goes from +1 to −1. |
-| input relation s_f | **1, 0.95, 0.9, 0.8, 0.6, 0.4, 0.2, 0** |
+| input relation s_f | ~~1, 0.95, 0.9, 0.8, 0.6, 0.4, 0.2, 0~~ **[Amended 2026-11-10, Kati, before any map arm]** **1, 0.95, 0.9, 0.8, 0.6, 0.4, 0.2, 0.1**. 0.1 replaces 0 to keep the docs/28 jump level, so the h 4/h 8 × s_f {1, 0.9, 0.1} cells are a third independent sample of the docs/28 configurations, reported beside docs/28 §9 and docs/30, unpooled. |
 | seeds | **16–23** (fresh; 0–15 are spent on the confirmatory runs) |
 | controls | identity cell (H0, s_f 1, exact copy); one fresh-noise identity arm per γ₀ |
 
 **Phase 1, two slices (run first):**
 - an H sweep at s_f ∈ {1, 0.9};
-- an s_f sweep at H ∈ {4, 8}.
+- an s_f sweep at ~~H ∈ {4, 8}~~ **[Amended 2026-11-10, Kati, before any map arm]** **H ∈ {0, 4, 8}**. E5 and the shape of
+  the benign corner need H0 across s_f.
 
-That is (7·2 + 8·2 − 4 overlap) × 3 × 8 = **624 arms**. Phase 1 already answers
-the shape questions on both axes.
+That is ~~(7·2 + 8·2 − 4 overlap) × 3 × 8 = 624 arms~~ **[Amended 2026-11-10, Kati, before any map arm]**
+(7·2 + 8·3 − 6 overlap) × 3 × 8 = **768 arms**, plus the three fresh-noise identity arms. Phase 1
+already answers the shape questions on both axes.
 
 **Phase 2, the full grid**, only if Phase 1 shows structure that the slices do
 not resolve (for example, an interaction): 7 × 8 × 3 × 8 = **1344 arms** (Phase 1
@@ -110,11 +112,16 @@ One notebook, `notebooks/core/aba_similarity_map.ipynb`. It answers one question
 docs/25 §7 format. Per γ₀:
 - maps of: fraction removed f; Δlog α_A (A1 → B); channel shares; FT_geo
   (neutral) and specific FT_beh; bottleneck-probe forgetting; Δρ_c (signed,
-  normalised); savings; exposure (steps);
+  normalised); savings; exposure (steps); **[Amended 2026-11-10, Kati, before any map arm]** restoration ρ per cell;
 - the same quantities against the measured similarities of §4;
 - a setting card per configuration (docs/29 §2a);
 - signed values only, no pooling across configurations, and 95% intervals over
   seeds for description (no family).
+- **[Amended 2026-11-10, Kati, before any map arm]** **Exposure in every caption.** Every map caption states that under
+  matched-loss stopping a similar B needs fewer updates, so similarity effects include their
+  effect on exposure. Steps on B are plotted beside every map.
+- **[Amended 2026-11-10, Kati, before any map arm]** Optional Phase 1b (a fixed budget on the H sweep at s_f 1) runs only if Kati asks after
+  Phase 1.
 
 ## 6. Expectations (write into the notebook before the run; read verbatim after)
 
@@ -132,6 +139,9 @@ These are directions, not thresholds:
   input interference.
 - **E6 (richness).** The ordering across similarity cells is the same at every γ₀;
   only size and channel change.
+- **[Amended 2026-11-10, Kati, before any map arm]** **E7 (restoration).** Restoration is complete at high input similarity and
+  falls below 0.9 as input similarity drops, at γ₀ ≥ 1 (cf. docs/33 limits: ρ = 0.862 at h 8
+  jump, γ₀ 10).
 
 ## 7. Rules
 
@@ -145,7 +155,7 @@ These are directions, not thresholds:
 
 ## 8. After the map
 
-1. Write `docs/34-similarity-map-summary.md` (per configuration, both nominal
+1. Write `docs/35-similarity-map-summary.md` (per configuration, both nominal
    and measured axes).
 2. Rewrite docs/29 as **map-predicted vs observed**. For each stream reading, the
    prediction is the A–B–A map value at the stream's realised S_r and ρ_in. The

@@ -119,6 +119,10 @@ which describes the early-signal runs. The controlled two-task A–B–A paradig
 comes first (`docs/26` Part B; `notebooks/core/aba_controlled.ipynb`), and the
 stream comes second.
 
+**[Amended 2026-11-10, Kati]** The A–B–A similarity map (`docs/34`) comes before the
+stream. The stream is parked until docs/34 §8 (the map summary, then docs/29 rewritten
+as map-predicted vs observed).
+
 ---
 
 ## 5. Ablations — one alternative explanation per row (appendix table)
