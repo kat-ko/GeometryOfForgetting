@@ -702,6 +702,145 @@ def figF4(cells, plt):
     return fig
 
 
+CONFIGS9 = [(h, sf) for h in HS for sf in SFS]
+PH_LABEL = ["init", "after A", "after B", "after A again"]
+
+
+def figF5(data, plt):
+    """Behaviour on A at each boundary (seeds 8–15): network accuracy (solid) and bottleneck probe (dashed)."""
+    from matplotlib.lines import Line2D
+    run = "seeds 8–15"
+    A, seeds = data[run], seeds_of(run)
+    fig, axes = plt.subplots(3, 3, figsize=(11, 9), sharex=True, sharey=True)
+    for i, h in enumerate(HS):
+        for j, sf in enumerate(SFS):
+            ax = axes[i, j]
+            _style(ax)
+            ax.axhline(0.5, color=INK2, lw=1, ls=":")
+            for k, gm in enumerate(GAMMAS):
+                o = (k - 1) * 0.08
+                net = [[A[s, gm, h, sf]["trajectory"][p][-1]["A_test_acc"] for s in seeds] for p in ("A1", "B", "A2")]
+                bot = [[A[s, gm, h, sf]["bottleneck"][p]["acc"] for s in seeds] for p in PHASES]
+                for xs, series, ls in ((np.arange(1, 4) + o, net, "-"), (np.arange(4) + o, bot, "--")):
+                    ms = [ci(v) for v in series]
+                    ax.plot(xs, [m[0] for m in ms], color=GCOL[gm], lw=1.4, ls=ls, zorder=2)
+                    for x, m in zip(xs, ms):
+                        ax.plot([x, x], [m[1], m[2]], color=GCOL[gm], lw=2, solid_capstyle="round", zorder=3)
+                    ax.scatter(xs, [m[0] for m in ms], s=22, color=GCOL[gm] if ls == "-" else "white",
+                               edgecolors=GCOL[gm], linewidths=1.3, zorder=4)
+            ax.set_xticks(range(4), PH_LABEL, fontsize=8)
+            ax.set_title(f"h = {h}, s_f = {sf:g} ({SF_NAME[sf]})", fontsize=9, color=INK)
+            if j == 0:
+                ax.set_ylabel("accuracy on A (test points)", fontsize=8, color=INK2)
+    h_ = [Line2D([], [], marker="o", ls="", color=GCOL[g], label=f"γ0 = {g:g}", markersize=7) for g in GAMMAS]
+    h_ += [Line2D([], [], color=INK2, ls="-", marker="o", label="network's own sign accuracy"),
+           Line2D([], [], color=INK2, ls="--", marker="o", markerfacecolor="white",
+                  label="bottleneck probe (n = 16, refit readout)"),
+           Line2D([], [], color=INK2, ls=":", label="chance 0.5")]
+    fig.legend(handles=h_, loc="lower center", ncol=len(h_), frameon=False, fontsize=8, labelcolor=INK)
+    fig.suptitle("Behaviour on A at each boundary, seeds 8–15 (mean, 99.17% t-interval, n = 8; both runs are in F1)\n"
+                 "At init the readout is 0, so the network's own accuracy is undefined and not drawn.",
+                 fontsize=9.5, color=INK)
+    fig.tight_layout(rect=(0, 0.04, 1, 0.96))
+    return fig
+
+
+def figF6(data, plt):
+    """Forest plot over the 9 configurations: f, ρ, FT_geo specific, FT_beh specific (vs h 8 jump)."""
+    LOG125 = math.log(1.25)
+    panels = [("fraction removed f", lambda r, A, s, g: frac_removed(r), 0.0, 0.10),
+              ("restoration ρ", lambda r, A, s, g: restoration(r), 1.0, 0.10),
+              ("FT_geo specific (neutral baseline)", lambda r, A, s, g: r["forward"]["specific"], 0.0, 0.05),
+              ("FT_beh specific (− FT_beh at h 8 jump)",
+               lambda r, A, s, g: r["behaviour"]["FT_beh"] - A[s, g, 8, 0.1]["behaviour"]["FT_beh"], 0.0, LOG125)]
+    fig, axes = plt.subplots(1, 4, figsize=(14, 6.4), sharey=True)
+    ys = {c: len(CONFIGS9) - 1 - i for i, c in enumerate(CONFIGS9)}
+    for ax, (lab, fn, ref, ses) in zip(axes, panels):
+        _style(ax)
+        ax.axvspan(ref - ses, ref + ses, color=GRID, alpha=0.6, lw=0)
+        ax.axvline(ref, color=INK2, lw=1)
+        if lab.startswith("restoration"):
+            ax.axvline(0.9, color=INK2, lw=1, ls="--")
+            ax.axvline(0.0, color=GRID, lw=0)
+        for (h, sf), y0 in ys.items():
+            for run, A in data.items():
+                filled, off = RUN_STYLE[run]
+                for k, gm in enumerate(GAMMAS):
+                    y = y0 + off * 0.9 + (k - 1) * 0.1
+                    v = [fn(A[s, gm, h, sf], A, s, gm) for s in seeds_of(run)]
+                    m, lo, hi = ci(v)
+                    ax.plot([lo, hi], [y, y], color=GCOL[gm], lw=1.8, solid_capstyle="round", zorder=3)
+                    ref_row = lab.startswith("FT_beh") and (h, sf) == (8, 0.1)
+                    ax.scatter([m], [y], s=20, zorder=4, color="white" if (ref_row or not filled) else GCOL[gm],
+                               edgecolors=GCOL[gm], linewidths=1.2)
+        ax.set_title(lab, fontsize=9, color=INK)
+        if lab.startswith("FT_beh"):
+            ax.text(0.35, ys[(8, 0.1)], "reference (0 by construction)", fontsize=7, color=INK2, va="center")
+    axes[0].set_yticks(list(ys.values()), [f"h {h}, {SF_NAME[sf]}" for h, sf in ys], fontsize=8)
+    _legend(fig)
+    fig.suptitle("Contrasts per configuration (mean, 99.17% t-interval, n = 8 per run). Grey band: reference ± SESOI "
+                 "(f 0.10; ρ: 1 ± 0.10, dashed = H6 threshold 0.9; FT_geo 0.05; FT_beh log 1.25).",
+                 fontsize=9.5, color=INK)
+    fig.tight_layout(rect=(0, 0.05, 1, 0.95))
+    return fig
+
+
+def _dtotal_resolved(A, run, g, h, sf) -> bool:
+    """docs/28 §3: the H5 denominator Δ_total(A1 → B) is resolved (99.17% interval excludes 0, ≥ 2 floors)."""
+    t = ci([A[s, g, h, sf]["backward"]["A1_to_B"]["total"] for s in seeds_of(run)])
+    return res_sign(t, FLOORS_928[run][g]) != 0
+
+
+def figF7(data, plt):
+    """Channel shares of Δlog α_A(A1 → B) in all 9 configurations; cells whose denominator is unresolved
+    (docs/28 §3) are grey and labelled 'not read'."""
+    from matplotlib.patches import Patch
+    fig, axes = plt.subplots(3, 3, figsize=(13, 10), sharey=True)
+    w = 0.36
+    for i, h in enumerate(HS):
+        for j, sf in enumerate(SFS):
+            ax = axes[i, j]
+            _style(ax)
+            for k, gm in enumerate(GAMMAS):
+                for run, A in data.items():
+                    filled, _ = RUN_STYLE[run]
+                    x = k + (w / 2 + 0.02) * (1 if filled else -1)
+                    if not _dtotal_resolved(A, run, gm, h, sf):
+                        ax.bar(x, 1.0, w, color=GRID, edgecolor=INK2 if filled else GRID, linewidth=0.6,
+                               hatch=None if filled else "////")
+                        ax.text(x, 0.5, "not read", rotation=90, ha="center", va="center", fontsize=6.5, color=INK2)
+                        continue
+                    pos, neg = 0.0, 0.0          # positive shares stack up from 0, negative ones down
+                    for ch, col in CH_COL.items():
+                        v = float(np.mean([share(A[s, gm, h, sf], ch) for s in seeds_of(run)]))
+                        bottom = pos if v >= 0 else neg
+                        ax.bar(x, v, w, bottom=bottom, color=col if filled else "white", edgecolor=col,
+                               linewidth=1.1, hatch=None if filled else "////")
+                        if abs(v) >= 0.12:
+                            ax.text(x, bottom + v / 2, f"{v:.2f}", ha="center", va="center", fontsize=6, color=INK)
+                        if v >= 0:
+                            pos += v
+                        else:
+                            neg += v
+            ax.axhline(0.5, color=INK2, lw=1, ls="--")
+            ax.axhline(0, color=INK2, lw=0.8)
+            ax.set_xticks(range(3), [f"γ0 {g:g}" for g in GAMMAS], fontsize=8)
+            ax.set_title(f"h = {h}, s_f = {sf:g} ({SF_NAME[sf]})", fontsize=9, color=INK)
+            if j == 0:
+                ax.set_ylabel("share of Δlog α_A (after A → after B)", fontsize=8, color=INK2)
+    hd = [Patch(facecolor=c, edgecolor=c, label=ch) for ch, c in CH_COL.items()]
+    hd += [Patch(facecolor=GRID, edgecolor=INK2, label="not read: Δ_total unresolved (docs/28 §3)"),
+           Patch(facecolor="white", edgecolor=INK2, hatch="////", label="left bar: seeds 0–7"),
+           Patch(facecolor=INK2, edgecolor=INK2, label="right bar: seeds 8–15")]
+    fig.legend(handles=hd, loc="lower center", ncol=len(hd), frameon=False, fontsize=8, labelcolor=INK)
+    fig.suptitle("Channel shares of Δlog α_A (after A → after B), all nine configurations (mean over 8 seeds per run; "
+                 "residual ≈ 0 not drawn; dashed: 0.5, the H5b bound)\n"
+                 "Negative shares are drawn below 0. At h 0 drift "
+                 "Δ_total > 0 (B adds capacity), so the shares there are of a gain, not a loss.", fontsize=10, color=INK)
+    fig.tight_layout(rect=(0, 0.04, 1, 0.96))
+    return fig
+
+
 # --------------------------------------------------------------------------- docs/32: stopping 2x2
 
 T8 = stats.t.ppf(1 - 0.05 / 16, 7)          # docs/32 §4: 99.375% two-sided (family of eight), df 7
@@ -893,7 +1032,10 @@ def main() -> None:
         for name, fig in (("aba_F1_gain_removal_restoration", figF1(data, plt)),
                           ("aba_F2_channel_shares", figF2(data, plt)),
                           ("aba_F3_accuracy_vs_capacity_frozen", figF3(data, plt)),
-                          ("aba_F4_protocol_robustness", figF4(cells, plt))):
+                          ("aba_F4_protocol_robustness", figF4(cells, plt)),
+                          ("aba_F5_behaviour", figF5(data, plt)),
+                          ("aba_F6_contrasts", figF6(data, plt)),
+                          ("aba_F7_channels", figF7(data, plt))):
             fig.savefig(FIG / f"{name}.png", dpi=130)
             plt.close(fig)
             print("wrote", FIG / f"{name}.png")

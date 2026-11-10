@@ -3,7 +3,7 @@
 **Status: DRAFT for Kati, 2026-11-10.**
 - Sources: docs/28 §9.3, docs/30, docs/31 and docs/32 only. Each number below is copied from a table
   generated there.
-- Figures: F1–F4 (`docs/figures/aba_F*.png`, docs/30 §3).
+- Figures: F1–F7 (`docs/figures/aba_F*.png`, docs/30 §3).
 - Numbers are given as **seeds 8–15 (confirmatory) | seeds 0–7 (original)**, as means with 99.17%
   t-intervals over n = 8. The two runs are never pooled.
 
@@ -55,6 +55,8 @@ At h 8 (frozen and drift; not read for H1), B removes 0.74–0.91 of the gain at
 - At γ0 0.1 the radius share is 0.38–0.41 | 0.36–0.38.
 - **H5b is not replicated.** "No channel carries more than 0.5" held at h 8 and was unresolved at h 4 in
   seeds 8–15.
+- F7 shows the shares in all nine configurations. At h 0 and at jump, most cells are not read, because B
+  barely changes A's capacity there.
 
 **Relearning A restores the gain (H6, F1c).**
 - ρ ≥ 0.9 at each of the 12 (γ0, h 4/8, frozen/drift) strata, in both runs.
@@ -62,6 +64,13 @@ At h 8 (frozen and drift; not read for H1), B removes 0.74–0.91 of the gain at
 
 **Accuracy follows capacity at frozen input (F3).** The bottleneck-probe accuracy on A rises with log α_A
 across phases and γ0. This is descriptive.
+
+**Behaviour is set by the labels; the representation keeps more (F5; seeds 8–15, descriptive).**
+- After B at frozen input, the network's own accuracy on A is 1 − H/16 at every γ0: 0.75 at h 4 and 0.50 at
+  h 8.
+- A refit bottleneck readout on the same hidden layer recovers more:
+  - h 4 frozen: 0.82, 0.88 and 0.89 at γ0 0.1, 1 and 10;
+  - h 8 frozen: 0.80–0.81.
 
 **Same labels under drift add capacity (H3).**
 - B with h 0 at drift raises A's capacity: +0.048 [+0.033, +0.062] | +0.035 [+0.015, +0.055] at γ0 0.1, and
@@ -71,6 +80,7 @@ across phases and γ0. This is descriptive.
 
 **Prior learning slows a related task specifically (H4).** At γ0 10, the specific behavioural forward
 transfer, FT_beh(h 8 frozen) − FT_beh(h 8 jump), is −0.459 [−0.591, −0.328] | −0.417 [−0.606, −0.229].
+F6 shows this contrast, together with f, ρ and FT_geo, for every configuration.
 
 ## Limits
 

@@ -198,6 +198,23 @@ seeds 0–7, and filled ones are seeds 8–15. The runs are never pooled.
   - (a) d = f(10) − f(0.1) at h 4 under the four stopping combinations.
   - (b) The main effects E_A and E_B, each with its docs/32 category.
   - Intervals are 99.375% t-intervals. The grey band is the SESOI, ±0.10.
+- **F5.** ![F5](figures/aba_F5_behaviour.png)
+  - Behaviour on A at each boundary, seeds 8–15 only; both runs are in F1.
+  - Solid lines: the network's own sign accuracy on A's test points. Dashed lines: the bottleneck-probe
+    accuracy (n = 16).
+  - The chance line is 0.5. At init the readout is 0, so the network's own accuracy is undefined and not
+    drawn.
+- **F6.** ![F6](figures/aba_F6_contrasts.png)
+  - A forest plot over the nine configurations: f, ρ, FT_geo specific and FT_beh specific. FT_beh specific is
+    taken against h 8 jump, so that row is 0 by construction.
+  - Each point is a γ0 mean with its 99.17% interval, both runs shown.
+  - The grey band is the reference ± SESOI. For ρ the reference is 1 ± 0.10, with the dashed H6 threshold at
+    0.9.
+- **F7.** ![F7](figures/aba_F7_channels.png)
+  - Channel shares of Δlog α_A(A → B) in all nine configurations, jump included.
+  - A cell is greyed "not read" when its Δ_total is unresolved (docs/28 §3: the 99.17% interval includes 0,
+    or |mean| < 2 floors).
+  - Negative shares are drawn below 0. At h 0 drift the shares are of a gain.
 
 ## 4. Setting cards
 
