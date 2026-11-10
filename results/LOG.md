@@ -4867,3 +4867,18 @@ package, with one implementation and one bit-for-bit check. Mark the 2M paths le
   - Both integrity arms are bit-identical: (Cr,Cr) against job 4396 and (Fx,Fx) against job 4458.
   - The (Fx,Cr) arm took 149 s sequential; A1 fixed, B converged at 1238 steps.
   - The 128-arm job is projected at about 40 min. `sbatch/aba_2x2.sh` is not submitted; it waits for Kati's go.
+
+### 2026-11-10: T1(c) to h 4 drift; docs/32 2×2 run (grime job 4538)
+
+- **docs/29 T1(c).** Moved to h 4 drift as a dated amendment (`27af9bf`), before any stream result. h 4
+  frozen is a secondary reading outside the family.
+- **Job 4538** (`27af9bf`, lib 635c4e3bf8cc6b96): 128/128 arms usable in 2223 s on 32 workers. Every phase
+  stopped by its cell's rule, (Cr,Fx) included.
+- **Integrity.** All 64 reference rows are bit-identical: 32 (Cr,Cr) against job 4396 and 32 (Fx,Fx) against
+  job 4458.
+- **Prediction (E_A < 0 at γ0 10).** Not held as stated. Frozen −0.142 [−0.206, −0.078] and drift −0.083
+  [−0.130, −0.036], 8/8 seeds each: nonzero, possibly trivial, not meaningful at SESOI 0.10.
+- **E_B at γ0 10.** Equivalent at frozen, inconclusive at drift.
+- **At γ0 0.1.** E_A is equivalent and E_B is +0.07 / +0.06 (nonzero, possibly trivial).
+- **Accounts.** "Other pattern" in both strata. Descriptively, the f(10) fall goes with over-training of A
+  and the f(0.1) rise with exposure on B.
