@@ -480,10 +480,13 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
     elif cfg.stopping != "criterion":
         raise ValueError(f"unknown stopping {cfg.stopping!r}")
     steps, first_loss, status = 0, None, "cap"
+    first_hit = None        # first step with loss ≤ target, checked before the update (docs/36)
     while True:
         loss, gW, gu = net.loss_grads(X, y)
         if first_loss is None:
             first_loss = loss
+        if first_hit is None and loss <= cfg.target_loss:
+            first_hit = steps
         if not np.isfinite(loss):
             status = "diverged"
             record(steps, loss)
@@ -506,6 +509,7 @@ def train_to_criterion(net: OneModuleNet, X: np.ndarray, y: np.ndarray, cfg: ABA
         net.u -= net.lr * gu
         steps += 1
     return {"steps": steps, "status": status, "converged": status in ("converged", "fixed"),
+            "first_hit": first_hit,
             "first_loss": float(first_loss), "final_loss": float(loss),
             "r_t": float(np.linalg.norm(net.W - W_start) / np.linalg.norm(W_start)),
             "records": recs}
@@ -1105,6 +1109,7 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
         "bottleneck": {**bn, "n": cfg.bottleneck_n},
         "behaviour": {
             "steps": steps,
+            "first_hit": {k: v["first_hit"] for k, v in ph.items()},
             "first_loss": {k: v["first_loss"] for k, v in ph.items()},
             "FT_beh": _logratio_steps(steps["freshB"], steps["B"]),
             "savings": _logratio_steps(steps["A1"], steps["A2"]),
@@ -1121,6 +1126,10 @@ def run_arm(cfg: ABAConfig, spec: ArmSpec, stamp: dict | None = None) -> dict:
         # FT_beh and savings are step ratios of equal budgets here and are not read (docs/31).
         out["behaviour"]["stopping"] = cfg.stopping
         out["behaviour"]["final_loss"] = {k: v["final_loss"] for k, v in ph.items()}
+        # docs/36: FT_beh from the first step at criterion, defined when B and fresh B are fixed.
+        hit = out["behaviour"]["first_hit"]
+        out["behaviour"]["FT_beh_hit"] = (None if hit["freshB"] is None or hit["B"] is None
+                                          else _logratio_steps(hit["freshB"], hit["B"]))
     timing["wall_s"] = time.perf_counter() - t_start
     out["timing"] = timing
     return out
@@ -1154,6 +1163,26 @@ def phase1_specs(cfg: ABAConfig) -> list[ArmSpec]:
     grid = [ArmSpec(s, float(g), int(h), float(f)) for s in cfg.seeds for g in cfg.gammas for h, f in cfgs]
     fresh = [ArmSpec(cfg.seeds[0], float(g), 0, 1.0, "fresh") for g in cfg.gammas]
     return grid + fresh
+
+
+# docs/36 (Phase 1b, extreme cases run 1): fixed budget on phase B and fresh B per γ0; A1 and A2 at
+# criterion. Budget = max B / fresh-B criterion steps over the 771 job-4651 arms at that γ0, rounded up
+# to the next 100 (maxima 3132 / 552 / 99).
+PHASE1B_BUDGET = {0.1: 3200, 1.0: 600, 10.0: 100}
+PHASE1B_CELLS = ((0, 1.0), (2, 1.0), (4, 1.0), (8, 1.0), (12, 1.0), (16, 1.0),
+                 (0, 0.9), (0, 0.4), (0, 0.1), (4, 0.1), (8, 0.1))
+
+
+def phase1b_cfg(cfg: ABAConfig, gamma: float) -> ABAConfig:
+    """The docs/36 config for one γ0: the map config with phase B (and fresh B) fixed at the γ0 budget."""
+    return replace(map_config(cfg), gammas=(float(gamma),), stopping="fixed",
+                   fixed_steps=(None, PHASE1B_BUDGET[float(gamma)], None))
+
+
+def phase1b_specs(cfg: ABAConfig) -> list[ArmSpec]:
+    """docs/36: the 11 cells × this config's γ0 × seeds (88 arms per γ0 at n = 8; no fresh-noise arms)."""
+    return [ArmSpec(s, float(g), int(h), float(f))
+            for s in cfg.seeds for g in cfg.gammas for h, f in PHASE1B_CELLS]
 
 
 def trained_floor(cfg: ABAConfig, gamma: float, seed: int = 0, K: int = 6) -> dict:

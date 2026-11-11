@@ -77,7 +77,7 @@ LEVEL_COL = ["#2a78d6", "#eb6834", "#1baf7a"]      # validated categorical slots
 GCOL = {0.1: "#2a78d6", 1.0: "#eb6834", 10.0: "#1baf7a"}
 
 cfg = A.map_cfg()
-MAP_JSONL = L.REPO / "results" / "aba" / f"FULL_{L.lib_hash()}.jsonl"
+MAP_JSONL = L.REPO / "results" / "aba" / "FULL_e3011fa49aca1994.jsonl"   # job 4651 (pinned 2026-11-11, docs/36)
 HAVE = MAP_JSONL.exists()
 SEEDS = list(cfg.seeds)
 print(f"lib hash {L.lib_hash()}; stamp now {L.git_stamp()}")

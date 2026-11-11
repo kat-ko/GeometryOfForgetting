@@ -19,6 +19,11 @@
     python notebooks/core/aba_cluster.py arm --map --spec 16,0.1,16,1
                                                               # docs/34: one map arm, timed
     python notebooks/core/aba_cluster.py map1 --workers 32    # docs/34 Phase 1 (771 arms, seeds 16-23)
+    python notebooks/core/aba_cluster.py reproduce --map      # docs/36: one job-4651 map arm, bit for bit
+    python notebooks/core/aba_cluster.py arm --map --spec 19,0.1,16,1 --stopping fixed --budget -,3200,-
+                                                              # docs/36: the timed fixed-B arm
+    python notebooks/core/aba_cluster.py map1b --workers 64   # docs/36 Phase 1b (264 arms, B fixed per γ0)
+    python notebooks/core/aba_cluster.py check1b              # docs/36 integrity checks vs job 4651
 
 Timing arms go to results/aba/timing_<hash>.jsonl, never into the grid checkpoint.
 """
@@ -93,6 +98,7 @@ def arm(cfg: L.ABAConfig, spec: L.ArmSpec) -> None:
     tm = res["timing"]
     print(f"{spec.key} ({cfg.stopping}): wall {wall:.0f}s (train {tm['train_s']:.0f}, GLUE {tm['glue_s']:.0f}, "
           f"NTK {tm['ntk_s']:.0f}, probes {tm['refit_s']:.0f}); steps {res['behaviour']['steps']}; "
+          f"first_hit {res['behaviour'].get('first_hit')}; "
           f"status {res['status']}; final loss {res['behaviour'].get('final_loss')}; "
           f"usable {res['usable']}; peak RSS {peak_rss_mb():.0f} MB", flush=True)
     with out.open("a", encoding="utf-8") as fh:
@@ -245,21 +251,23 @@ def map1(base: L.ABAConfig, workers: int) -> None:
           f"usable {sum(r['usable'] for r in rows)}; wall {time.perf_counter() - t0:.0f}s on {workers} workers")
 
 
-def reproduce(cfg: L.ABAConfig) -> None:
-    ref = next((r for r in map(json.loads, REF_JSONL.read_text(encoding="utf-8").splitlines())
-                if r["key"] == REF_SPEC.key), None)
+def reproduce(cfg: L.ABAConfig, ref_jsonl: Path = REF_JSONL, ref_spec: L.ArmSpec = REF_SPEC) -> None:
+    ref = next((r for r in map(json.loads, ref_jsonl.read_text(encoding="utf-8").splitlines())
+                if r["key"] == ref_spec.key
+                and json.dumps(r["config"], sort_keys=True) == json.dumps(cfg.key_fields(), sort_keys=True)),
+               None)
     if ref is None:
-        sys.exit(f"{REF_SPEC.key} not found in {REF_JSONL}")
+        sys.exit(f"{ref_spec.key} with this config not found in {ref_jsonl}")
     t0 = time.perf_counter()
     # Through JSON, exactly as run_grid stores a row.
-    new = json.loads(json.dumps(L.run_arm(cfg, REF_SPEC)))
+    new = json.loads(json.dumps(L.run_arm(cfg, ref_spec)))
     a = {k: v for k, v in ref.items() if k not in IGNORED}
     b = {k: v for k, v in new.items() if k not in IGNORED}
     # docs/34: fields added since the reference (relations.taskvec_*) are listed, not compared;
     # every field the reference has must match bit for bit.
     added = [d for d in _diff(a, b) if d.endswith("only on one side") and _only_new(a, d)]
     diffs = [d for d in _diff(a, b) if d not in added]
-    print(f"{REF_SPEC.key}: wall {time.perf_counter() - t0:.0f}s; reference lib {ref['lib_hash']} "
+    print(f"{ref_spec.key}: wall {time.perf_counter() - t0:.0f}s; reference lib {ref['lib_hash']} "
           f"stamp {ref['stamp']}; this lib {new['lib_hash']} stamp {new['stamp']}")
     print(f"compared {len(a)} top-level fields (ignoring {', '.join(IGNORED)}); "
           f"fields added since the reference: {[d.split(' ')[0] for d in added] or 'none'}")
@@ -271,10 +279,57 @@ def reproduce(cfg: L.ABAConfig) -> None:
     print("bit-identical")
 
 
+# docs/36: Phase 1b, fixed budget on phase B per γ0 (extreme cases, run 1), against job 4651.
+MAP_REF_JSONL = L.REPO / "results" / "aba" / "FULL_e3011fa49aca1994.jsonl"   # job 4651
+MAP_REF_SPEC = L.ArmSpec(16, 0.1, 16, 1.0)
+P1B_TIMING_SPEC = L.ArmSpec(19, 0.1, 16, 1.0)      # job 4651's largest B count (3132)
+
+
+def map1b(base: L.ABAConfig, workers: int) -> None:
+    """The 264 docs/36 arms in ONE pool (three configs, one per γ0; longest γ0 first), appended to
+    the shared fixed checkpoint and separated there by the config dict. Resumes per config."""
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    from multiprocessing import get_context
+    cfgs = [L.phase1b_cfg(base, g) for g in (0.1, 1.0, 10.0)]
+    path = L.cache_path(cfgs[0])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    todo = []
+    for cfg in cfgs:
+        done = {r["key"] for r in L.load_results(cfg)}
+        todo += [(cfg, s) for s in L.phase1b_specs(cfg) if s.key not in done]
+    stamp = L.git_stamp()
+    t0 = time.perf_counter()
+    n = sum(len(L.phase1b_specs(c)) for c in cfgs)
+    print(f"docs/36 Phase 1b: {n} arms, {len(todo)} to run, budgets {L.PHASE1B_BUDGET}, into {path.name}",
+          flush=True)
+    if todo:
+        with ProcessPoolExecutor(max_workers=min(workers, len(todo)), mp_context=get_context("spawn")) as ex:
+            futs = {ex.submit(L._arm_job, (cfg, s, stamp)): s for cfg, s in todo}
+            for i, fut in enumerate(as_completed(futs), 1):
+                res = fut.result()
+                with path.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(res) + "\n")
+                print(f"[{i}/{len(todo)}] {res['key']}  wall {res['timing']['wall_s']:.0f}s  "
+                      f"first_hit B {res['behaviour']['first_hit']['B']}  usable={res['usable']}", flush=True)
+    rows = sum(len(L.load_results(c)) for c in cfgs)
+    print(f"docs/36 Phase 1b: {rows}/{n} arms in {path.name}; wall {time.perf_counter() - t0:.0f}s "
+          f"on {workers} workers")
+
+
+def check1b(base: L.ABAConfig) -> None:
+    """docs/36 §2 integrity checks 1-3 against job 4651. Exit 1 on any failure."""
+    import aba_fixedb_analysis as FB
+    checks = FB.integrity(FB.load_fixed(base), FB.load_criterion(MAP_REF_JSONL, base))
+    for name, ok, det in checks:
+        print(f"{'PASS' if ok else 'FAIL'}  {name}  {det}", flush=True)
+    if not all(ok for _, ok, _ in checks):
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=("calibrate", "timing", "grid", "reproduce", "arm", "floors",
-                                       "cells", "match", "map1"))
+                                       "cells", "match", "map1", "map1b", "check1b"))
     ap.add_argument("--map", action="store_true", help="arm mode: use the docs/34 map config (seeds 16-23)")
     ap.add_argument("--quick", action="store_true", help="QUICK config instead of FULL")
     ap.add_argument("--workers", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "4")))
@@ -294,7 +349,10 @@ if __name__ == "__main__":
     spec = (L.ArmSpec(int(a.spec.split(",")[0]), float(a.spec.split(",")[1]),
                       int(a.spec.split(",")[2]), float(a.spec.split(",")[3])) if a.spec else None)
     {"calibrate": lambda: calibrate(cfg), "timing": lambda: timing(cfg),
-     "grid": lambda: grid(cfg, a.workers), "reproduce": lambda: reproduce(cfg),
+     "grid": lambda: grid(cfg, a.workers),
+     "reproduce": lambda: (reproduce(L.map_config(cfg), MAP_REF_JSONL, MAP_REF_SPEC) if a.map
+                           else reproduce(cfg)),
+     "map1b": lambda: map1b(cfg, a.workers), "check1b": lambda: check1b(cfg),
      "floors": lambda: floors(cfg), "arm": lambda: arm(L.map_config(cfg) if a.map else cfg, spec),
      "cells": lambda: cells(cfg, a.workers), "match": lambda: match(cfg, spec),
      "map1": lambda: map1(cfg, a.workers)}[a.mode]()
