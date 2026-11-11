@@ -122,6 +122,9 @@ docs/25 §7 format. Per γ₀:
   effect on exposure. Steps on B are plotted beside every map.
 - **[Amended 2026-11-10, Kati, before any map arm]** Optional Phase 1b (a fixed budget on the H sweep at s_f 1) runs only if Kati asks after
   Phase 1.
+- **[Amended 2026-11-11, Kati, after Phase 1 (docs/35)]** Phase 1b is requested in this form: a fixed budget
+  **per γ0 on phase B only** (A1 and A2 stay at criterion), on 11 extreme cells. This replaces the fixed
+  budget on the H sweep at s_f 1 named above. The design, predictions and rules are in docs/36.
 
 ## 6. Expectations (write into the notebook before the run; read verbatim after)
 

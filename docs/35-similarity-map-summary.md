@@ -72,7 +72,10 @@ cards.
   removes 0.33–0.43 of A's gain.
 - **Richness steepens the start of the dose.** At H2, f is 0.05 at γ₀ 0.1, 0.30 at γ₀ 1 and 0.53 at γ₀ 10.
 - **H12 is not the mirror image of H4.** In label terms, B at H12 is B at H4 with the sign flipped. Yet f is
-  0.70–0.82 at H12 against 0.35–0.70 at H4, at s_f 1. H12 also needs more updates on B: γ₀ 0.1 2382 vs 1422,
+  0.70–0.82 at H12 against 0.35–0.70 at H4, at s_f 1.
+  - **[Corrected 2026-11-11, Kati]** H4 and H12 are independent label draws for each seed. An H12 task is an
+    H4 task with a flipped readout only in distribution (capacity does not depend on the sign of the labels),
+    not seed by seed. The comparison is distributional (docs/36 §5(i)). H12 also needs more updates on B: γ₀ 0.1 2382 vs 1422,
   γ₀ 10 44 vs 22 (medians). So this difference includes exposure.
 - **Bottleneck forgetting has the same shape at a smaller scale.** At s_f 1 it peaks at H8 (γ₀ 0.1 +0.05,
   γ₀ 1 +0.23, γ₀ 10 +0.21) and is about 0 at H16.

@@ -50,6 +50,9 @@ the same cells.
 **Runs.**
 - **Interim, before the final paper: extreme cases only**, fixed budget per γ0. Pre-commit and cell choice to
   follow (Phase 1b, docs/34 §5 amendment).
+  - **Extreme cases, run 1: docs/36** (pre-committed 2026-11-11). Fixed budget on phase B and fresh B per γ0
+    (3200 / 600 / 100); A1 and A2 at criterion; 11 cells × 3 γ0 × seeds 16–23 = 264 arms. Job: TBD. Its §5b
+    plot (f along the H sweep, criterion vs fixed, with updates on B and r_B) is the candidate example plot.
 - **Final appendix: the full grid**, fixed budget per γ0 on all Phase 1 configurations (32 × 3 γ0 × 8 seeds),
   compared cell by cell with the matched-loss map (job 4651).
 
