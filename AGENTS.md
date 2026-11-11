@@ -5,6 +5,7 @@ Rules for any LLM agent working in this repository.
 **Read docs/24, 25, 26 and 34 first.** (Added 2026-11-06, Kati; docs/34 added 2026-11-10, Kati.) They set
 the scientific hierarchy, the operating rules and the method. docs/34 is the A–B–A similarity map, which
 comes before the stream; the stream is parked. The invariants below still hold.
+Items the final paper must contain are tracked in `docs/reference/paper-backlog.md` (added 2026-11-11).
 
 Read `docs/00-math-spec.md` before writing any numerical code. Read
 `docs/02-validation-suite.md` before claiming any component works.

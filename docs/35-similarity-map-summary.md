@@ -147,5 +147,9 @@ FT_beh. That is 72 cells, each compared with seeds 8–15 and with seeds 0–7 (
 
 1. E4 rule overlap: equivalence clause or strict clause (§2 caveat b).
 2. E3 part (ii) holds by construction: keep it, or drop it from future readings.
-3. Phase 1b (fixed budget) yes or no; Phase 2 go or no go.
+3. ~~Phase 1b (fixed budget) yes or no~~; Phase 2 go or no go.
+   **Decided (Kati, 2026-11-11):** fixed budget per γ0 runs. Before the final paper, only the extreme cases
+   (pre-commit to follow). For the final appendix, the full grid compared with the matched-loss map. Both
+   are tracked in `docs/reference/paper-backlog.md` (B1), and the docs/31–32 over-training finding is marked
+   for the appendix (B2).
 4. docs/29 rewrite: index the map prediction by (S_r, ρ_in) jointly (§4).
